@@ -1,10 +1,8 @@
 node_modules/
 .claude/
-gh-cli.zip
-gh-cli-extracted/
+gh-cli*
 backups/
 .buddy/
-scripts/think-daemon.mjs
 notes/
 orders.log
-.git
+scripts/think-daemon.mjs
