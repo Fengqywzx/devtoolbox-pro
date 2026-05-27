@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentFlow — 多智能体AI工作站</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131f;
+  --surface2: #1a1a2e;
+  --border: #252540;
+  --text: #e0e0f0;
+  --text2: #9090b0;
+  --accent: #6c5ce7;
+  --accent2: #a29bfe;
+  --green: #00d2a0;
+  --orange: #ff9f43;
+  --red: #ff6b6b;
+  --blue: #54a0ff;
+  --pink: #ff6b9d;
+  --cyan: #00d2d3;
+  --yellow: #feca57;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+:root.light {
+  --bg: #f5f5fa;
+  --surface: #ffffff;
+  --surface2: #eeeef5;
+  --border: #d0d0e0;
+  --text: #1a1a2e;
+  --text2: #606080;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: background var(--transition), border var(--transition);
+}
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: #fff;
+}
+.brand { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+.brand span { color: var(--accent2); }
+.agent-list {
+  flex: 1; overflow-y: auto; padding: 12px;
+}
+.agent-card {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all var(--transition);
+  position: relative;
+}
+.agent-card:hover { border-color: var(--border); transform: translateY(-1px); }
+.agent-card.active { border-color: var(--accent); }
+.agent-card.thinking { border-color: var(--accent); animation: pulse-border 1.5s ease-in-out infinite; }
+@keyframes pulse-border {
+  0%,100% { border-color: var(--accent); box-shadow: 0 0 8px rgba(108,92,231,0.3); }
+  50% { border-color: var(--accent2); box-shadow: 0 0 16px rgba(108,92,231,0.6); }
+}
+.agent-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.agent-avatar { font-size: 28px; line-height: 1; }
+.agent-info { flex: 1; min-width: 0; }
+.agent-name { font-weight: 600; font-size: 14px; }
+.agent-role { font-size: 11px; color: var(--text2); }
+.agent-status {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+.agent-status.idle { background: var(--text2); }
+.agent-status.thinking { background: var(--accent2); animation: pulse-dot 1s ease-in-out infinite; }
+.agent-status.speaking { background: var(--green); }
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.agent-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.agent-tag {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  background: rgba(108,92,231,0.15); color: var(--accent2);
+}
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 8px;
+}
+
+/* Main */
+.main {
+  flex: 1; display: flex; flex-direction: column;
+  min-width: 0;
+}
+.topbar {
+  padding: 12px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background var(--transition), border var(--transition);
+}
+.topbar-title { font-weight: 600; font-size: 14px; }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+.chat-area {
+  flex: 1; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.chat-empty {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--text2); text-align: center; gap: 12px;
+}
+.chat-empty-icon { font-size: 64px; opacity: 0.5; }
+.chat-empty h2 { font-size: 22px; color: var(--text); }
+.chat-empty p { font-size: 14px; max-width: 500px; line-height: 1.6; }
+
+.message {
+  display: flex; gap: 12px;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+.message.system { justify-content: center; }
+.message-avatar { font-size: 24px; flex-shrink: 0; width: 36px; text-align: center; }
+.message-body { flex: 1; min-width: 0; }
+.message-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.message-sender { font-weight: 600; font-size: 13px; }
+.message-time { font-size: 11px; color: var(--text2); }
+.message-content {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  transition: background var(--transition);
+}
+.message.system .message-content {
+  background: transparent;
+  color: var(--text2);
+  font-size: 12px;
+  text-align: center;
+  padding: 4px 12px;
+}
+.message-content code {
+  background: rgba(108,92,231,0.15);
+  padding: 2px 6px; border-radius: 4px;
+  font-size: 13px; color: var(--accent2);
+}
+.message-content pre {
+  background: #0a0a0f;
+  border-radius: 8px;
+  padding: 14px;
+  overflow-x: auto;
+  margin: 8px 0;
+  border: 1px solid var(--border);
+}
+.message-content pre code {
+  background: none; padding: 0; color: var(--green);
+}
+
+/* Agent-to-agent messages */
+.agent-thread {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin: 8px 0;
+}
+.agent-thread-label {
+  font-size: 11px; color: var(--accent2);
+  margin-bottom: 8px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* Input */
+.input-area {
+  padding: 16px 20px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  transition: background var(--transition), border var(--transition);
+}
+.input-row { display: flex; gap: 10px; }
+.input-row input {
+  flex: 1;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: all var(--transition);
+}
+.input-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,92,231,0.15); }
+.input-row input::placeholder { color: var(--text2); }
+
+/* Buttons */
+.btn {
+  padding: 10px 18px;
+  border: none; border-radius: var(--radius);
+  cursor: pointer; font-size: 13px; font-weight: 600;
+  transition: all var(--transition);
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #5b4bd5; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(108,92,231,0.4); }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--surface2); color: var(--text); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-icon { padding: 8px; border-radius: 8px; min-width: 0; }
+
+/* Tools Panel */
+.tools-panel {
+  position: fixed; right: -420px; top: 0; bottom: 0;
+  width: 400px; background: var(--surface);
+  border-left: 1px solid var(--border);
+  z-index: 100; transition: right var(--transition);
+  display: flex; flex-direction: column;
+}
+.tools-panel.open { right: 0; }
+.tools-panel-header {
+  padding: 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tools-content { flex: 1; overflow-y: auto; padding: 16px; }
+.tool-card {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 14px; margin-bottom: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.tool-card:hover { border-color: var(--border); }
+.tool-card.running { border-color: var(--accent); }
+.tool-name { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.tool-output {
+  margin-top: 8px; padding: 10px;
+  background: #0a0a0f; border-radius: 6px;
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 12px; max-height: 200px; overflow-y: auto;
+  white-space: pre-wrap; color: var(--green);
+}
+.tool-status { font-size: 11px; color: var(--text2); }
+
+/* Theme toggle */
+.theme-toggle {
+  width: 40px; height: 22px;
+  background: var(--border); border-radius: 11px;
+  cursor: pointer; position: relative;
+  transition: background var(--transition);
+}
+.theme-toggle::after {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; background: #fff;
+  border-radius: 50%; top: 2px; left: 2px;
+  transition: transform var(--transition);
+}
+:root.light .theme-toggle { background: var(--accent); }
+:root.light .theme-toggle::after { transform: translateX(18px); }
+
+/* Particles */
+#particles {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 0; opacity: 0.3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { width: 60px; }
+  .sidebar .brand, .sidebar .agent-info, .sidebar .agent-tags,
+  .sidebar-footer .btn span, .topbar-title { display: none; }
+  .agent-card { padding: 10px; display: flex; justify-content: center; }
+  .agent-header { margin-bottom: 0; }
+  .sidebar-footer { justify-content: center; }
+  .tools-panel { width: 100%; right: -100%; }
+}
+
+/* Agent collaboration visual */
+.collab-indicator {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; background: rgba(108,92,231,0.1);
+  border-radius: 20px; font-size: 12px; color: var(--accent2);
+}
+.collab-dots { display: flex; gap: 3px; }
+.collab-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent2);
+  animation: collab-bounce 1.4s ease-in-out infinite;
+}
+.collab-dot:nth-child(2) { animation-delay: 0.2s; }
+.collab-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes collab-bounce { 0%,80%,100%{transform:scale(0.6);opacity:0.4} 40%{transform:scale(1);opacity:1} }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text2); }
+
+/* Quick action chips */
+.quick-actions {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding: 8px 0;
+}
+.quick-chip {
+  padding: 8px 14px; border-radius: 20px;
+  background: var(--surface2); border: 1px solid var(--border);
+  cursor: pointer; font-size: 12px; color: var(--text2);
+  transition: all var(--transition); white-space: nowrap;
+}
+.quick-chip:hover { border-color: var(--accent); color: var(--text); background: rgba(108,92,231,0.1); }
+
+/* Notification toast */
+.toast {
+  position: fixed; top: 20px; right: 20px;
+  padding: 12px 20px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--border);
+  box-shadow: var(--shadow); z-index: 200;
+  animation: slideIn 0.3s ease;
+  font-size: 13px;
+}
+@keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">⬡</div>
+    <div class="brand">Agent<span>Flow</span></div>
+  </div>
+  <div class="agent-list" id="agentList"></div>
+  <div class="sidebar-footer">
+    <button class="btn btn-ghost btn-sm" onclick="addAgent()" title="添加智能体">
+      <span>+</span> <span>新智能体</span>
+    </button>
+    <button class="btn btn-ghost btn-sm" onclick="startAgentRoundtable()" title="智能体圆桌讨论">
+      <span>◈</span> <span>圆桌讨论</span>
+    </button>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">多智能体协作空间</div>
+    <div class="topbar-actions">
+      <div class="collab-indicator" id="collabIndicator" style="display:none">
+        <div class="collab-dots">
+          <div class="collab-dot"></div><div class="collab-dot"></div><div class="collab-dot"></div>
+        </div>
+        <span>智能体协作中...</span>
+      </div>
+      <div class="theme-toggle" onclick="toggleTheme()" title="切换主题"></div>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="toggleTools()" title="工具箱">🔧</button>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="exportChat()" title="导出对话">📥</button>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="clearChat()" title="清空对话">🗑</button>
+    </div>
+  </div>
+
+  <div class="chat-area" id="chatArea">
+    <div class="chat-empty">
+      <div class="chat-empty-icon">⬡</div>
+      <h2>AgentFlow 多智能体工作站</h2>
+      <p>多个专业AI智能体正在待命，随时协作解决复杂任务。<br>你可以向任何一个智能体提问，或者发起<strong>圆桌讨论</strong>让它们一起工作。</p>
+      <div class="quick-actions">
+        <div class="quick-chip" onclick="sendQuickTask('design')">🏗️ 设计一个系统架构</div>
+        <div class="quick-chip" onclick="sendQuickTask('code')">💻 生成项目代码</div>
+        <div class="quick-chip" onclick="sendQuickTask('review')">🔍 审查代码质量</div>
+        <div class="quick-chip" onclick="sendQuickTask('research')">🔬 研究技术方案</div>
+        <div class="quick-chip" onclick="sendQuickTask('explain')">📖 解释复杂概念</div>
+        <div class="quick-chip" onclick="startAgentRoundtable()">◈ 启动圆桌讨论</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <input type="text" id="chatInput" placeholder="输入消息，或 @智能体名 指定对话对象..."
+             onkeydown="if(event.key==='Enter') sendMessage()">
+      <button class="btn btn-primary" onclick="sendMessage()">
+        <span>▶</span> <span>发送</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="startAgentRoundtable()" title="发起智能体之间的自主讨论">
+        <span>◈</span> <span>圆桌</span>
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- Tools Panel -->
+<div class="tools-panel" id="toolsPanel">
+  <div class="tools-panel-header">
+    <strong>🔧 智能体工具箱</strong>
+    <button class="btn btn-ghost btn-sm btn-icon" onclick="toggleTools()">✕</button>
+  </div>
+  <div class="tools-content" id="toolsContent">
+    <div class="tool-card" onclick="runTool('code-exec')">
+      <div class="tool-name">⚡ 代码执行沙箱</div>
+      <div class="tool-status">JavaScript / Python (Pyodide)</div>
+    </div>
+    <div class="tool-card" onclick="runTool('analyze')">
+      <div class="tool-name">📊 数据分析</div>
+      <div class="tool-status">统计、可视化、洞察</div>
+    </div>
+    <div class="tool-card" onclick="runTool('file-ops')">
+      <div class="tool-name">📁 文件操作</div>
+      <div class="tool-status">读写、转换、批量处理</div>
+    </div>
+    <div class="tool-card" onclick="runTool('web-fetch')">
+      <div class="tool-name">🌐 网页抓取</div>
+      <div class="tool-status">获取网页内容并分析</div>
+    </div>
+    <div class="tool-card" onclick="runTool('knowledge')">
+      <div class="tool-name">🧠 知识图谱</div>
+      <div class="tool-status">构建概念关联网络</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// AgentFlow — Multi-Agent AI Collaboration Platform
+// 浏览器原生 | 多智能体 | 本地优先 | 2026
+// ============================================================
+
+// --- State ---
+const state = {
+  theme: 'dark',
+  agents: [],
+  messages: [],
+  activeAgent: null,
+  isAgentThinking: false,
+  toolsOpen: false,
+  apiKey: localStorage.getItem('af_api_key') || '',
+  apiEndpoint: localStorage.getItem('af_api_endpoint') || 'https://api.openai.com/v1/chat/completions',
+  model: localStorage.getItem('af_model') || 'gpt-4o',
+  demoMode: true
+};
+
+// --- Default Agents ---
+const DEFAULT_AGENTS = [
+  {
+    id: 'architect',
+    name: 'Architect',
+    avatar: '🏗️',
+    role: '系统架构师',
+    specialty: ['系统设计', '架构模式', '技术选型', '可扩展性'],
+    color: '#6c5ce7',
+    personality: '你是一位资深系统架构师，擅长设计高可用、可扩展的系统架构。你思考问题全面，会考虑CAP定理、微服务边界、数据一致性等核心问题。'
+  },
+  {
+    id: 'coder',
+    name: 'Coder',
+    avatar: '💻',
+    role: '高级工程师',
+    specialty: ['代码生成', '算法优化', '调试', '全栈开发'],
+    color: '#00d2a0',
+    personality: '你是一位全栈高级工程师，精通多种编程语言和框架。你写的代码简洁、高效、可维护，注重最佳实践和设计模式。'
+  },
+  {
+    id: 'reviewer',
+    name: 'Reviewer',
+    avatar: '🔍',
+    role: '代码审查专家',
+    specialty: ['代码审查', '安全审计', '性能分析', '最佳实践'],
+    color: '#ff9f43',
+    personality: '你是一位严格的代码审查专家，擅长发现代码中的安全漏洞、性能问题和不良实践。你对OWASP Top 10了如指掌，注重代码质量和安全性。'
+  },
+  {
+    id: 'researcher',
+    name: 'Researcher',
+    avatar: '🔬',
+    role: '技术研究员',
+    specialty: ['技术调研', '论文解读', '趋势分析', '竞品研究'],
+    color: '#54a0ff',
+    personality: '你是一位技术研究员，擅长深度调研技术方案，追踪前沿技术趋势，能够快速理解新概念并进行系统性分析。'
+  },
+  {
+    id: 'devops',
+    name: 'DevOps',
+    avatar: '🚀',
+    role: 'DevOps工程师',
+    specialty: ['CI/CD', '容器化', '云部署', '监控告警'],
+    color: '#ff6b9d',
+    personality: '你是一位DevOps工程师，精通Docker、Kubernetes、GitHub Actions等工具，擅长构建自动化部署流水线和监控系统。'
+  }
+];
+
+// --- Demo Responses (for no-API mode) ---
+const DEMO_RESPONSES = {
+  architect: {
+    design: `针对这个系统设计问题，我建议采用以下架构：
+
+**1. 整体架构：微服务 + 事件驱动**
+- 使用 API Gateway 作为统一入口（推荐 Kong 或 Envoy）
+- 服务间异步通信使用消息队列（Kafka / RabbitMQ）
+- 每个微服务独立部署、独立数据库
+
+**2. 数据层设计**
+- 事务性数据 → PostgreSQL（ACID 保证）
+- 高并发读 → Redis 缓存层
+- 搜索场景 → Elasticsearch
+- 非结构化数据 → MongoDB 或 MinIO
+
+**3. 关键决策**
+- CAP 权衡：选择 AP（分区容错 + 可用性），用最终一致性
+- 服务拆分粒度：按业务领域（DDD 限界上下文）拆分
+- API 版本管理：URL 路径版本化 (/api/v1/...)
+
+**4. 扩展性考虑**
+- 水平扩展：无状态服务 + 负载均衡
+- 数据库扩展：读写分离 → 分库分表（未来）
+- CDN 加速静态资源
+
+需要我进一步细化某个部分吗？`,
+    explain: `让我从架构层面解释这个概念：
+
+这个概念的核心思想可以类比为：
+
+🏢 **现实类比**：就像一个大公司分成多个专业部门——每个部门（微服务）独立运作，通过内部邮件系统（消息队列）沟通，而不是所有人挤在一个大办公室里（单体架构）。
+
+**技术本质**：
+1. 关注点分离 — 每个组件只做一件事
+2. 松耦合 — 组件之间通过定义良好的接口通信
+3. 高内聚 — 相关功能放在一起
+
+**架构意义**：这种设计让系统可以独立扩展瓶颈部分，而不需要整体扩容，大大降低成本。`
+  },
+  coder: {
+    code: `好的，让我来生成代码实现：
+
+\`\`\`javascript
+// 基于最佳实践的实现
+class EventBus {
+  constructor() {
+    this.events = new Map();
+  }
+
+  on(event, handler) {
+    if (!this.events.has(event)) {
+      this.events.set(event, new Set());
+    }
+    this.events.get(event).add(handler);
+    return () => this.events.get(event).delete(handler);
+  }
+
+  emit(event, data) {
+    const handlers = this.events.get(event);
+    if (handlers) {
+      handlers.forEach(handler => {
+        try { handler(data); } catch (e) {
+          console.error(\`EventBus error in \${event}:\`, e);
+        }
+      });
+    }
+  }
+
+  once(event, handler) {
+    const wrapper = (data) => {
+      handler(data);
+      this.off(event, wrapper);
+    };
+    return this.on(event, wrapper);
+  }
+
+  off(event, handler) {
+    const handlers = this.events.get(event);
+    if (handlers) handlers.delete(handler);
+  }
+}
+\`\`\`
+
+**设计要点：**
+- 使用 Set 而非 Array 存储处理器，避免重复注册
+- `on()` 返回取消订阅函数，方便 React useEffect 清理
+- `once()` 是对 `on()` 的优雅封装
+- try-catch 确保一个处理器的错误不影响其他处理器
+
+需要添加类型定义或单元测试吗？`,
+    review: `我审查了这段代码，发现以下问题和改进建议：
+
+**🔴 严重问题：**
+1. 未处理循环引用 — JSON.stringify 会抛出异常
+2. 错误被静默吞掉 — 应该至少 console.error
+
+**🟡 改进建议：**
+1. 使用 EventTarget 或 AbortController 模式替代手动管理
+2. 考虑添加 `listenerCount()` 方法用于调试
+3. 大量事件时考虑 WeakMap 避免内存泄漏
+
+**✅ 做得好的：**
+1. Set 去重设计合理
+2. 返回 unsubscribe 函数符合 React 模式
+3. once 实现简洁优雅`
+  },
+  reviewer: {
+    review: `## 代码审查报告
+
+**总体评分：7/10**
+
+### 🔴 安全风险（必须修复）
+1. **XSS 风险**：用户输入未经过滤直接插入 DOM，建议使用 \`textContent\` 而非 \`innerHTML\`
+2. **无 CSP 头**：缺少 Content-Security-Policy，XSS 攻击面大
+
+### 🟡 性能问题（建议修复）
+1. 频繁 DOM 操作未使用 DocumentFragment 批量更新
+2. 事件监听器未在组件销毁时清理，可能导致内存泄漏
+3. 大列表未使用虚拟滚动
+
+### 🟢 代码质量
+1. 命名规范，可读性好
+2. 模块化设计合理
+3. 建议添加 TypeScript 类型定义
+
+### 📋 检查清单
+- [x] OWASP Top 10 检查
+- [x] 依赖安全审计
+- [ ] 性能压测
+- [ ] 可访问性 (a11y)`,
+    explain: `让我从安全角度分析这个问题：
+
+**核心风险矩阵：**
+
+| 威胁 | 严重度 | 可能性 | 风险等级 |
+|------|--------|--------|----------|
+| XSS注入 | 高 | 中 | 🔴 严重 |
+| CSRF | 中 | 低 | 🟡 中等 |
+| 信息泄露 | 中 | 中 | 🟡 中等 |
+
+**防护建议：**
+1. 输入验证 → 白名单策略
+2. 输出编码 → 上下文相关编码
+3. CSP 头 → 限制脚本来源
+4. HttpOnly Cookie → 防止 JS 读取敏感 cookie`
+  },
+  researcher: {
+    research: `## 技术调研报告
+
+### 调研主题分析
+
+**行业现状（2026）：**
+目前该领域正处于快速发展期，主要玩家包括：
+
+1. **浏览器原生 AI** — WebGPU + WebAssembly 让 LLM 推理可在浏览器中运行
+   - WebLLM / Transformers.js 等框架成熟
+   - Gemma 4、Llama 3 等模型可本地运行
+   - 延迟从 2024 年的 20+ token/s 提升到 60+ token/s
+
+2. **多智能体系统** — 从单一大模型到协作智能体网络
+   - AutoGen、CrewAI、OpenClaw (152K⭐) 引领潮流
+   - 智能体专业化分工成为共识
+   - 技能市场 (ClawdHub) 生态正在形成
+
+3. **本地优先架构** — 数据主权回归用户
+   - CRDT 技术成熟（Yjs, Automerge）
+   - OPFS 提供浏览器本地文件系统
+   - IndexedDB 支持大规模本地存储
+
+**推荐方案：**
+采用混合架构：浏览器端处理实时交互 + 可选云端模型增强能力
+
+**参考文献：**
+- OpenClaw: github.com/Fengqywzx (152K+ stars, 2026)
+- n0x: github.com/ZababurinSergei/n0x
+- MolmoWeb: AI2 开源视觉浏览器智能体`,
+    explain: `让我深入解释这个概念：
+
+**直观理解：**
+把一个大任务分解成多个专家协作完成，就像医院里的多学科会诊——心内科、神经科、放射科医生各展所长，共同诊断复杂病例。
+
+**技术演进路径：**
+2023: 单一 LLM (ChatGPT)
+2024: RAG + 工具调用 (Function Calling)
+2025: 智能体 (AutoGPT, CrewAI)
+2026: 多智能体协作网络 ← **我们在这里**
+
+**关键突破：**
+- 智能体间通信协议标准化
+- 浏览器端推理性能达到实用门槛
+- 技能复用生态系统形成`
+  },
+  devops: {
+    deploy: `## 部署方案
+
+### 推荐架构
+
+\`\`\`yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      - NODE_ENV=production
+    depends_on: [redis, postgres]
+    deploy:
+      replicas: 3
+      resources:
+        limits: { cpus: '1', memory: '512M' }
+
+  redis:
+    image: redis:7-alpine
+    volumes: [redis_data:/data]
+
+  postgres:
+    image: postgres:16-alpine
+    volumes: [pg_data:/var/lib/postgresql/data]
+    environment:
+      POSTGRES_PASSWORD: \${DB_PASSWORD}
+
+  nginx:
+    image: nginx:alpine
+    ports: ["80:80", "443:443"]
+    volumes: [./nginx.conf:/etc/nginx/nginx.conf]
+\`\`\`
+
+### CI/CD 流水线 (GitHub Actions)
+1. Lint → Test → Build → Deploy Staging → E2E → Deploy Prod
+2. 蓝绿部署，零停机时间
+3. 自动回滚：错误率 > 1% 自动回退`,
+    explain: `从运维角度看这个问题：
+
+**部署策略对比：**
+
+| 策略 | 停机时间 | 风险 | 成本 | 适用场景 |
+|------|----------|------|------|----------|
+| 滚动更新 | 0 | 低 | 低 | 无状态服务 |
+| 蓝绿部署 | 0 | 极低 | 中 | 关键业务 |
+| 金丝雀发布 | 0 | 极低 | 中 | 大规模用户 |
+
+**监控四金律：**
+1. 延迟 — p50/p95/p99 响应时间
+2. 流量 — QPS/RPS
+3. 错误 — 错误率按类型分类
+4. 饱和度 — CPU/内存/连接池使用率`
+  }
+};
+
+// --- Initialize ---
+function init() {
+  // Load agents
+  const saved = localStorage.getItem('af_agents');
+  state.agents = saved ? JSON.parse(saved) : [...DEFAULT_AGENTS];
+  if (!saved) saveAgents();
+
+  // Load messages
+  const savedMsgs = localStorage.getItem('af_messages');
+  if (savedMsgs) {
+    state.messages = JSON.parse(savedMsgs);
+    renderMessages();
+  }
+
+  // Load theme
+  const savedTheme = localStorage.getItem('af_theme');
+  if (savedTheme === 'light') {
+    state.theme = 'light';
+    document.documentElement.classList.add('light');
+  }
+
+  // Check API config
+  if (state.apiKey) {
+    state.demoMode = false;
+  }
+
+  renderAgents();
+  initParticles();
+}
+
+// --- Agent Management ---
+function renderAgents() {
+  const container = document.getElementById('agentList');
+  container.innerHTML = state.agents.map(a => `
+    <div class="agent-card ${state.activeAgent?.id === a.id ? 'active' : ''}"
+         onclick="selectAgent('${a.id}')">
+      <div class="agent-header">
+        <span class="agent-avatar">${a.avatar}</span>
+        <div class="agent-info">
+          <div class="agent-name">${a.name}</div>
+          <div class="agent-role">${a.role}</div>
+        </div>
+        <div class="agent-status idle" id="status-${a.id}"></div>
+      </div>
+      <div class="agent-tags">
+        ${a.specialty.map(s => `<span class="agent-tag">${s}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectAgent(id) {
+  state.activeAgent = state.agents.find(a => a.id === id);
+  renderAgents();
+  document.getElementById('topbarTitle').textContent =
+    `与 ${state.activeAgent.avatar} ${state.activeAgent.name} 对话中`;
+  document.getElementById('chatInput').focus();
+}
+
+function addAgent() {
+  const name = prompt('智能体名称：');
+  if (!name) return;
+  const role = prompt('角色描述：');
+  if (!role) return;
+  const avatar = prompt('图标 (emoji)：', '🤖');
+  const agent = {
+    id: 'agent-' + Date.now(),
+    name,
+    avatar: avatar || '🤖',
+    role,
+    specialty: ['通用'],
+    color: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6,'0'),
+    personality: `你是${name}，${role}。`
+  };
+  state.agents.push(agent);
+  saveAgents();
+  renderAgents();
+  addSystemMessage(`新智能体 ${avatar} ${name} 已加入协作空间`);
+}
+
+function saveAgents() {
+  localStorage.setItem('af_agents', JSON.stringify(state.agents));
+}
+
+// --- Messages ---
+function addSystemMessage(text) {
+  state.messages.push({ type: 'system', text, time: Date.now() });
+  saveMessages();
+  appendMessage({ type: 'system', text, time: Date.now() });
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text || state.isAgentThinking) return;
+  input.value = '';
+
+  // Check for @mention
+  const mentionMatch = text.match(/^@(\S+)\s+(.+)/);
+  if (mentionMatch) {
+    const targetName = mentionMatch[1].toLowerCase();
+    const targetAgent = state.agents.find(a => a.name.toLowerCase() === targetName);
+    if (targetAgent) {
+      selectAgent(targetAgent.id);
+    }
+  }
+
+  // Add user message
+  const userMsg = { type: 'user', text, time: Date.now() };
+  state.messages.push(userMsg);
+  saveMessages();
+  appendMessage(userMsg);
+
+  // Clear empty state
+  const emptyEl = document.querySelector('.chat-empty');
+  if (emptyEl) emptyEl.remove();
+
+  // Generate response
+  generateResponse(text);
+}
+
+function generateResponse(userText) {
+  state.isAgentThinking = true;
+  document.getElementById('chatInput').disabled = true;
+
+  // Decide which agents respond
+  const respondingAgents = state.activeAgent
+    ? [state.activeAgent]
+    : [state.agents[0]];
+
+  // If roundtable mode or complex query, involve multiple agents
+  const isComplex = userText.length > 50 ||
+    /设计|架构|系统|方案|部署|全栈|完整/.test(userText);
+
+  if (isComplex && !state.activeAgent) {
+    // Multi-agent response
+    generateMultiAgentResponse(userText);
+  } else {
+    // Single agent response
+    generateSingleAgentResponse(respondingAgents[0], userText);
+  }
+}
+
+async function generateSingleAgentResponse(agent, userText) {
+  setAgentStatus(agent.id, 'thinking');
+  document.getElementById('collabIndicator').style.display = 'none';
+
+  let responseText;
+
+  if (!state.demoMode && state.apiKey) {
+    responseText = await callRealAPI(agent, userText);
+  } else {
+    responseText = generateDemoResponse(agent, userText);
+  }
+
+  // Simulate typing delay
+  await sleep(800 + Math.random() * 1500);
+
+  setAgentStatus(agent.id, 'speaking');
+  const msg = {
+    type: 'agent',
+    agentId: agent.id,
+    agentName: agent.name,
+    agentAvatar: agent.avatar,
+    text: responseText,
+    time: Date.now()
+  };
+  state.messages.push(msg);
+  saveMessages();
+  appendMessage(msg);
+
+  setTimeout(() => setAgentStatus(agent.id, 'idle'), 2000);
+  state.isAgentThinking = false;
+  document.getElementById('chatInput').disabled = false;
+  document.getElementById('chatInput').focus();
+}
+
+async function generateMultiAgentResponse(userText) {
+  document.getElementById('collabIndicator').style.display = 'flex';
+
+  // Select 2-3 relevant agents
+  const agents = selectRelevantAgents(userText);
+  const responses = [];
+
+  for (const agent of agents) {
+    setAgentStatus(agent.id, 'thinking');
+    await sleep(600 + Math.random() * 800);
+    setAgentStatus(agent.id, 'speaking');
+
+    const response = generateDemoResponse(agent, userText);
+    responses.push({ agent, response });
+    setAgentStatus(agent.id, 'idle');
+  }
+
+  document.getElementById('collabIndicator').style.display = 'none';
+
+  // Render as agent thread
+  addAgentThreadMessage(userText, responses);
+  state.isAgentThinking = false;
+  document.getElementById('chatInput').disabled = false;
+  document.getElementById('chatInput').focus();
+}
+
+function addAgentThreadMessage(userText, responses) {
+  const threadHtml = responses.map(({agent, response}) => {
+    const msg = {
+      type: 'agent',
+      agentId: agent.id,
+      agentName: agent.name,
+      agentAvatar: agent.avatar,
+      text: response,
+      time: Date.now()
+    };
+    state.messages.push(msg);
+    return `<div class="message">
+      <div class="message-avatar">${agent.avatar}</div>
+      <div class="message-body">
+        <div class="message-header">
+          <span class="message-sender" style="color:${agent.color}">${agent.name}</span>
+          <span class="message-time">${formatTime(Date.now())}</span>
+        </div>
+        <div class="message-content">${formatContent(response)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  saveMessages();
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'agent-thread';
+  wrapper.innerHTML = `
+    <div class="agent-thread-label">◈ 智能体协作讨论</div>
+    ${threadHtml}
+  `;
+
+  const chatArea = document.getElementById('chatArea');
+  document.querySelector('.chat-empty')?.remove();
+  chatArea.appendChild(wrapper);
+  scrollToBottom();
+}
+
+async function startAgentRoundtable() {
+  if (state.isAgentThinking) return;
+  document.querySelector('.chat-empty')?.remove();
+
+  addSystemMessage('◈ 智能体圆桌讨论已启动 — 各智能体正在就当前话题交换意见');
+
+  const topics = [
+    '如何设计一个真正面向未来的技术架构？请各位智能体从各自专业角度发表见解。',
+    '在当前技术趋势下，一个独立开发者应该如何选择技术栈来最大化效率和影响力？'
+  ];
+  const topic = topics[Math.floor(Math.random() * topics.length)];
+
+  const userMsg = { type: 'user', text: topic, time: Date.now() };
+  state.messages.push(userMsg);
+  saveMessages();
+  appendMessage(userMsg);
+
+  // All agents participate
+  const relevantAgents = state.agents.slice(0, 4);
+  state.isAgentThinking = true;
+  document.getElementById('collabIndicator').style.display = 'flex';
+  document.getElementById('chatInput').disabled = true;
+
+  const responses = [];
+  for (const agent of relevantAgents) {
+    setAgentStatus(agent.id, 'thinking');
+    await sleep(700 + Math.random() * 1000);
+    setAgentStatus(agent.id, 'speaking');
+    const response = generateDemoResponse(agent, topic);
+    responses.push({ agent, response });
+    setAgentStatus(agent.id, 'idle');
+  }
+
+  document.getElementById('collabIndicator').style.display = 'none';
+  addAgentThreadMessage(topic, responses);
+  state.isAgentThinking = false;
+  document.getElementById('chatInput').disabled = false;
+}
+
+function generateDemoResponse(agent, userText) {
+  const lower = userText.toLowerCase();
+
+  // Determine response category
+  let category = 'explain';
+  if (/设计|架构|系统|方案/.test(lower)) category = 'design';
+  if (/代码|code|写|生成|实现|编程/.test(lower)) category = 'code';
+  if (/审查|review|检查|安全|漏洞/.test(lower)) category = 'review';
+  if (/研究|调研|论文|趋势|前沿|对比/.test(lower)) category = 'research';
+  if (/部署|deploy|docker|k8s|ci|cd|上线/.test(lower)) category = 'deploy';
+
+  const responses = DEMO_RESPONSES[agent.id];
+  if (responses && responses[category]) {
+    return responses[category];
+  }
+
+  // Generic fallback
+  return `作为${agent.role}，我来分析这个问题：
+
+**核心要点：**
+1. 这是一个涉及${agent.specialty.slice(0,2).join('和')}领域的问题
+2. 需要从${agent.specialty[0]}角度出发进行系统性思考
+
+**我的分析：**
+这个问题可以从多个维度来看。首先，我们需要明确目标和约束条件；其次，考虑可用的技术方案和工具；最后，评估每个方案的优劣和trade-off。
+
+**建议：**
+基于我的专业领域知识，我建议采用渐进式的方法——先建立最小可行方案，在迭代中完善。这样可以在保证质量的同时，快速获得反馈。
+
+需要我进一步深入某个方面吗？`;
+}
+
+// --- API Integration ---
+async function callRealAPI(agent, userText) {
+  try {
+    const systemPrompt = agent.personality + '\n请用中文回答，保持专业且友好的语气。';
+
+    const response = await fetch(state.apiEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${state.apiKey}`
+      },
+      body: JSON.stringify({
+        model: state.model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userText }
+        ],
+        temperature: 0.7,
+        max_tokens: 2048
+      })
+    });
+
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch (e) {
+    console.error('API call failed:', e);
+    return `⚠️ API 调用失败: ${e.message}\n\n已自动切换到演示模式。你可以在设置中配置 API Key。`;
+  }
+}
+
+// --- Quick Tasks ---
+function sendQuickTask(type) {
+  const tasks = {
+    design: '@Architect 设计一个支持百万并发的实时消息系统架构',
+    code: '@Coder 用JavaScript实现一个带优先级和超时的任务队列',
+    review: '@Reviewer 审查以下代码的安全性并给出改进建议',
+    research: '@Researcher 调研2026年最值得学习的5项前端技术',
+    explain: '请解释分布式系统中的CAP定理及其在实际项目中的权衡'
+  };
+  const input = document.getElementById('chatInput');
+  input.value = tasks[type] || tasks.explain;
+  sendMessage();
+}
+
+// --- UI ---
+function appendMessage(msg) {
+  const chatArea = document.getElementById('chatArea');
+  document.querySelector('.chat-empty')?.remove();
+
+  const div = document.createElement('div');
+  div.className = `message ${msg.type}`;
+
+  if (msg.type === 'system') {
+    div.innerHTML = `<div class="message-content">${msg.text}</div>`;
+  } else if (msg.type === 'user') {
+    div.innerHTML = `
+      <div class="message-avatar">👤</div>
+      <div class="message-body">
+        <div class="message-header">
+          <span class="message-sender">你</span>
+          <span class="message-time">${formatTime(msg.time)}</span>
+        </div>
+        <div class="message-content">${formatContent(msg.text)}</div>
+      </div>`;
+  } else if (msg.type === 'agent') {
+    const agent = state.agents.find(a => a.id === msg.agentId);
+    const color = agent?.color || '#6c5ce7';
+    div.innerHTML = `
+      <div class="message-avatar">${msg.agentAvatar}</div>
+      <div class="message-body">
+        <div class="message-header">
+          <span class="message-sender" style="color:${color}">${msg.agentName}</span>
+          <span class="message-time">${formatTime(msg.time)}</span>
+        </div>
+        <div class="message-content">${formatContent(msg.text)}</div>
+      </div>`;
+  }
+
+  chatArea.appendChild(div);
+  scrollToBottom();
+}
+
+function renderMessages() {
+  const chatArea = document.getElementById('chatArea');
+  chatArea.innerHTML = '';
+  if (state.messages.length === 0) {
+    chatArea.innerHTML = `
+      <div class="chat-empty">
+        <div class="chat-empty-icon">⬡</div>
+        <h2>AgentFlow 多智能体工作站</h2>
+        <p>多个专业AI智能体正在待命，随时协作解决复杂任务。<br>你可以向任何一个智能体提问，或者发起<strong>圆桌讨论</strong>让它们一起工作。</p>
+        <div class="quick-actions">
+          <div class="quick-chip" onclick="sendQuickTask('design')">🏗️ 设计一个系统架构</div>
+          <div class="quick-chip" onclick="sendQuickTask('code')">💻 生成项目代码</div>
+          <div class="quick-chip" onclick="sendQuickTask('review')">🔍 审查代码质量</div>
+          <div class="quick-chip" onclick="sendQuickTask('research')">🔬 研究技术方案</div>
+          <div class="quick-chip" onclick="sendQuickTask('explain')">📖 解释复杂概念</div>
+          <div class="quick-chip" onclick="startAgentRoundtable()">◈ 启动圆桌讨论</div>
+        </div>
+      </div>`;
+    return;
+  }
+  state.messages.forEach(msg => appendMessage(msg));
+}
+
+function formatContent(text) {
+  // Code blocks
+  text = text.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+  // Inline code
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Bold
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Tables (simple)
+  text = text.replace(/\|(.+)\|/g, (match) => {
+    const cells = match.split('|').filter(c => c.trim());
+    return '<code>' + cells.join(' │ ') + '</code>';
+  });
+  return text;
+}
+
+function scrollToBottom() {
+  const chatArea = document.getElementById('chatArea');
+  requestAnimationFrame(() => {
+    chatArea.scrollTop = chatArea.scrollHeight;
+  });
+}
+
+function setAgentStatus(agentId, status) {
+  const el = document.getElementById(`status-${agentId}`);
+  if (el) {
+    el.className = `agent-status ${status}`;
+  }
+  // Also update card class
+  const cards = document.querySelectorAll('.agent-card');
+  cards.forEach(card => {
+    if (card.querySelector(`#status-${agentId}`)) {
+      card.classList.toggle('thinking', status === 'thinking');
+    }
+  });
+}
+
+function selectRelevantAgents(userText) {
+  const lower = userText.toLowerCase();
+  const scores = state.agents.map(agent => {
+    let score = 0;
+    agent.specialty.forEach(s => {
+      if (lower.includes(s.toLowerCase())) score += 3;
+    });
+    if (/设计|架构/.test(lower) && agent.id === 'architect') score += 5;
+    if (/代码|写|编程/.test(lower) && agent.id === 'coder') score += 5;
+    if (/审查|安全|review/.test(lower) && agent.id === 'reviewer') score += 5;
+    if (/研究|调研|前沿/.test(lower) && agent.id === 'researcher') score += 5;
+    if (/部署|运维|docker/.test(lower) && agent.id === 'devops') score += 5;
+    return { agent, score };
+  });
+
+  return scores
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(s => s.agent);
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function saveMessages() {
+  // Keep max 200 messages
+  if (state.messages.length > 200) {
+    state.messages = state.messages.slice(-200);
+  }
+  localStorage.setItem('af_messages', JSON.stringify(state.messages));
+}
+
+// --- Tools ---
+function toggleTools() {
+  state.toolsOpen = !state.toolsOpen;
+  document.getElementById('toolsPanel').classList.toggle('open', state.toolsOpen);
+}
+
+function runTool(toolId) {
+  const toolsContent = document.getElementById('toolsContent');
+
+  if (toolId === 'code-exec') {
+    const code = prompt('输入要执行的 JavaScript 代码：', 'console.log("Hello from AgentFlow!")');
+    if (!code) return;
+    try {
+      const result = eval(code);
+      showToast(`✅ 执行成功: ${result ?? 'undefined'}`);
+    } catch (e) {
+      showToast(`❌ 错误: ${e.message}`);
+    }
+  } else if (toolId === 'analyze') {
+    showToast('📊 数据分析工具：上传数据后智能体将自动分析');
+  } else if (toolId === 'web-fetch') {
+    const url = prompt('输入网页 URL：', 'https://');
+    if (url) showToast(`🌐 正在抓取: ${url}...（演示模式）`);
+  } else {
+    showToast('🔧 工具准备就绪，请让智能体使用此工具');
+  }
+}
+
+// --- Theme ---
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.classList.toggle('light', state.theme === 'light');
+  localStorage.setItem('af_theme', state.theme);
+}
+
+// --- Export / Clear ---
+function exportChat() {
+  const text = state.messages.map(m => {
+    if (m.type === 'system') return `[系统] ${m.text}`;
+    if (m.type === 'user') return `[你] ${m.text}`;
+    return `[${m.agentName}] ${m.text}`;
+  }).join('\n\n---\n\n');
+
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `agentflow-export-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('📥 对话已导出');
+}
+
+function clearChat() {
+  if (!confirm('确定要清空所有对话记录吗？此操作不可撤销。')) return;
+  state.messages = [];
+  saveMessages();
+  renderMessages();
+  showToast('🗑 对话已清空');
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// --- Particles ---
+function initParticles() {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = Array.from({ length: 50 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: (Math.random() - 0.5) * 0.5,
+    size: Math.random() * 2 + 1,
+    opacity: Math.random() * 0.5 + 0.1
+  }));
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(108,92,231,${p.opacity})`;
+      ctx.fill();
+    });
+
+    // Lines between nearby particles
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(108,92,231,${0.1 * (1 - dist / 120)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+}
+
+// --- Keyboard Shortcuts ---
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('chatInput').focus();
+  }
+  if (e.ctrlKey && e.key === 'r') {
+    e.preventDefault();
+    startAgentRoundtable();
+  }
+  if (e.ctrlKey && e.key === 'b') {
+    e.preventDefault();
+    toggleTools();
+  }
+});
+
+// --- Startup ---
+init();
+console.log('%c⬡ AgentFlow v1.0 %c浏览器原生多智能体AI工作站',
+  'color:#a29bfe;font-size:18px;', 'color:#9090b0;');
+console.log('%c5个专业智能体已就绪 | 演示模式 (无需API Key) | Ctrl+K 聚焦输入 | Ctrl+R 圆桌讨论',
+  'color:#9090b0;');
+</script>
+</body>
+</html>
