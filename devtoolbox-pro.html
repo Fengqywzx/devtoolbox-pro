@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevToolbox Pro — 程序员效率工具箱</title>
+<style>
+:root {
+  --bg: #0d1117; --surface: #161b22; --border: #30363d;
+  --text: #c9d1d9; --muted: #8b949e; --accent: #58a6ff;
+  --green: #3fb950; --red: #f85149; --orange: #d2991d;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Microsoft YaHei',sans-serif;min-height:100vh;display:flex;}
+.sidebar{width:200px;background:var(--surface);border-right:1px solid var(--border);padding:16px 0;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;}
+.sidebar h1{font-size:14px;padding:12px 20px;color:var(--accent);border-bottom:1px solid var(--border);margin-bottom:8px;}
+.sidebar button{display:block;width:100%;text-align:left;padding:10px 20px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;transition:all .15s;}
+.sidebar button:hover,.sidebar button.active{color:var(--text);background:var(--border);}
+.main{margin-left:200px;flex:1;padding:32px;max-width:900px;}
+.main h2{font-size:20px;margin-bottom:8px;}
+.main .desc{color:var(--muted);font-size:13px;margin-bottom:20px;}
+.panel{display:none;}
+.panel.active{display:block;}
+textarea,input[type="text"]{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:6px;font-family:'Cascadia Code','Fira Code','Consolas',monospace;font-size:13px;resize:vertical;min-height:120px;}
+textarea:focus,input:focus{outline:none;border-color:var(--accent);}
+.row{display:flex;gap:12px;margin:12px 0;}
+.btn{padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:13px;transition:all .15s;}
+.btn:hover{border-color:var(--accent);}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn.primary:hover{opacity:.9;}
+.output{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;min-height:80px;font-family:'Cascadia Code','Fira Code','Consolas',monospace;font-size:13px;white-space:pre-wrap;word-break:break-all;margin-top:12px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.badge.ok{background:var(--green);color:#000;}
+.badge.err{background:var(--red);color:#fff;}
+.color-grid{display:flex;gap:4px;flex-wrap:wrap;}
+.color-swatch{width:36px;height:36px;border-radius:4px;cursor:pointer;border:2px solid transparent;transition:all .15s;}
+.color-swatch:hover{border-color:#fff;transform:scale(1.1);}
+.color-preview{width:80px;height:80px;border-radius:8px;border:2px solid var(--border);margin:12px 0;}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h1>🛠 DevToolbox Pro</h1>
+  <button class="active" data-panel="json">📋 JSON 格式化</button>
+  <button data-panel="base64">🔐 Base64 编解码</button>
+  <button data-panel="url">🔗 URL 编解码</button>
+  <button data-panel="timestamp">⏰ 时间戳转换</button>
+  <button data-panel="color">🎨 颜色工具</button>
+  <button data-panel="regex">🔍 正则测试</button>
+  <button data-panel="diff">📊 文本对比</button>
+  <button data-panel="uuid">🪪 UUID 生成</button>
+</nav>
+
+<main class="main">
+  <!-- JSON -->
+  <div class="panel active" id="panel-json">
+    <h2>JSON 格式化 / 验证</h2>
+    <p class="desc">压缩、格式化、验证 JSON 数据</p>
+    <textarea id="jsonIn" placeholder='{"name":"DevToolbox","version":"1.0"}'></textarea>
+    <div class="row">
+      <button class="btn primary" onclick="jsonFormat()">格式化</button>
+      <button class="btn" onclick="jsonMinify()">压缩</button>
+      <button class="btn" onclick="jsonValidate()">验证</button>
+    </div>
+    <div class="output" id="jsonOut"></div>
+  </div>
+
+  <!-- Base64 -->
+  <div class="panel" id="panel-base64">
+    <h2>Base64 编解码</h2>
+    <p class="desc">文本 ↔ Base64 互转</p>
+    <textarea id="b64In" placeholder="输入文本或 Base64 字符串..."></textarea>
+    <div class="row">
+      <button class="btn primary" onclick="b64Encode()">编码 (→Base64)</button>
+      <button class="btn" onclick="b64Decode()">解码 (→文本)</button>
+    </div>
+    <div class="output" id="b64Out"></div>
+  </div>
+
+  <!-- URL -->
+  <div class="panel" id="panel-url">
+    <h2>URL 编解码</h2>
+    <p class="desc">URL encode / decode</p>
+    <textarea id="urlIn" placeholder="输入 URL 或编码字符串..."></textarea>
+    <div class="row">
+      <button class="btn primary" onclick="urlEncode()">编码 (encodeURIComponent)</button>
+      <button class="btn" onclick="urlDecode()">解码 (decodeURIComponent)</button>
+    </div>
+    <div class="output" id="urlOut"></div>
+  </div>
+
+  <!-- Timestamp -->
+  <div class="panel" id="panel-timestamp">
+    <h2>时间戳转换</h2>
+    <p class="desc">Unix 时间戳 ↔ 可读日期</p>
+    <div class="row">
+      <input type="text" id="tsIn" placeholder="输入时间戳(秒/毫秒) 或 ISO 日期..." style="flex:1">
+      <button class="btn primary" onclick="tsConvert()">转换</button>
+    </div>
+    <div class="output" id="tsOut"></div>
+    <p style="margin-top:12px;color:var(--muted);font-size:12px;">
+      当前时间戳: <span id="tsNow" style="color:var(--accent);cursor:pointer" onclick="document.getElementById('tsIn').value=Math.floor(Date.now()/1000);tsConvert()">点击填入</span>
+    </p>
+  </div>
+
+  <!-- Color -->
+  <div class="panel" id="panel-color">
+    <h2>颜色工具</h2>
+    <p class="desc">HEX ↔ RGB ↔ HSL 互转 / 颜色选择器</p>
+    <div class="row">
+      <input type="color" id="colorPicker" value="#58a6ff" style="width:60px;height:40px;padding:2px;">
+      <input type="text" id="colorHex" value="#58a6ff" style="flex:1" placeholder="#HEX">
+      <button class="btn primary" onclick="colorParse()">解析</button>
+    </div>
+    <div class="color-preview" id="colorPreview" style="background:#58a6ff;"></div>
+    <div class="output" id="colorOut"></div>
+    <p class="desc" style="margin-top:16px;">预设色板</p>
+    <div class="color-grid" id="colorGrid"></div>
+  </div>
+
+  <!-- Regex -->
+  <div class="panel" id="panel-regex">
+    <h2>正则表达式测试</h2>
+    <p class="desc">编写正则，实时测试匹配结果</p>
+    <div class="row">
+      <input type="text" id="regexPat" placeholder="正则表达式，如 \d{4}-\d{2}-\d{2}" style="flex:1">
+      <input type="text" id="regexFlags" placeholder="flags: g i m" style="width:100px">
+    </div>
+    <textarea id="regexText" placeholder="测试文本..." style="margin-top:8px;"></textarea>
+    <div class="row">
+      <button class="btn primary" onclick="regexTest()">测试</button>
+    </div>
+    <div class="output" id="regexOut"></div>
+  </div>
+
+  <!-- Diff -->
+  <div class="panel" id="panel-diff">
+    <h2>文本对比</h2>
+    <p class="desc">比较两段文本的差异（逐行）</p>
+    <div class="row">
+      <textarea id="diffA" placeholder="原始文本..." style="flex:1;min-height:150px;"></textarea>
+      <textarea id="diffB" placeholder="新文本..." style="flex:1;min-height:150px;"></textarea>
+    </div>
+    <div class="row">
+      <button class="btn primary" onclick="diffCompare()">对比</button>
+    </div>
+    <div class="output" id="diffOut"></div>
+  </div>
+
+  <!-- UUID -->
+  <div class="panel" id="panel-uuid">
+    <h2>UUID 生成器</h2>
+    <p class="desc">生成 UUID v4 / 批量生成</p>
+    <div class="row">
+      <input type="number" id="uuidCount" value="5" min="1" max="100" style="width:80px" title="数量">
+      <button class="btn primary" onclick="uuidGen()">生成</button>
+    </div>
+    <div class="output" id="uuidOut"></div>
+  </div>
+</main>
+
+<script>
+// Navigation
+document.querySelectorAll('.sidebar button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+  });
+});
+
+// JSON
+function jsonFormat(){ try{ const o=JSON.parse(document.getElementById('jsonIn').value); document.getElementById('jsonOut').innerHTML='<span class="badge ok">VALID</span>\n'+JSON.stringify(o,null,2); }catch(e){ document.getElementById('jsonOut').innerHTML='<span class="badge err">INVALID</span>\n'+e.message; }}
+function jsonMinify(){ try{ const o=JSON.parse(document.getElementById('jsonIn').value); document.getElementById('jsonOut').textContent=JSON.stringify(o); }catch(e){ document.getElementById('jsonOut').innerHTML='<span class="badge err">INVALID</span>\n'+e.message; }}
+function jsonValidate(){ try{ JSON.parse(document.getElementById('jsonIn').value); document.getElementById('jsonOut').innerHTML='<span class="badge ok">✓ 有效 JSON</span>'; }catch(e){ document.getElementById('jsonOut').innerHTML='<span class="badge err">✗ '+e.message+'</span>'; }}
+
+// Base64
+function b64Encode(){ try{ document.getElementById('b64Out').textContent=btoa(unescape(encodeURIComponent(document.getElementById('b64In').value))); }catch(e){ document.getElementById('b64Out').textContent='错误: '+e.message; }}
+function b64Decode(){ try{ document.getElementById('b64Out').textContent=decodeURIComponent(escape(atob(document.getElementById('b64In').value.trim()))); }catch(e){ document.getElementById('b64Out').textContent='错误: '+e.message; }}
+
+// URL
+function urlEncode(){ document.getElementById('urlOut').textContent=encodeURIComponent(document.getElementById('urlIn').value); }
+function urlDecode(){ try{ document.getElementById('urlOut').textContent=decodeURIComponent(document.getElementById('urlIn').value); }catch(e){ document.getElementById('urlOut').textContent='错误: '+e.message; }}
+
+// Timestamp
+function tsConvert(){
+  const v=document.getElementById('tsIn').value.trim();
+  const out=document.getElementById('tsOut');
+  if(/^\d{10}$/.test(v)){ const d=new Date(parseInt(v)*1000); out.textContent=`秒时间戳 → ${d.toISOString()}\n本地时间: ${d.toLocaleString('zh-CN')}\nUTC: ${d.toUTCString()}`; }
+  else if(/^\d{13}$/.test(v)){ const d=new Date(parseInt(v)); out.textContent=`毫秒时间戳 → ${d.toISOString()}\n本地时间: ${d.toLocaleString('zh-CN')}\nUTC: ${d.toUTCString()}`; }
+  else{ const d=new Date(v); if(isNaN(d.getTime())){ out.innerHTML='<span class="badge err">无法解析</span>'; return; } out.textContent=`日期 → 秒: ${Math.floor(d.getTime()/1000)}\n毫秒: ${d.getTime()}\nISO: ${d.toISOString()}`; }
+}
+setInterval(()=>{ document.getElementById('tsNow').textContent=Math.floor(Date.now()/1000); },1000);
+
+// Color
+const presetColors=['#58a6ff','#3fb950','#f85149','#d2991d','#bc8cff','#f778ba','#79c0ff','#56d364','#ff7b72','#e3b341','#d2a8ff','#ff9bce'];
+(function(){
+  const grid=document.getElementById('colorGrid');
+  presetColors.forEach(c=>{ const d=document.createElement('div'); d.className='color-swatch'; d.style.background=c; d.title=c; d.onclick=()=>{ document.getElementById('colorHex').value=c; document.getElementById('colorPicker').value=c; colorParse(); }; grid.appendChild(d); });
+})();
+document.getElementById('colorPicker').addEventListener('input',function(){ document.getElementById('colorHex').value=this.value; colorParse(); });
+function colorParse(){
+  const hex=document.getElementById('colorHex').value.trim();
+  const out=document.getElementById('colorOut');
+  const m=/^#?([a-f0-9]{6}|[a-f0-9]{3})$/i.exec(hex);
+  if(!m){ out.innerHTML='<span class="badge err">无效 HEX</span>'; return; }
+  let h=m[1]; if(h.length===3) h=h.split('').map(c=>c+c).join('');
+  const r=parseInt(h.substr(0,2),16), g=parseInt(h.substr(2,2),16), b=parseInt(h.substr(4,2),16);
+  const hsl=rgbToHsl(r,g,b);
+  document.getElementById('colorPreview').style.background='#'+h;
+  document.getElementById('colorPicker').value='#'+h;
+  out.textContent=`HEX: #${h}\nRGB: rgb(${r}, ${g}, ${b})\nHSL: hsl(${hsl[0]}°, ${hsl[1]}%, ${hsl[2]}%)\n\n大写: #${h.toUpperCase()}`;
+}
+function rgbToHsl(r,g,b){ r/=255;g/=255;b/=255; const max=Math.max(r,g,b),min=Math.min(r,g,b); let h=0,s=0,l=(max+min)/2; if(max!==min){ const d=max-min; s=l>.5?d/(2-max-min):d/(max+min); switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;} } return [Math.round(h*360),Math.round(s*100),Math.round(l*100)]; }
+
+// Regex
+function regexTest(){
+  const pat=document.getElementById('regexPat').value, flags=document.getElementById('regexFlags').value.trim();
+  const text=document.getElementById('regexText').value;
+  try{
+    const re=new RegExp(pat,flags); const matches=[];
+    let m; if(flags.includes('g')){ while((m=re.exec(text))!==null){ matches.push({idx:m.index,match:m[0],groups:m.length>1?Array.from(m).slice(1):[]}); if(m[0].length===0) re.lastIndex++; }}
+    else{ m=re.exec(text); if(m) matches.push({idx:m.index,match:m[0],groups:m.length>1?Array.from(m).slice(1):[]}); }
+    if(matches.length===0){ document.getElementById('regexOut').innerHTML='<span class="badge err">无匹配</span>'; return; }
+    document.getElementById('regexOut').innerHTML=matches.map(m=>`<span class="badge ok">匹配</span> 位置 ${m.idx}: <strong>${escHtml(m.match)}</strong>${m.groups.length?'  捕获组: '+m.groups.map(g=>escHtml(g||'')).join(', '):''}`).join('\n');
+  }catch(e){ document.getElementById('regexOut').innerHTML='<span class="badge err">正则错误: '+e.message+'</span>'; }
+}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// Diff
+function diffCompare(){
+  const a=document.getElementById('diffA').value.split('\n'), b=document.getElementById('diffB').value.split('\n');
+  const out=document.getElementById('diffOut');
+  const max=Math.max(a.length,b.length); let html='';
+  for(let i=0;i<max;i++){
+    if(i>=a.length){ html+=`<span style="background:#3fb95022;display:block">+ ${escHtml(b[i])}</span>\n`; }
+    else if(i>=b.length){ html+=`<span style="background:#f8514922;display:block">- ${escHtml(a[i])}</span>\n`; }
+    else if(a[i]!==b[i]){ html+=`<span style="background:#f8514922;display:block">- ${escHtml(a[i])}</span>\n<span style="background:#3fb95022;display:block">+ ${escHtml(b[i])}</span>\n`; }
+    else{ html+=`<span style="display:block">  ${escHtml(a[i])}</span>\n`; }
+  }
+  out.innerHTML=html||'<span class="badge ok">两段文本相同</span>';
+}
+
+// UUID
+function uuidGen(){
+  const n=parseInt(document.getElementById('uuidCount').value)||5;
+  const uuids=[];
+  for(let i=0;i<Math.min(n,100);i++){ uuids.push(crypto.randomUUID()); }
+  document.getElementById('uuidOut').textContent=uuids.join('\n');
+}
+</script>
+</body>
+</html>

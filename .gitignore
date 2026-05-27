@@ -1,0 +1,10 @@
+node_modules/
+.claude/
+gh-cli.zip
+gh-cli-extracted/
+backups/
+.buddy/
+scripts/think-daemon.mjs
+notes/
+orders.log
+.git

@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>意义收集罐</title>
+<link href="https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&family=Silkscreen&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --blue-deep:#0f1d4a;--blue-royal:#1e3a8a;--blue-bright:#2563eb;
+    --sky:#0ea5e9;--cyan:#06b6d4;
+    --yellow-star:#fde047;--gold:#fbbf24;--orange:#f97316;
+    --coral:#fb7185;--pink:#ec4899;--purple:#8b5cf6;
+    --mint:#34d399;--lime:#a3e635;--cream:#fff8e7;
+  }
+
+  body{
+    min-height:100vh;
+    background:linear-gradient(175deg,#0b1d4a 0%,#162d7a 15%,#1e4a9e 35%,#2563c0 55%,#0e8abf 75%,#06a8b8 100%);
+    font-family:"ZCOOL KuaiLe","PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--cream);
+    overflow-x:hidden;
+    cursor:default;
+    user-select:none;
+    position:relative;
+  }
+
+  /* ===== VAN GOGH SKY ===== */
+  .sky-layer{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .swirl{
+    position:absolute;border-radius:42% 58% 45% 55%;
+    filter:blur(45px);opacity:0.4;mix-blend-mode:screen;
+  }
+  .swirl-1{width:600px;height:350px;top:5%;left:-10%;background:conic-gradient(from 0deg,#fde047,#fbbf24,#f59e0b,#fde047,#22d3ee,#7dd3fc,#fde047);animation:rotateSwirl 28s linear infinite;}
+  .swirl-2{width:500px;height:280px;top:15%;right:-8%;background:conic-gradient(from 90deg,#fbbf24,#fef08a,#fb923c,#60a5fa,#38bdf8,#fbbf24);animation:rotateSwirl 22s linear infinite reverse;}
+  .swirl-3{width:420px;height:250px;top:40%;left:20%;background:conic-gradient(from 180deg,#7dd3fc,#fde047,#22d3ee,#fbbf24,#93c5fd,#fde047);animation:rotateSwirl 32s linear infinite;}
+  .swirl-4{width:350px;height:200px;bottom:20%;right:15%;background:conic-gradient(from 270deg,#fef08a,#38bdf8,#fbbf24,#a78bfa,#fde047,#c084fc);animation:rotateSwirl 25s linear infinite reverse;}
+  .swirl-5{width:280px;height:180px;top:55%;left:45%;background:conic-gradient(from 45deg,#fb923c,#fde047,#f97316,#fbbf24,#fef08a,#fdba74);animation:rotateSwirl 20s linear infinite;}
+  @keyframes rotateSwirl{
+    from{transform:rotate(0deg) scale(1);}
+    50%{transform:rotate(180deg) scale(1.08);}
+    to{transform:rotate(360deg) scale(1);}
+  }
+
+  /* Van Gogh stars */
+  .vangogh-star{
+    position:absolute;border-radius:50%;
+    animation:vgPulse 3s ease-in-out infinite;z-index:1;
+  }
+  .vangogh-star::before,.vangogh-star::after{
+    content:'';position:absolute;background:currentColor;border-radius:2px;
+  }
+  .vangogh-star::before{width:200%;height:4px;top:50%;left:-50%;transform:translateY(-50%);}
+  .vangogh-star::after{width:4px;height:200%;left:50%;top:-50%;transform:translateX(-50%);}
+  .vs-1{width:40px;height:40px;top:8%;left:12%;color:#fde047;box-shadow:0 0 40px #fde047,0 0 80px #fbbf24,0 0 120px #f59e0b;animation-delay:0s;}
+  .vs-2{width:30px;height:30px;top:20%;right:18%;color:#fbbf24;box-shadow:0 0 30px #fbbf24,0 0 60px #f59e0b,0 0 90px #fb923c;animation-delay:.8s;}
+  .vs-3{width:50px;height:50px;top:50%;left:8%;color:#fef08a;box-shadow:0 0 50px #fef08a,0 0 100px #fde047,0 0 150px #fbbf24;animation-delay:1.6s;}
+  .vs-4{width:35px;height:35px;top:35%;right:25%;color:#fde047;box-shadow:0 0 35px #fde047,0 0 70px #fbbf24,0 0 100px #f59e0b;animation-delay:2.2s;}
+  .vs-5{width:25px;height:25px;bottom:30%;left:30%;color:#fbbf24;box-shadow:0 0 25px #fbbf24,0 0 50px #f59e0b,0 0 75px #fb923c;animation-delay:.4s;}
+  .vs-6{width:45px;height:45px;bottom:15%;right:10%;color:#fef08a;box-shadow:0 0 45px #fef08a,0 0 90px #fde047,0 0 130px #fbbf24;animation-delay:1.2s;}
+  @keyframes vgPulse{
+    0%,100%{transform:scale(1);opacity:.85;}
+    50%{transform:scale(1.3);opacity:1;}
+  }
+
+  /* Tiny stars */
+  .tiny-star{
+    position:absolute;width:var(--sz);height:var(--sz);
+    background:#fff;border-radius:2px;
+    animation:twinkle var(--dur) ease-in-out infinite;
+    animation-delay:var(--delay);
+    box-shadow:0 0 calc(var(--sz)*4) #fde047;
+  }
+  @keyframes twinkle{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(2);}}
+
+  .cypress{
+    position:fixed;bottom:0;left:3%;width:0;height:0;
+    border-left:35px solid transparent;border-right:35px solid transparent;
+    border-bottom:200px solid #0a2a3e;
+    filter:drop-shadow(0 0 15px rgba(6,182,212,.3));
+    z-index:0;pointer-events:none;
+  }
+  .cypress::after{
+    content:'';position:absolute;top:80px;left:-22px;width:0;
+    border-left:22px solid transparent;border-right:22px solid transparent;
+    border-bottom:140px solid #082030;
+    filter:drop-shadow(0 0 10px rgba(6,182,212,.25));
+  }
+
+  .village{
+    position:fixed;bottom:0;left:0;right:0;height:60px;
+    background:
+      linear-gradient(180deg,transparent 30%,#0a2a3e 30%) 40px 0/50px 100%,
+      linear-gradient(180deg,transparent 40%,#0c3046 40%) 140px 0/60px 100%,
+      linear-gradient(180deg,transparent 25%,#0a2a3e 25%) 250px 0/45px 100%,
+      linear-gradient(180deg,transparent 35%,#0c3046 35%) 350px 0/55px 100%;
+    background-repeat:no-repeat;
+    pointer-events:none;z-index:0;opacity:.7;
+  }
+
+  /* ===== MAIN MASCOT — 奶龙风格圆滚滚 ===== */
+  .mascot-main{
+    position:fixed;z-index:20;pointer-events:none;
+    left:clamp(10px,8%,60px);
+    top:50%;transform:translateY(-50%);
+    animation:mascotBounce 4s ease-in-out infinite;
+  }
+  @keyframes mascotBounce{
+    0%,100%{transform:translateY(-50%) translateX(0);}
+    30%{transform:translateY(-55%) translateX(8px);}
+    60%{transform:translateY(-47%) translateX(-4px);}
+    85%{transform:translateY(-52%) translateX(3px);}
+  }
+
+  .mascot-body{
+    width:160px;height:170px;
+    background:radial-gradient(ellipse at 38% 30%,#fff8e0 0%,#fde68a 15%,#fbbf24 45%,#f59e0b 75%,#d97706 100%);
+    border-radius:45% 50% 50% 48%;
+    position:relative;
+    box-shadow:
+      0 8px 30px rgba(251,191,36,.45),
+      0 0 60px rgba(253,224,71,.25),
+      inset 0 -10px 25px rgba(180,100,20,.3);
+    /* belly */
+  }
+  .mascot-body::before{
+    content:'';position:absolute;
+    width:55%;height:45%;
+    background:radial-gradient(ellipse,#fffef5 0%,#fef3c7 60%,transparent 100%);
+    border-radius:50%;
+    left:22%;top:42%;
+  }
+
+  /* Horns */
+  .mascot-horn{
+    position:absolute;
+    width:0;height:0;
+    border-left:10px solid transparent;
+    border-right:10px solid transparent;
+    border-bottom:22px solid #f59e0b;
+    filter:drop-shadow(0 -2px 2px rgba(180,100,20,.4));
+  }
+  .mascot-horn.left{top:-14px;left:28px;transform:rotate(-15deg);}
+  .mascot-horn.right{top:-14px;right:28px;transform:rotate(15deg);}
+  .mascot-horn::after{
+    content:'';position:absolute;
+    top:16px;left:-6px;
+    width:0;height:0;
+    border-left:6px solid transparent;
+    border-right:6px solid transparent;
+    border-bottom:14px solid #fbbf24;
+  }
+
+  /* Eyes */
+  .mascot-eye{
+    position:absolute;top:32%;
+    width:20px;height:22px;
+    background:#1a1a2e;
+    border-radius:50%;
+    animation:mascotBlink 5s ease-in-out infinite;
+  }
+  .mascot-eye.left{left:26%;}
+  .mascot-eye.right{right:26%;}
+  .mascot-eye::before{
+    content:'';position:absolute;
+    width:7px;height:7px;
+    background:#fff;
+    border-radius:50%;
+    top:3px;left:4px;
+  }
+  @keyframes mascotBlink{
+    0%,45%,55%,100%{transform:scaleY(1);}
+    50%{transform:scaleY(0.08);}
+  }
+
+  /* Blush */
+  .mascot-blush{
+    position:absolute;top:40%;
+    width:18px;height:11px;
+    background:rgba(251,113,133,.5);
+    border-radius:50%;
+    filter:blur(2px);
+  }
+  .mascot-blush.left{left:16%;}
+  .mascot-blush.right{right:16%;}
+
+  /* Mouth */
+  .mascot-mouth{
+    position:absolute;top:41%;left:50%;transform:translateX(-50%);
+    width:14px;height:7px;
+    border-bottom:3px solid #b45309;
+    border-radius:0 0 50% 50%;
+  }
+
+  /* Wings */
+  .mascot-wing{
+    position:absolute;top:28%;
+    width:32px;height:20px;
+    background:radial-gradient(ellipse,#fef3c7 0%,#fbbf24 60%,#f59e0b 100%);
+    border-radius:50% 20% 50% 30%;
+    animation:wingFlap 1.8s ease-in-out infinite;
+    filter:drop-shadow(0 3px 4px rgba(180,100,20,.3));
+  }
+  .mascot-wing.left{left:-26px;transform-origin:right center;animation-delay:0s;}
+  .mascot-wing.right{right:-26px;transform-origin:left center;animation-delay:.9s;}
+  @keyframes wingFlap{
+    0%,100%{transform:rotate(-5deg) translateY(0);}
+    50%{transform:rotate(8deg) translateY(-6px);}
+  }
+
+  /* Feet */
+  .mascot-feet{position:absolute;bottom:-8px;}
+  .mascot-feet.left{left:28px;}
+  .mascot-feet.right{right:28px;}
+  .mascot-foot{
+    width:22px;height:14px;
+    background:radial-gradient(ellipse at 50% 0%,#fbbf24,#d97706);
+    border-radius:50%;
+    display:inline-block;
+  }
+
+  /* ===== SIDE MASCOT (Right, smaller, pinkish) ===== */
+  .mascot-side{
+    position:fixed;z-index:18;pointer-events:none;
+    right:clamp(8px,6%,50px);
+    top:38%;
+    animation:mascotSideFloat 5s ease-in-out infinite;
+  }
+  @keyframes mascotSideFloat{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    40%{transform:translateY(-22px) rotate(3deg);}
+    70%{transform:translateY(-8px) rotate(-2deg);}
+  }
+
+  .side-body{
+    width:100px;height:105px;
+    background:radial-gradient(ellipse at 38% 30%,#fff0f5 0%,#fbcfe8 15%,#f9a8d4 45%,#f472b6 75%,#db2777 100%);
+    border-radius:48% 50% 48% 50%;
+    position:relative;
+    box-shadow:0 6px 22px rgba(244,114,182,.4),0 0 40px rgba(251,207,232,.2),inset 0 -8px 20px rgba(180,60,100,.25);
+  }
+  .side-body::before{
+    content:'';position:absolute;
+    width:50%;height:40%;
+    background:radial-gradient(ellipse,#fff 0%,#fce7f3 60%,transparent 100%);
+    border-radius:50%;
+    left:25%;top:44%;
+  }
+  .side-eye{
+    position:absolute;top:34%;
+    width:13px;height:14px;
+    background:#1a1a2e;
+    border-radius:50%;
+    animation:mascotBlink 4.5s ease-in-out infinite;
+    animation-delay:.5s;
+  }
+  .side-eye.left{left:28%;}.side-eye.right{right:28%;}
+  .side-eye::before{
+    content:'';position:absolute;
+    width:5px;height:5px;background:#fff;border-radius:50%;
+    top:2px;left:3px;
+  }
+  .side-blush{
+    position:absolute;top:42%;
+    width:12px;height:7px;
+    background:rgba(251,113,133,.5);
+    border-radius:50%;filter:blur(2px);
+  }
+  .side-blush.left{left:18%;}.side-blush.right{right:18%;}
+  .side-mouth{
+    position:absolute;top:43%;left:50%;transform:translateX(-50%);
+    width:9px;height:5px;
+    border-bottom:2px solid #9d174d;
+    border-radius:0 0 50% 50%;
+  }
+  .side-ear{
+    position:absolute;top:-16px;
+    width:16px;height:22px;
+    background:radial-gradient(ellipse,#f9a8d4,#ec4899);
+    border-radius:50% 50% 30% 30%;
+    box-shadow:0 -2px 4px rgba(180,60,100,.3);
+  }
+  .side-ear.left{left:14px;transform:rotate(-10deg);}
+  .side-ear.right{right:14px;transform:rotate(10deg);}
+
+  /* ===== FLOATING CUTE ELEMENTS ===== */
+  .float-cute{
+    position:fixed;z-index:15;pointer-events:none;
+    font-size:var(--fs,2rem);
+    animation:floatCute var(--fdur,6s) var(--fdelay,0s) ease-in-out infinite;
+    filter:drop-shadow(0 0 8px var(--fglow,#fde047));
+    opacity:.8;
+  }
+  @keyframes floatCute{
+    0%,100%{transform:translateY(0) translateX(0) rotate(0deg);}
+    25%{transform:translateY(-25px) translateX(10px) rotate(5deg);}
+    50%{transform:translateY(-8px) translateX(-8px) rotate(-3deg);}
+    75%{transform:translateY(-30px) translateX(5px) rotate(4deg);}
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .app{
+    position:relative;z-index:10;
+    display:flex;flex-direction:column;
+    align-items:center;gap:22px;
+    padding:30px 16px 50px;
+    width:100%;max-width:500px;
+    margin:0 auto;
+  }
+
+  /* Header */
+  .header{text-align:center;}
+  .date-display{
+    font-family:'Liu Jian Mao Cao',cursive;
+    font-size:1.3rem;
+    letter-spacing:.15em;
+    color:#fde047;
+    text-shadow:0 0 14px rgba(253,224,71,.5);
+    margin-bottom:6px;
+  }
+  .greeting{
+    font-family:'Ma Shan Zheng',cursive;
+    font-size:2rem;
+    font-weight:400;
+    line-height:1.6;
+    background:linear-gradient(90deg,#fde047,#fb923c,#fb7185,#ec4899,#8b5cf6,#7dd3fc);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-size:300% 100%;
+    animation:rainbowShift 4s ease-in-out infinite;
+    text-shadow:none;
+  }
+  @keyframes rainbowShift{
+    0%,100%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+  }
+
+  /* Jar */
+  .jar-area{
+    position:relative;cursor:pointer;
+    transition:transform .3s steps(3);
+  }
+  .jar-area:hover{transform:scale(1.06);}
+  .jar-area:active{transform:scale(.94);}
+
+  .jar-canvas{
+    display:block;
+    image-rendering:pixelated;
+    filter:drop-shadow(0 0 18px rgba(251,191,36,.45));
+    transition:filter .5s;
+  }
+  .jar-area:hover .jar-canvas{filter:drop-shadow(0 0 34px rgba(253,224,71,.65));}
+
+  .jar-label{
+    text-align:center;
+    font-family:'ZCOOL QingKe HuangYou',cursive;
+    font-size:.9rem;
+    color:#22d3ee;
+    margin-top:6px;
+    letter-spacing:.1em;
+    text-shadow:0 0 10px rgba(34,211,238,.4);
+  }
+  .jar-count{
+    text-align:center;
+    font-family:'Silkscreen',monospace;
+    font-size:.75rem;
+    color:#fb923c;
+    margin-top:2px;
+  }
+
+  /* Card */
+  .card{
+    width:100%;
+    background:linear-gradient(135deg,rgba(30,58,138,.75),rgba(37,99,235,.55));
+    border:4px solid #7dd3fc;
+    border-radius:4px;
+    padding:32px 26px;
+    box-shadow:
+      4px 0 0 0 #38bdf8,-4px 0 0 0 #38bdf8,
+      0 -4px 0 0 #7dd3fc,0 4px 0 0 #7dd3fc,
+      8px 4px 0 0 rgba(15,29,74,.4),
+      inset 0 0 30px rgba(125,211,252,.08);
+    image-rendering:pixelated;
+  }
+
+  .question-icon{
+    font-size:2.5rem;
+    margin-bottom:10px;
+    animation:pixelBounce 1.5s steps(4) infinite;
+  }
+  @keyframes pixelBounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-8px);}
+  }
+
+  .question-text{
+    font-family:'ZCOOL KuaiLe',sans-serif;
+    font-size:1.5rem;
+    font-weight:400;
+    line-height:1.8;
+    margin-bottom:18px;
+    text-shadow:0 0 10px var(--qglow,rgba(254,240,138,.3));
+  }
+
+  .answer-input{
+    width:100%;min-height:110px;
+    background:rgba(15,29,74,.6);
+    border:3px solid #38bdf8;
+    border-radius:2px;
+    padding:16px;
+    color:#fff8e7;
+    font-family:'ZCOOL KuaiLe',sans-serif;
+    font-size:1.1rem;
+    line-height:1.8;
+    resize:vertical;outline:none;
+    transition:border-color .2s,box-shadow .2s;
+    box-shadow:
+      3px 0 0 0 #0ea5e9,-3px 0 0 0 #0ea5e9,
+      0 -3px 0 0 #38bdf8,0 3px 0 0 #38bdf8;
+    image-rendering:pixelated;
+  }
+  .answer-input:focus{
+    border-color:#fbbf24;
+    box-shadow:
+      3px 0 0 0 #f59e0b,-3px 0 0 0 #f59e0b,
+      0 -3px 0 0 #fbbf24,0 3px 0 0 #fbbf24,
+      0 0 28px rgba(251,191,36,.25);
+  }
+  .answer-input::placeholder{
+    color:rgba(147,197,253,.5);
+    font-family:'ZCOOL QingKe HuangYou',cursive;
+    font-size:1rem;
+  }
+
+  .submit-btn{
+    display:block;width:100%;margin-top:14px;padding:16px;
+    background:linear-gradient(180deg,#fb923c,#f97316);
+    border:4px solid #fbbf24;border-radius:2px;
+    color:#fff8e7;
+    font-family:'ZCOOL QingKe HuangYou',cursive;
+    font-size:1.25rem;
+    letter-spacing:.1em;cursor:pointer;
+    transition:all .15s step-end;
+    box-shadow:
+      4px 0 0 0 #f59e0b,-4px 0 0 0 #f59e0b,
+      0 -4px 0 0 #fbbf24,0 4px 0 0 #fbbf24,
+      8px 6px 0 0 rgba(15,29,74,.5);
+    image-rendering:pixelated;
+    text-shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+  .submit-btn:hover{
+    background:linear-gradient(180deg,#fdba74,#fb923c);
+    border-color:#fde047;
+    transform:translate(2px,2px);
+    box-shadow:
+      4px 0 0 0 #fbbf24,-4px 0 0 0 #fbbf24,
+      0 -4px 0 0 #fde047,0 4px 0 0 #fde047,
+      4px 2px 0 0 rgba(15,29,74,.5);
+  }
+  .submit-btn:active{
+    transform:translate(6px,4px);
+    box-shadow:
+      2px 0 0 0 #f59e0b,-2px 0 0 0 #f59e0b,
+      0 -2px 0 0 #fbbf24,0 2px 0 0 #fbbf24,
+      2px 1px 0 0 rgba(15,29,74,.5);
+  }
+  .submit-btn:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4);}
+
+  /* Done */
+  .main-view.hidden{display:none;}
+  .done-icon{
+    font-size:3.5rem;text-align:center;margin-bottom:10px;
+    animation:pixelBounce 2s steps(6) infinite;
+  }
+  .done-text{
+    text-align:center;
+    font-family:'Ma Shan Zheng',cursive;
+    font-size:1.35rem;
+    line-height:1.9;
+    background:linear-gradient(90deg,#fde047,#34d399,#7dd3fc,#fbbf24);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-size:300% 100%;
+    animation:rainbowShift 3s ease-in-out infinite;
+  }
+  .done-answer{
+    margin-top:14px;
+    font-family:'ZCOOL KuaiLe',sans-serif;
+    font-size:1rem;
+    color:#fef08a;font-style:italic;
+    line-height:1.8;max-height:90px;overflow-y:auto;text-align:center;
+    text-shadow:0 0 8px rgba(254,240,138,.2);
+  }
+  .pixel-hearts{display:flex;gap:8px;justify-content:center;margin-top:10px;}
+  .pixel-heart{
+    width:14px;height:14px;
+    background:#fb7185;
+    image-rendering:pixelated;
+    animation:pixelBounce 1.2s steps(4) infinite;
+    animation-delay:var(--hdelay);
+    box-shadow:0 0 10px #fb7185;
+  }
+
+  /* Nav */
+  .bottom-nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+  .nav-btn{
+    background:rgba(30,58,138,.5);
+    border:3px solid;border-radius:2px;
+    font-family:'ZCOOL QingKe HuangYou',cursive;
+    font-size:1rem;
+    cursor:pointer;padding:12px 22px;
+    letter-spacing:.06em;
+    transition:all .15s step-end;
+    image-rendering:pixelated;
+    box-shadow:3px 3px 0 0 rgba(15,29,74,.5);
+  }
+  .nav-btn:hover{transform:translate(1px,1px);box-shadow:1px 1px 0 0 rgba(15,29,74,.5);}
+  .nav-btn:active{transform:translate(3px,3px);box-shadow:none;}
+  .btn-today{border-color:#fbbf24;color:#fde047;background:rgba(251,146,60,.25);}
+  .btn-today:hover{background:rgba(251,146,60,.45);}
+  .btn-collection{border-color:#7dd3fc;color:#7dd3fc;background:rgba(14,165,233,.25);}
+  .btn-collection:hover{background:rgba(14,165,233,.45);}
+
+  /* Collection */
+  .collection-view{display:none;width:100%;flex-direction:column;gap:14px;}
+  .collection-view.active{display:flex;}
+  .collection-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+  .collection-title{
+    font-family:'Ma Shan Zheng',cursive;
+    font-size:1.5rem;
+    background:linear-gradient(90deg,#fde047,#7dd3fc);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .collection-count{
+    font-family:'Silkscreen',monospace;
+    font-size:.8rem;color:#fbbf24;
+  }
+  .entry-card{
+    background:linear-gradient(135deg,rgba(30,58,138,.7),rgba(37,99,235,.5));
+    border:3px solid #38bdf8;border-radius:2px;
+    padding:18px 20px;cursor:pointer;
+    transition:all .15s step-end;
+    box-shadow:
+      3px 0 0 0 #0ea5e9,-3px 0 0 0 #0ea5e9,
+      0 -3px 0 0 #38bdf8,0 3px 0 0 #38bdf8,
+      6px 4px 0 0 rgba(15,29,74,.4);
+    image-rendering:pixelated;
+    color:var(--card-clr,#fef08a);
+  }
+  .entry-card:hover{
+    border-color:#fbbf24;
+    transform:translate(2px,2px);
+    box-shadow:
+      2px 0 0 0 #f59e0b,-2px 0 0 0 #f59e0b,
+      0 -2px 0 0 #fbbf24,0 2px 0 0 #fbbf24,
+      3px 2px 0 0 rgba(15,29,74,.4);
+  }
+  .entry-date{
+    font-family:'Liu Jian Mao Cao',cursive;
+    font-size:.9rem;margin-bottom:4px;
+    color:var(--card-clr,#fef08a);
+  }
+  .entry-question{
+    font-family:'ZCOOL KuaiLe',sans-serif;
+    font-size:1rem;line-height:1.5;margin-bottom:2px;
+  }
+  .entry-preview{
+    font-family:'Ma Shan Zheng',cursive;
+    font-size:.9rem;opacity:.7;line-height:1.5;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+
+  .empty-collection{
+    text-align:center;padding:40px 20px;
+    color:#7dd3fc;line-height:2.4;
+    font-family:'ZCOOL KuaiLe',sans-serif;
+    font-size:1.1rem;
+  }
+
+  /* Toast */
+  .toast{
+    position:fixed;top:24px;left:50%;
+    transform:translateX(-50%) translateY(-120px);
+    z-index:200;
+    background:rgba(30,58,138,.95);
+    border:4px solid #fbbf24;border-radius:2px;
+    padding:14px 30px;
+    color:#fde047;
+    font-family:'ZCOOL QingKe HuangYou',cursive;
+    font-size:1rem;
+    letter-spacing:.06em;
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+    pointer-events:none;
+    box-shadow:4px 4px 0 0 rgba(15,29,74,.6);
+    image-rendering:pixelated;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* Overlay */
+  .overlay{
+    position:fixed;inset:0;z-index:150;
+    background:rgba(11,29,74,.88);
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;
+    animation:fadeIn .25s ease;
+  }
+  .overlay-card{
+    background:linear-gradient(180deg,#1e3a8a,#162d7a);
+    border:4px solid #7dd3fc;border-radius:2px;
+    padding:32px 26px;
+    max-width:440px;width:100%;
+    box-shadow:
+      4px 0 0 0 #38bdf8,-4px 0 0 0 #38bdf8,
+      0 -4px 0 0 #7dd3fc,0 4px 0 0 #7dd3fc,
+      8px 8px 0 0 rgba(15,29,74,.5);
+    animation:slideUp .3s ease;
+    image-rendering:pixelated;color:#fff8e7;
+  }
+  .overlay-date{
+    font-family:'Liu Jian Mao Cao',cursive;
+    font-size:.9rem;color:#fbbf24;margin-bottom:4px;
+  }
+  .overlay-question{
+    font-family:'Ma Shan Zheng',cursive;
+    font-size:1.1rem;color:#fef08a;margin-bottom:14px;line-height:1.6;
+  }
+  .overlay-answer{
+    font-family:'ZCOOL KuaiLe',sans-serif;
+    font-size:1.05rem;line-height:2;
+    white-space:pre-wrap;color:#fff8e7;
+  }
+  .overlay-close-btn{
+    display:block;margin:18px auto 0;padding:12px 30px;
+    background:linear-gradient(180deg,#fb923c,#f97316);
+    border:3px solid #fbbf24;border-radius:2px;
+    color:#fff8e7;
+    font-family:'ZCOOL QingKe HuangYou',cursive;
+    font-size:1.05rem;
+    cursor:pointer;letter-spacing:.06em;
+    image-rendering:pixelated;
+    box-shadow:3px 3px 0 0 rgba(15,29,74,.5);
+  }
+  .overlay-close-btn:hover{background:linear-gradient(180deg,#fdba74,#fb923c);}
+
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes slideUp{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-track{background:#0f1d4a;}
+  ::-webkit-scrollbar-thumb{background:#7dd3fc;border-radius:3px;}
+
+  @media(max-width:640px){
+    .mascot-main{left:2px;transform:translateY(-50%) scale(.65);}
+    .mascot-side{right:2px;transform:scale(.6);}
+    .app{padding:20px 10px 40px;gap:16px;}
+    .card{padding:22px 16px;}
+    .greeting{font-size:1.4rem;}
+    .question-text{font-size:1.2rem;}
+    .date-display{font-size:1rem;}
+    .swirl-1,.swirl-2,.swirl-3{display:none;}
+    .cypress{left:-5%;border-left-width:20px;border-right-width:20px;border-bottom-width:130px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Sky -->
+<div class="sky-layer">
+  <div class="swirl swirl-1"></div><div class="swirl swirl-2"></div>
+  <div class="swirl swirl-3"></div><div class="swirl swirl-4"></div>
+  <div class="swirl swirl-5"></div>
+  <div class="vangogh-star vs-1"></div><div class="vangogh-star vs-2"></div>
+  <div class="vangogh-star vs-3"></div><div class="vangogh-star vs-4"></div>
+  <div class="vangogh-star vs-5"></div><div class="vangogh-star vs-6"></div>
+  <div class="cypress"></div><div class="village"></div>
+</div>
+<div class="sky-layer" id="tinyStarsLayer"></div>
+
+<!-- MAIN MASCOT — 奶龙风格圆滚滚 -->
+<div class="mascot-main" id="mascotMain">
+  <div class="mascot-body">
+    <div class="mascot-horn left"></div>
+    <div class="mascot-horn right"></div>
+    <div class="mascot-eye left"></div>
+    <div class="mascot-eye right"></div>
+    <div class="mascot-blush left"></div>
+    <div class="mascot-blush right"></div>
+    <div class="mascot-mouth"></div>
+    <div class="mascot-wing left"></div>
+    <div class="mascot-wing right"></div>
+  </div>
+  <div class="mascot-feet left"><div class="mascot-foot"></div></div>
+  <div class="mascot-feet right"><div class="mascot-foot"></div></div>
+</div>
+
+<!-- SIDE MASCOT — 粉色小伙伴 -->
+<div class="mascot-side" id="mascotSide">
+  <div class="side-body">
+    <div class="side-ear left"></div>
+    <div class="side-ear right"></div>
+    <div class="side-eye left"></div>
+    <div class="side-eye right"></div>
+    <div class="side-blush left"></div>
+    <div class="side-blush right"></div>
+    <div class="side-mouth"></div>
+  </div>
+</div>
+
+<!-- Floating cute elements -->
+<div class="float-cute" style="top:8%;left:55%;--fs:2.2rem;--fdur:7s;--fdelay:0s;--fglow:#fde047;">&#11088;</div>
+<div class="float-cute" style="top:18%;left:42%;--fs:1.6rem;--fdur:5.5s;--fdelay:1.5s;--fglow:#fb7185;">&#10084;&#65039;</div>
+<div class="float-cute" style="top:60%;left:58%;--fs:2rem;--fdur:8s;--fdelay:3s;--fglow:#7dd3fc;">&#127752;</div>
+<div class="float-cute" style="top:72%;left:35%;--fs:1.8rem;--fdur:6.5s;--fdelay:2s;--fglow:#a78bfa;">&#127775;</div>
+<div class="float-cute" style="top:25%;left:48%;--fs:1.5rem;--fdur:9s;--fdelay:4s;--fglow:#34d399;">&#127753;</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- App -->
+<div class="app">
+
+  <div class="header">
+    <div class="date-display" id="dateDisplay"></div>
+    <div class="greeting" id="greeting"></div>
+  </div>
+
+  <!-- Jar -->
+  <div class="jar-area" id="jarArea" title="点击查看收集">
+    <canvas class="jar-canvas" id="jarCanvas" width="80" height="112"></canvas>
+    <div class="jar-label">轻触罐子 · 回顾收集</div>
+    <div class="jar-count" id="jarCount"></div>
+  </div>
+
+  <!-- Question -->
+  <div class="main-view" id="mainView">
+    <div class="card">
+      <div class="question-icon" id="questionIcon"></div>
+      <div class="question-text" id="questionText"></div>
+      <textarea class="answer-input" id="answerInput"
+        placeholder="写下你此刻的感受...哪怕一句话也值得珍藏"
+        rows="3"></textarea>
+      <button class="submit-btn" id="submitBtn">★ 放进罐子里</button>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div class="main-view hidden" id="doneView">
+    <div class="card">
+      <div class="done-icon" id="doneIcon"></div>
+      <div class="done-text" id="doneText"></div>
+      <div class="done-answer" id="doneAnswer"></div>
+      <div class="pixel-hearts" id="pixelHearts"></div>
+    </div>
+  </div>
+
+  <!-- Collection -->
+  <div class="collection-view" id="collectionView">
+    <div class="collection-header">
+      <span class="collection-title">★ 你的光点收集</span>
+      <span class="collection-count" id="collectionCount"></span>
+    </div>
+    <div id="collectionEntries"></div>
+  </div>
+
+  <!-- Nav -->
+  <div class="bottom-nav">
+    <button class="nav-btn btn-today" id="navToday">✦ 今日</button>
+    <button class="nav-btn btn-collection" id="navCollection">◆ 收集回顾</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY='meaning_jar_v3';
+  const QMAP_KEY='meaning_jar_v3_qmap';
+
+  const questions=[
+    '今天发生了什么让你感到温暖的小事？',
+    '今天你帮助了谁，或者谁帮助了你？',
+    '今天有什么让你感到感激的瞬间？',
+    '今天你注意到什么美好的细节？',
+    '今天哪一刻让你觉得"活着真好"？',
+    '今天你和谁产生了有意义的连接？',
+    '今天你学到了什么新东西？',
+    '今天你对自己说了什么温柔的话？',
+    '今天有什么挑战让你成长了？',
+    '今天你做了哪些让自己真正开心的事？',
+    '今天你听到了什么打动你的话？',
+    '今天有什么微不足道却让你微笑的时刻？',
+    '如果今天是一颗星星，它会是什么颜色的？为什么？',
+    '今天你放下了什么，又拾起了什么？',
+    '今天有什么事情让你对未来充满期待？',
+  ];
+
+  const qColors=[
+    '#fde047','#fb923c','#fbbf24','#fb7185','#7dd3fc',
+    '#34d399','#a78bfa','#f97316','#22d3ee','#fef08a',
+    '#c084fc','#fdba74','#93c5fd','#a3e635','#f9a8d4',
+  ];
+  const qIcons=['⭐','🌟','✨','💫','🌙','☀️','🪐','🌻','🍀','🎵','💖','🌈','🕯️','🌿','🦋'];
+  const qGlows=[
+    'rgba(253,224,71,.4)','rgba(251,146,60,.4)','rgba(251,191,36,.4)','rgba(251,113,133,.4)','rgba(125,211,252,.4)',
+    'rgba(52,211,153,.4)','rgba(167,139,250,.4)','rgba(249,115,22,.4)','rgba(34,211,238,.4)','rgba(254,240,138,.4)',
+    'rgba(192,132,252,.4)','rgba(253,186,116,.4)','rgba(147,197,253,.4)','rgba(163,230,53,.4)','rgba(249,168,212,.4)',
+  ];
+
+  const greetings=[
+    '今天阳光真好，你也一样灿烂呢！','记得多喝水哦，你的身体值得被温柔对待~',
+    '工作再忙，也别忘了对自己笑一笑呀','天冷记得加衣，你的温暖很重要',
+    '今天的你也很努力了，给自己鼓个掌吧！','累了就歇一歇，星星也需要夜晚来发光',
+    '无论今天怎样，明天的太阳都会照常升起','你今天微笑了吗？没有的话，现在笑一个吧！',
+    '辛苦了，今天的你也在这世界上闪闪发光呢','生活有时像一杯温水，平淡却最解渴，你感受到了吗？',
+    '嘿，停下来三秒钟——吸气——呼气——好了，继续前进吧！','今天有好好吃饭吗？胃和心都要照顾好哦',
+    '为什么程序员分不清万圣节和圣诞节？因为 Oct 31 == Dec 25！',
+    '一个包子走在路上，饿了就把自己吃了…',
+    '我：大脑，今天要开心！大脑：收到！然后释放了一些根本不存在的快乐激素',
+    '今天讲个冷笑话：雪碧。讲完了。','如果"笑"可以燃烧卡路里，你现在已经是超模啦！',
+    '你知道海水为什么是咸的吗？因为鱼在海里哭……不对，是被太阳晒出汗了！',
+    '为什么鸡要去太空？因为它想看看地球是不是真的像鸡蛋！',
+    '我今天去银行取钱，柜员说："你的余额不足。"我说："我知道，我就是来看看它还在不在。"',
+    '意义不在远方，就在你此刻呼吸的空气里','你收集的每一个瞬间，都在悄悄塑造未来的你',
+    '快乐不是目的地，而是沿途的风景','有时候，慢下来就是最快的进步',
+    '人生就像一盒巧克力——好吧这句话被说烂了，但你确实不知道明天会尝到什么味道',
+    '你今天的所有感受，都是宇宙在用它的方式和你对话',
+    '你是限量版！全宇宙只有一个你！','今天的不开心就到此为止，明天依旧光芒万丈',
+    '你已经做得够好了，剩下的交给时间','别怕犯错，每个"失误"都是一颗独特的星星',
+    '你比自己想象的更勇敢、更强大、更可爱','抬头看看天——你和星星一样，都在正确的位置上',
+    '今天哪怕只做了一件小事，也值得为自己骄傲','生活不需要完美，需要的是你真实的模样',
+    '来，跟我念：我很好，我很棒，我今天超厉害的！（念完了吗？奖励你一颗虚拟糖果 🍬）',
+    '今天的小挑战：找到三件让你开心的事，大小都算！开始！',
+    '如果今天是一部电影，你会给它打几分？',
+  ];
+
+  const $=s=>document.querySelector(s);
+  function getToday(){return new Date().toISOString().split('T')[0];}
+  function hashDate(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return Math.abs(h);}
+  function loadJSON(k){try{return JSON.parse(localStorage.getItem(k))||{};}catch(e){return{};}}
+  function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v));}
+  function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+  function getQuestionForDate(d){
+    const map=loadJSON(QMAP_KEY);
+    if(map[d])return map[d];
+    const q=questions[hashDate(d)%questions.length];
+    map[d]=q;saveJSON(QMAP_KEY,map);return q;
+  }
+
+  // Tiny stars
+  function createTinyStars(){
+    const layer=$('#tinyStarsLayer'),frag=document.createDocumentFragment();
+    for(let i=0;i<60;i++){
+      const s=document.createElement('div');s.className='tiny-star';
+      const sz=(1.5+Math.random()*3)+'px';
+      s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--sz:${sz};--dur:${2+Math.random()*4}s;--delay:${Math.random()*4}s;`;
+      frag.appendChild(s);
+    }
+    layer.appendChild(frag);
+  }
+
+  // Pixel jar
+  function drawJar(count){
+    const c=$('#jarCanvas'),ctx=c.getContext('2d');
+    const w=80,h=112;
+    ctx.clearRect(0,0,w,h);ctx.imageSmoothingEnabled=false;
+    // Body
+    ctx.fillStyle='rgba(30,58,138,.5)';ctx.fillRect(18,24,44,72);
+    ctx.strokeStyle='#7dd3fc';ctx.lineWidth=2;ctx.strokeRect(18,24,44,72);
+    // Lid
+    ctx.fillStyle='#fb923c';ctx.fillRect(22,18,36,8);
+    ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.strokeRect(22,18,36,8);
+    // Neck
+    ctx.fillStyle='rgba(30,58,138,.4)';ctx.fillRect(26,10,28,10);
+    ctx.strokeStyle='#7dd3fc';ctx.lineWidth=2;ctx.strokeRect(26,10,28,10);
+    // Cork
+    ctx.fillStyle='#d4a574';ctx.fillRect(28,4,24,8);
+    ctx.strokeStyle='#c4956a';ctx.lineWidth=2;ctx.strokeRect(28,4,24,8);
+    // Glass shine
+    ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(22,28,8,60);
+    // Lights
+    const pos=[
+      [28,68],[52,60],[36,72],[60,68],[44,56],[32,48],[56,44],[40,52],[50,72],[60,52],
+      [28,36],[48,32],[36,60],[56,56],[44,40],[60,60],[32,56],[52,68],[28,44],[56,36],
+      [40,32],[48,48],[36,40],[52,52],[60,44],[44,68],[28,60],[32,40],[56,48],[48,60],
+    ];
+    const total=Math.min(count,pos.length);
+    for(let i=0;i<total;i++){
+      const[lx,ly]=pos[i],r=i>=total-3?3:2,bright=i>=total-3;
+      ctx.fillStyle=bright?'rgba(253,224,71,.5)':'rgba(251,191,36,.35)';
+      ctx.fillRect(lx-2,ly-2,r+4,r+4);
+      ctx.fillStyle=bright?'#fde047':'#fbbf24';ctx.fillRect(lx,ly,r,r);
+      ctx.fillStyle=bright?'#fef08a':'#fde047';ctx.fillRect(lx,ly,1,1);
+    }
+  }
+
+  function getGreeting(){
+    return greetings[hashDate(getToday())%greetings.length];
+  }
+
+  function renderToday(){
+    currentView='today';
+    const today=getToday(),entries=loadJSON(STORAGE_KEY);
+    const q=getQuestionForDate(today),qIdx=hashDate(today)%questions.length;
+    const now=new Date();
+    const wd=['日','一','二','三','四','五','六'];
+    $('#dateDisplay').textContent=now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 星期'+wd[now.getDay()];
+    $('#greeting').textContent=getGreeting();
+
+    const clr=qColors[qIdx];
+    $('#questionIcon').textContent=qIcons[qIdx];
+    $('#questionIcon').style.color=clr;
+
+    if(entries[today]){showDone(entries[today]);}
+    else{showQuestion(q,clr,qGlows[qIdx]);}
+    updateJar();
+  }
+
+  function showQuestion(q,clr,glow){
+    currentView='today';
+    $('#mainView').classList.remove('hidden');$('#doneView').classList.add('hidden');
+    $('#collectionView').classList.remove('active');
+    $('#questionText').textContent=q;
+    $('#questionText').style.color=clr;
+    $('#questionText').style.setProperty('--qglow',glow);
+    $('#answerInput').value='';$('#answerInput').disabled=false;
+    $('#submitBtn').disabled=false;$('#submitBtn').textContent='★ 放进罐子里';
+  }
+
+  function showDone(entry){
+    currentView='done';
+    $('#mainView').classList.add('hidden');$('#doneView').classList.remove('hidden');
+    $('#collectionView').classList.remove('active');
+    const icons=['🌟','✨','💖','🎉','🦋','🌈','🌻','🍀','💫','🕯️'];
+    $('#doneIcon').textContent=icons[Math.floor(Math.random()*icons.length)];
+    const msgs=[
+      '今天的意义已经收集好啦<br>它正静静地在罐子里发光呢',
+      '又一颗星星落入罐中<br>谢谢你今天的分享',
+      '收集完毕！<br>你的每一天都值得被记住',
+      '罐子里又多了一颗光点<br>那是今天的你留下的痕迹',
+    ];
+    $('#doneText').innerHTML=msgs[hashDate(getToday())%msgs.length];
+    $('#doneAnswer').textContent='「'+entry.answer+'」';
+    const hearts=$('#pixelHearts');hearts.innerHTML='';
+    for(let i=0;i<5;i++){
+      const h=document.createElement('div');h.className='pixel-heart';
+      h.style.setProperty('--hdelay',(i*.2)+'s');hearts.appendChild(h);
+    }
+  }
+
+  function updateJar(){
+    const dates=Object.keys(loadJSON(STORAGE_KEY)).sort();
+    drawJar(dates.length);
+    $('#jarCount').textContent=dates.length+' 颗光点';
+  }
+
+  $('#submitBtn').addEventListener('click',()=>{
+    const answer=$('#answerInput').value.trim();
+    if(!answer){showToast('写下点什么吧，哪怕一句话也好呀');$('#answerInput').focus();return;}
+    const today=getToday(),entries=loadJSON(STORAGE_KEY);
+    entries[today]={question:getQuestionForDate(today),answer,timestamp:Date.now()};
+    saveJSON(STORAGE_KEY,entries);
+    $('#answerInput').disabled=true;$('#submitBtn').disabled=true;
+    $('#submitBtn').textContent='✦ 已收集';
+    spawnFallingStar();
+    setTimeout(()=>{showDone(entries[today]);updateJar();},700);
+  });
+
+  function spawnFallingStar(){
+    const star=document.createElement('div');
+    star.style.cssText=`
+      position:fixed;z-index:180;pointer-events:none;left:50%;top:-20px;
+      transform:translateX(-50%);width:16px;height:16px;
+      background:#fde047;image-rendering:pixelated;
+      box-shadow:0 0 30px #fde047,0 0 60px #fbbf24,0 0 90px #f59e0b;
+      transition:all .7s cubic-bezier(.25,.46,.45,.94);
+    `;
+    document.body.appendChild(star);
+    requestAnimationFrame(()=>{
+      const jarR=$('#jarArea').getBoundingClientRect();
+      star.style.top=(jarR.top+jarR.height*.4)+'px';
+    });
+    setTimeout(()=>{star.style.transform='translateX(-50%) scale(.2)';star.style.opacity='0';},500);
+    setTimeout(()=>star.remove(),1200);
+  }
+
+  function renderCollection(){
+    currentView='collection';
+    $('#mainView').classList.add('hidden');$('#doneView').classList.add('hidden');
+    $('#collectionView').classList.add('active');
+    const entries=loadJSON(STORAGE_KEY);
+    const dates=Object.keys(entries).sort().reverse();
+    $('#collectionCount').textContent='共 '+dates.length+' 颗';
+    if(dates.length===0){
+      $('#collectionEntries').innerHTML='<div class="empty-collection">⭐<br>罐子还是空的<br>每天来这里留下一句话<br>慢慢地，它会装满星光</div>';
+      return;
+    }
+    const colors=['#fde047','#fb7185','#7dd3fc','#34d399','#fbbf24','#a78bfa','#fb923c','#22d3ee','#f9a8d4','#a3e635'];
+    $('#collectionEntries').innerHTML=dates.map((d,i)=>{
+      const e=entries[d],[y,m,day]=d.split('-');
+      return`<div class="entry-card" data-date="${d}" style="--card-clr:${colors[i%colors.length]}">
+        <div class="entry-date">${y}年${+m}月${+day}日</div>
+        <div class="entry-question">${esc(e.question)}</div>
+        <div class="entry-preview">${esc(e.answer)}</div></div>`;
+    }).join('');
+    $('#collectionEntries').querySelectorAll('.entry-card').forEach(c=>{
+      c.addEventListener('click',()=>showDetail(c.dataset.date));
+    });
+  }
+
+  function showDetail(d){
+    const e=loadJSON(STORAGE_KEY)[d];if(!e)return;
+    const[y,m,day]=d.split('-');
+    const overlay=document.createElement('div');overlay.className='overlay';
+    overlay.innerHTML=`<div class="overlay-card" onclick="event.stopPropagation()">
+      <div class="overlay-date">${y}年${+m}月${+day}日</div>
+      <div class="overlay-question">${esc(e.question)}</div>
+      <div class="overlay-answer">${esc(e.answer)}</div>
+      <button class="overlay-close-btn">关闭</button></div>`;
+    document.body.appendChild(overlay);
+    const close=()=>{overlay.style.opacity='0';overlay.style.transition='opacity .2s';setTimeout(()=>overlay.remove(),200);};
+    overlay.addEventListener('click',close);
+    overlay.querySelector('.overlay-close-btn').addEventListener('click',close);
+  }
+
+  let currentView='today';
+  $('#navToday').addEventListener('click',renderToday);
+  $('#navCollection').addEventListener('click',renderCollection);
+  $('#jarArea').addEventListener('click',renderCollection);
+
+  let toastT;
+  function showToast(msg){
+    clearTimeout(toastT);$('#toast').textContent=msg;
+    $('#toast').classList.add('show');
+    toastT=setTimeout(()=>$('#toast').classList.remove('show'),2200);
+  }
+
+  // Mouse parallax for mascots
+  document.addEventListener('mousemove',e=>{
+    const x=(e.clientX/window.innerWidth-.5)*18;
+    const y=(e.clientY/window.innerHeight-.5)*18;
+    const main=$('#mascotMain'),side=$('#mascotSide');
+    if(main){
+      main.style.transform=`translateY(-50%) translate(${x*1.2}px,${y*.8}px)`;
+      main.style.transition='transform .6s ease-out';
+    }
+    if(side){
+      side.style.transform=`translate(${-x*.9}px,${y*.7}px)`;
+      side.style.transition='transform .7s ease-out';
+    }
+  });
+
+  createTinyStars();
+  drawJar(Object.keys(loadJSON(STORAGE_KEY)).length);
+  renderToday();
+})();
+</script>
+</body>
+</html>

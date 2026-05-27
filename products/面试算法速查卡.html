@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面试算法速查卡 | CS Interview Cheatsheet</title>
+<style>
+:root{--bg:#0a0a0a;--surface:#141414;--border:#2a2a2a;--text:#e0e0e0;--accent:#00ff88;--warn:#ffcc00;--info:#00aaff;--pink:#ff6b9d}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Fira Code','Cascadia Code','Consolas','Microsoft YaHei',monospace;padding:24px;max-width:1100px;margin:0 auto}
+h1{font-size:22px;color:var(--accent);text-align:center;margin-bottom:4px;letter-spacing:2px}
+.subtitle{text-align:center;color:#666;font-size:12px;margin-bottom:24px}
+.section{margin-bottom:24px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.section h2{background:var(--surface);padding:10px 16px;font-size:14px;color:var(--accent);border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.section h2:hover{background:#1a1a1a}
+.section .body{padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:12px;line-height:1.7}
+.card h3{font-size:13px;margin-bottom:6px;color:var(--warn)}
+.card .code{background:#000;border:1px solid var(--border);border-radius:4px;padding:8px;margin:6px 0;font-size:11px;white-space:pre;overflow-x:auto;color:#ccc}
+.card .complexity{font-size:10px;color:#888;margin-top:4px}
+.badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;margin-right:4px}
+.badge.easy{background:#1a3a1a;color:var(--accent)}
+.badge.med{background:#3a3a1a;color:var(--warn)}
+.badge.hard{background:#3a1a1a;color:#f66}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.tab{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);cursor:pointer;font-size:11px;transition:.15s}
+.tab:hover,.tab.active{border-color:var(--accent);color:var(--accent)}
+.search{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:6px;font-size:13px;margin-bottom:16px;font-family:inherit}
+.search:focus{outline:none;border-color:var(--accent)}
+@media print{body{background:#fff;color:#000}.section{border-color:#ccc}body{font-size:10px}}
+</style>
+</head>
+<body>
+
+<h1>面试算法速查卡</h1>
+<p class="subtitle">数据结构 · 排序 · 搜索 · 动态规划 · 系统设计 — 面试前快速复习</p>
+
+<input type="text" class="search" id="searchBox" placeholder="搜索算法/数据结构... (如: 二分查找、链表反转、快速排序)">
+
+<div class="tabs">
+  <button class="tab active" data-cat="all">全部</button>
+  <button class="tab" data-cat="sort">排序</button>
+  <button class="tab" data-cat="ds">数据结构</button>
+  <button class="tab" data-cat="search">搜索</button>
+  <button class="tab" data-cat="dp">动态规划</button>
+  <button class="tab" data-cat="graph">图论</button>
+  <button class="tab" data-cat="sys">系统设计</button>
+</div>
+
+<div id="content"></div>
+
+<script>
+const CHEATSHEET = [
+  // 排序
+  {cat:'sort',title:'快速排序',diff:'med',code:`function quickSort(arr) {
+  if (arr.length <= 1) return arr;
+  const pivot = arr[Math.floor(arr.length/2)];
+  const left = arr.filter(x => x < pivot);
+  const mid = arr.filter(x => x === pivot);
+  const right = arr.filter(x => x > pivot);
+  return [...quickSort(left), ...mid, ...quickSort(right)];
+}`,complexity:'时间: O(n log n) 平均 · O(n²) 最坏 · 空间: O(log n)'},
+  {cat:'sort',title:'归并排序',diff:'med',code:`function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  const mid = Math.floor(arr.length / 2);
+  const left = mergeSort(arr.slice(0, mid));
+  const right = mergeSort(arr.slice(mid));
+  return merge(left, right);
+}
+function merge(l, r) {
+  const res = []; let i = 0, j = 0;
+  while (i < l.length && j < r.length)
+    res.push(l[i] < r[j] ? l[i++] : r[j++]);
+  return [...res, ...l.slice(i), ...r.slice(j)];
+}`,complexity:'时间: O(n log n) · 空间: O(n) · 稳定排序'},
+  {cat:'sort',title:'堆排序',diff:'med',code:`function heapSort(arr) {
+  const heapify = (n, i) => {
+    let largest = i, l = 2*i+1, r = 2*i+2;
+    if (l < n && arr[l] > arr[largest]) largest = l;
+    if (r < n && arr[r] > arr[largest]) largest = r;
+    if (largest !== i) {
+      [arr[i], arr[largest]] = [arr[largest], arr[i]];
+      heapify(n, largest);
+    }
+  };
+  for (let i = Math.floor(arr.length/2)-1; i >= 0; i--) heapify(arr.length, i);
+  for (let i = arr.length-1; i > 0; i--) {
+    [arr[0], arr[i]] = [arr[i], arr[0]];
+    heapify(i, 0);
+  }
+  return arr;
+}`,complexity:'时间: O(n log n) · 空间: O(1) · 不稳定'},
+
+  // 数据结构
+  {cat:'ds',title:'链表反转 (迭代)',diff:'easy',code:`function reverseList(head) {
+  let prev = null, curr = head;
+  while (curr) {
+    const next = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = next;
+  }
+  return prev;
+}`,complexity:'时间: O(n) · 空间: O(1)'},
+  {cat:'ds',title:'链表反转 (递归)',diff:'easy',code:`function reverseList(head) {
+  if (!head || !head.next) return head;
+  const newHead = reverseList(head.next);
+  head.next.next = head;
+  head.next = null;
+  return newHead;
+}`,complexity:'时间: O(n) · 空间: O(n) 递归栈'},
+  {cat:'ds',title:'LRU 缓存',diff:'med',code:`class LRUCache {
+  constructor(capacity) {
+    this.cap = capacity;
+    this.map = new Map();
+  }
+  get(key) {
+    if (!this.map.has(key)) return -1;
+    const val = this.map.get(key);
+    this.map.delete(key);
+    this.map.set(key, val);
+    return val;
+  }
+  put(key, value) {
+    if (this.map.has(key)) this.map.delete(key);
+    this.map.set(key, value);
+    if (this.map.size > this.cap)
+      this.map.delete(this.map.keys().next().value);
+  }
+}`,complexity:'时间: O(1) · 利用 Map 的插入顺序特性'},
+  {cat:'ds',title:'二叉树遍历 (非递归)',diff:'med',code:`// 中序遍历 (左-根-右)
+function inorderTraversal(root) {
+  const res = [], stack = [];
+  let curr = root;
+  while (curr || stack.length) {
+    while (curr) { stack.push(curr); curr = curr.left; }
+    curr = stack.pop();
+    res.push(curr.val);
+    curr = curr.right;
+  }
+  return res;
+}`,complexity:'时间: O(n) · 空间: O(h) h为树高'},
+  {cat:'ds',title:'Trie (前缀树)',diff:'med',code:`class Trie {
+  constructor() { this.root = {}; }
+  insert(word) {
+    let node = this.root;
+    for (const c of word) {
+      if (!node[c]) node[c] = {};
+      node = node[c];
+    }
+    node.isEnd = true;
+  }
+  search(word) {
+    let node = this.root;
+    for (const c of word) {
+      if (!node[c]) return false;
+      node = node[c];
+    }
+    return !!node.isEnd;
+  }
+  startsWith(prefix) {
+    let node = this.root;
+    for (const c of prefix) {
+      if (!node[c]) return false;
+      node = node[c];
+    }
+    return true;
+  }
+}`,complexity:'插入/查询: O(m) m为单词长度'},
+
+  // 搜索
+  {cat:'search',title:'二分查找',diff:'easy',code:`function binarySearch(arr, target) {
+  let l = 0, r = arr.length - 1;
+  while (l <= r) {
+    const mid = Math.floor((l + r) / 2);
+    if (arr[mid] === target) return mid;
+    if (arr[mid] < target) l = mid + 1;
+    else r = mid - 1;
+  }
+  return -1;
+}`,complexity:'时间: O(log n) · 前提: 数组已排序'},
+  {cat:'search',title:'BFS (层序遍历)',diff:'med',code:`function bfs(root) {
+  if (!root) return [];
+  const res = [], queue = [root];
+  while (queue.length) {
+    const level = [], len = queue.length;
+    for (let i = 0; i < len; i++) {
+      const node = queue.shift();
+      level.push(node.val);
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+    res.push(level);
+  }
+  return res;
+}`,complexity:'时间: O(n) · 空间: O(w) w为树宽'},
+  {cat:'search',title:'DFS (深度优先)',diff:'med',code:`// 递归版
+function dfs(node, visited = new Set()) {
+  if (!node || visited.has(node)) return;
+  visited.add(node);
+  console.log(node.val);
+  for (const neighbor of node.neighbors)
+    dfs(neighbor, visited);
+}`,complexity:'时间: O(V+E) · 空间: O(V)'},
+
+  // 动态规划
+  {cat:'dp',title:'爬楼梯 (经典DP)',diff:'easy',code:`// n阶楼梯，每次1或2步，多少种爬法
+function climbStairs(n) {
+  if (n <= 2) return n;
+  let a = 1, b = 2;
+  for (let i = 3; i <= n; i++)
+    [a, b] = [b, a + b];
+  return b;
+}
+// dp[i] = dp[i-1] + dp[i-2]`,complexity:'时间: O(n) · 空间: O(1) · 本质是斐波那契'},
+  {cat:'dp',title:'最长递增子序列 (LIS)',diff:'med',code:`function lengthOfLIS(nums) {
+  const dp = new Array(nums.length).fill(1);
+  for (let i = 0; i < nums.length; i++)
+    for (let j = 0; j < i; j++)
+      if (nums[i] > nums[j])
+        dp[i] = Math.max(dp[i], dp[j] + 1);
+  return Math.max(...dp);
+}`,complexity:'时间: O(n²) · 可优化至 O(n log n) 用二分'},
+  {cat:'dp',title:'背包问题 (0/1)',diff:'med',code:`// capacity = W, n 个物品 weight[i] value[i]
+function knapsack(W, wt, val, n) {
+  const dp = Array(W + 1).fill(0);
+  for (let i = 0; i < n; i++)
+    for (let w = W; w >= wt[i]; w--)
+      dp[w] = Math.max(dp[w], dp[w - wt[i]] + val[i]);
+  return dp[W];
+}`,complexity:'时间: O(n·W) · 空间: O(W)'},
+  {cat:'dp',title:'编辑距离',diff:'hard',code:`function minDistance(word1, word2) {
+  const m = word1.length, n = word2.length;
+  const dp = Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = word1[i-1] === word2[j-1]
+        ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  return dp[m][n];
+}`,complexity:'时间: O(mn) · 空间: O(mn)'},
+
+  // 图论
+  {cat:'graph',title:'Dijkstra 最短路径',diff:'med',code:`function dijkstra(graph, start) {
+  const dist = {}, visited = new Set();
+  for (const v in graph) dist[v] = Infinity;
+  dist[start] = 0;
+  while (visited.size < Object.keys(graph).length) {
+    let u = null;
+    for (const v in graph)
+      if (!visited.has(v) && (u === null || dist[v] < dist[u])) u = v;
+    visited.add(u);
+    for (const [v, w] of Object.entries(graph[u] || {}))
+      if (dist[u] + w < dist[v]) dist[v] = dist[u] + w;
+  }
+  return dist;
+}`,complexity:'时间: O(V²) · 用优先队列可优化至 O((V+E)logV)'},
+  {cat:'graph',title:'拓扑排序 (Kahn)',diff:'med',code:`function topoSort(n, edges) {
+  const indeg = Array(n).fill(0), adj = Array.from({length:n},()=>[]);
+  for (const [u, v] of edges) { adj[u].push(v); indeg[v]++; }
+  const q = [], res = [];
+  for (let i = 0; i < n; i++) if (indeg[i] === 0) q.push(i);
+  while (q.length) {
+    const u = q.shift(); res.push(u);
+    for (const v of adj[u]) if (--indeg[v] === 0) q.push(v);
+  }
+  return res.length === n ? res : []; // 有环返回[]
+}`,complexity:'时间: O(V+E)'},
+
+  // 系统设计
+  {cat:'sys',title:'设计短链接服务',diff:'med',code:`核心方案:
+1. 用 Base62 编码自增 ID → 短码
+2. 数据库: ID → long_url 映射表
+3. 访问: 301 重定向
+4. 分布式: 雪花算法生成 ID
+5. 缓存: Redis 热点 URL
+关键数字: 7位Base62 = 62^7 ≈ 3.5万亿`,complexity:'关注点: 并发、去重、过期策略、QPS'},
+  {cat:'sys',title:'设计限流器',diff:'med',code:`固定窗口:
+- key: userId, 计数器 + 过期时间
+
+滑动窗口 (更精确):
+- Redis Sorted Set
+- ZREMRANGEBYSCORE 移除过期
+- ZCARD 计数
+
+令牌桶:
+- 定速补充令牌
+- 请求消耗令牌
+- 无令牌 → 429`,complexity:'常见算法: 固定窗口/滑动窗口/令牌桶/漏桶'},
+  {cat:'sys',title:'设计消息队列',diff:'hard',code:`核心组件:
+- Producer → Broker → Consumer
+- Topic 分区 (Partition)
+- 消费者组 (Consumer Group)
+- Offset 管理
+- 持久化 (WAL / 日志段)
+
+关键:
+- 至少一次/至多一次/精确一次语义
+- 顺序保证 (同一分区内有序)
+- 延迟: 批量发送 + 零拷贝`,complexity:'分布式: 主从复制/ISR/Leader选举'},
+];
+
+function render(entries) {
+  const cats = {};
+  entries.forEach(e => {
+    if (!cats[e.cat]) cats[e.cat] = [];
+    cats[e.cat].push(e);
+  });
+  let html = '';
+  for (const [cat, items] of Object.entries(cats)) {
+    const catName = {sort:'排序算法',ds:'数据结构',search:'搜索算法',dp:'动态规划',graph:'图论',sys:'系统设计'}[cat] || cat;
+    html += `<div class="section"><h2>${catName} (${items.length})</h2><div class="body">`;
+    items.forEach(item => {
+      html += `<div class="card">
+        <h3>${item.title} <span class="badge ${item.diff}">${item.diff==='easy'?'简单':item.diff==='med'?'中等':'困难'}</span></h3>
+        <div class="code">${item.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <div class="complexity">${item.complexity}</div>
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+  document.getElementById('content').innerHTML = html;
+}
+
+// Search + Filter
+document.getElementById('searchBox').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  const cat = document.querySelector('.tab.active')?.dataset.cat || 'all';
+  let filtered = CHEATSHEET;
+  if (cat !== 'all') filtered = filtered.filter(e => e.cat === cat);
+  if (q) filtered = filtered.filter(e => e.title.includes(q) || e.code.includes(q) || e.complexity.includes(q));
+  render(filtered);
+});
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const cat = tab.dataset.cat;
+    const q = document.getElementById('searchBox').value.toLowerCase();
+    let filtered = cat === 'all' ? CHEATSHEET : CHEATSHEET.filter(e => e.cat === cat);
+    if (q) filtered = filtered.filter(e => e.title.includes(q) || e.code.includes(q));
+    render(filtered);
+  });
+});
+
+render(CHEATSHEET);
+</script>
+</body>
+</html>

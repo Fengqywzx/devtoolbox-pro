@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>万子轩的数字小铺</title>
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--text:#e2e8f0;--accent:#38bdf8;--green:#4ade80;--pink:#f472b6;--amber:#fbbf24;--red:#f87171}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Microsoft YaHei',sans-serif;min-height:100vh}
+.hero{text-align:center;padding:60px 20px 40px;background:linear-gradient(180deg,#1e3a5f22 0%,transparent 100%)}
+.hero h1{font-size:36px;background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.hero p{color:#94a3b8;font-size:15px}
+.products{max-width:1000px;margin:0 auto;padding:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .2s;display:flex;flex-direction:column}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.card .icon{font-size:40px;margin-bottom:12px}
+.card h3{font-size:18px;margin-bottom:6px}
+.card .desc{color:#94a3b8;font-size:13px;line-height:1.6;flex:1;margin-bottom:16px}
+.card .features{font-size:12px;color:#94a3b8;margin-bottom:16px}
+.card .features span{display:inline-block;background:var(--bg);padding:2px 8px;border-radius:4px;margin:2px;border:1px solid var(--border)}
+.card .footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:16px}
+.card .price{font-size:22px;font-weight:700;color:var(--accent)}
+.card .price .orig{font-size:13px;color:#666;text-decoration:line-through;margin-left:6px}
+.card .btn{padding:8px 20px;border-radius:20px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-size:13px;transition:.15s;text-decoration:none}
+.card .btn:hover{background:var(--accent);color:#000}
+.contact-bar{text-align:center;padding:40px 20px;color:#94a3b8;font-size:14px}
+.contact-bar a{color:var(--accent);text-decoration:none}
+.faq{max-width:700px;margin:0 auto;padding:20px}
+.faq h2{text-align:center;margin-bottom:20px;color:var(--accent)}
+.faq-item{margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.faq-item summary{padding:12px 16px;background:var(--surface);cursor:pointer;font-size:14px;font-weight:600}
+.faq-item p{padding:12px 16px;font-size:13px;color:#94a3b8;line-height:1.7}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:100;justify-content:center;align-items:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:420px;width:90%;text-align:center}
+.modal h3{font-size:20px;margin-bottom:8px}
+.modal .price-tag{font-size:32px;color:var(--accent);font-weight:700;margin:16px 0}
+.modal .pay-methods{display:flex;gap:16px;justify-content:center;margin:20px 0}
+.modal .pay-method{padding:12px 24px;border:2px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:.15s}
+.modal .pay-method:hover,.modal .pay-method.active{border-color:var(--green);background:#4ade8011}
+.modal .pay-method .pay-icon{font-size:32px}
+.modal .pay-method .pay-name{font-size:12px;color:#94a3b8;margin-top:4px}
+.modal .pay-qr{background:#fff;padding:16px;border-radius:8px;margin:16px 0;display:none}
+.modal .pay-qr.show{display:block}
+.modal .pay-qr .qr-placeholder{width:200px;height:200px;background:#f0f0f0;margin:0 auto;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;flex-direction:column;gap:8px}
+.modal .note{font-size:12px;color:#94a3b8;margin-top:8px}
+.modal .btn-done{padding:10px 30px;border-radius:20px;border:none;background:var(--green);color:#000;cursor:pointer;font-size:14px;font-weight:600;margin-top:16px}
+.modal .btn-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>万子轩的数字小铺</h1>
+  <p>大学生独立开发 · 实用工具 · 价格友好 · 即买即发</p>
+</div>
+
+<div class="products">
+  <div class="card">
+    <div class="icon">🛠</div>
+    <h3>DevToolbox Pro</h3>
+    <p class="desc">程序员效率工具箱，8 合 1 集成开发辅助工具。JSON 格式化、Base64、正则测试、时间戳、颜色工具、文本对比、UUID 生成。</p>
+    <div class="features"><span>JSON</span><span>Base64</span><span>正则</span><span>时间戳</span><span>UUID</span><span>颜色</span><span>Diff</span><span>URL</span></div>
+    <div class="footer"><span class="price">¥9.9 <span class="orig">¥29.9</span></span><button class="btn" onclick="buy('DevToolbox Pro','¥9.9')">购买</button></div>
+  </div>
+
+  <div class="card">
+    <div class="icon">📄</div>
+    <h3>极简简历模板</h3>
+    <p class="desc">可直接打印的 A4 简历模板，浏览器打开即编辑。极简风格，适合找实习/找工作。</p>
+    <div class="features"><span>可编辑</span><span>A4打印</span><span>极简</span><span>HTML</span></div>
+    <div class="footer"><span class="price">¥5.9 <span class="orig">¥19.9</span></span><button class="btn" onclick="buy('极简简历模板','¥5.9')">购买</button></div>
+  </div>
+
+  <div class="card">
+    <div class="icon">📚</div>
+    <h3>考前冲刺计划器</h3>
+    <p class="desc">番茄钟 + 任务管理 + 艾宾浩斯复习系统。期末复习、考证备考必备。</p>
+    <div class="features"><span>番茄钟</span><span>任务管理</span><span>笔记</span><span>复习规划</span></div>
+    <div class="footer"><span class="price">¥5.9 <span class="orig">¥19.9</span></span><button class="btn" onclick="buy('考前冲刺计划器','¥5.9')">购买</button></div>
+  </div>
+
+  <div class="card">
+    <div class="icon">⚡</div>
+    <h3>面试算法速查卡</h3>
+    <p class="desc">20+ 核心算法代码模板，排序/搜索/DP/图论/系统设计，面试前快速复习。</p>
+    <div class="features"><span>排序</span><span>DP</span><span>图论</span><span>系统设计</span><span>搜索</span></div>
+    <div class="footer"><span class="price">¥5.9 <span class="orig">¥19.9</span></span><button class="btn" onclick="buy('面试算法速查卡','¥5.9')">购买</button></div>
+  </div>
+</div>
+
+<div class="faq">
+  <h2>常见问题</h2>
+  <div class="faq-item"><summary>怎么使用这些产品？</summary><p>所有产品都是单个 HTML 文件，用浏览器（Chrome/Edge/Firefox）打开即可使用。不需要安装任何软件，不需要联网。</p></div>
+  <div class="faq-item"><summary>买完可以退款吗？</summary><p>虚拟商品售出后不支持退款。但如果你遇到任何问题（打不开、功能异常），直接联系我帮你解决。</p></div>
+  <div class="faq-item"><summary>可以定制吗？</summary><p>可以！加功能、改配色、加 Logo 都可以。定制价格根据需求聊。</p></div>
+</div>
+
+<div class="contact-bar">
+  <p>北京工业大学 · 计算机专业 · 独立开发</p>
+  <p style="margin-top:4px">购买/定制联系微信：wan_zixuan</p>
+</div>
+
+<!-- Purchase Modal -->
+<div class="modal-overlay" id="buyModal">
+  <div class="modal">
+    <h3 id="modalTitle">购买 DevToolbox Pro</h3>
+    <div class="price-tag" id="modalPrice">¥9.9</div>
+    <p style="color:#94a3b8;font-size:13px">选择付款方式</p>
+    <div class="pay-methods">
+      <div class="pay-method active" onclick="selectPay('wechat',this)">
+        <div class="pay-icon">💚</div><div class="pay-name">微信支付</div>
+      </div>
+      <div class="pay-method" onclick="selectPay('alipay',this)">
+        <div class="pay-icon">💙</div><div class="pay-name">支付宝</div>
+      </div>
+    </div>
+    <div class="pay-qr show" id="payQR">
+      <div class="qr-placeholder">
+        <span style="font-size:48px">📱</span>
+        <span>请保存收款码到<br>products/screenshots/<br>wechat-pay.png</span>
+      </div>
+    </div>
+    <p class="note">付款后截图发给微信 wan_zixuan，立即发文件</p>
+    <p class="note" style="color:var(--green);margin-top:4px" id="payHint">或直接微信红包，秒发货</p>
+    <button class="btn-done" onclick="closeModal()">已完成付款</button>
+    <p style="font-size:11px;color:#666;margin-top:8px;cursor:pointer" onclick="closeModal()">关闭</p>
+  </div>
+</div>
+
+<script>
+function buy(name, price) {
+  document.getElementById('modalTitle').textContent = '购买 ' + name;
+  document.getElementById('modalPrice').textContent = price;
+  document.getElementById('buyModal').classList.add('show');
+
+  // Log order
+  try {
+    fetch('/api/buy', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({product: name, price, time: new Date().toISOString()})
+    }).catch(() => {});
+  } catch(e) {}
+}
+
+function selectPay(method, el) {
+  document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('payHint').textContent = method === 'wechat' ? '微信红包/扫码付款，秒发货' : '支付宝转账后发截图，秒发货';
+}
+
+function closeModal() {
+  document.getElementById('buyModal').classList.remove('show');
+}
+</script>
+
+</body>
+</html>

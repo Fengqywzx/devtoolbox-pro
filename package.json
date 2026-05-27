@@ -1,0 +1,28 @@
+{
+  "name": "devtoolbox-pro",
+  "version": "1.0.0",
+  "description": "Developer Toolbox Pro - JSON/Base64/Regex/Timestamp/UUID tools in one HTML file",
+  "main": "devtoolbox-pro.html",
+  "files": [
+    "devtoolbox-pro.html",
+    "README.md"
+  ],
+  "keywords": [
+    "developer-tools",
+    "json-formatter",
+    "base64",
+    "regex",
+    "uuid",
+    "timestamp",
+    "devtools"
+  ],
+  "author": "万子轩",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+    "simple-git": "^3.36.0"
+  }
+}

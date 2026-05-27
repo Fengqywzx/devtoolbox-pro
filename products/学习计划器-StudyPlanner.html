@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>考前冲刺计划器 | Study Planner Pro</title>
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--border:#334155;--text:#e2e8f0;--accent:#38bdf8;--green:#4ade80;--red:#f87171;--amber:#fbbf24}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Microsoft YaHei',sans-serif;min-height:100vh;display:flex}
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);padding:20px 0;position:fixed;top:0;left:0;bottom:0;overflow-y:auto}
+.sidebar h1{font-size:15px;padding:0 20px 16px;color:var(--accent);border-bottom:1px solid var(--border);margin-bottom:8px}
+.sidebar button{display:block;width:100%;text-align:left;padding:10px 20px;background:none;border:none;color:var(--text);cursor:pointer;font-size:13px;transition:.15s}
+.sidebar button:hover,.sidebar button.active{background:var(--border);color:var(--accent)}
+.main{margin-left:240px;flex:1;padding:32px;max-width:800px}
+.main h2{font-size:20px;margin-bottom:6px}
+.desc{color:#94a3b8;font-size:13px;margin-bottom:20px}
+.panel{display:none}
+.panel.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
+.card h3{font-size:15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+input,textarea,select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px;width:100%}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+textarea{resize:vertical;min-height:60px}
+.row{display:flex;gap:10px;margin:10px 0;align-items:center}
+.btn{padding:7px 14px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:12px;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+.btn.danger{background:var(--red);color:#fff;border-color:var(--red)}
+.progress-bar{height:8px;background:var(--border);border-radius:4px;margin:8px 0;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:4px;transition:width .3s}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.stat-card .num{font-size:28px;font-weight:700;color:var(--accent)}
+.stat-card .label{font-size:11px;color:#94a3b8;margin-top:4px}
+.task-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.task-item:last-child{border-bottom:none}
+.task-item .left{display:flex;align-items:center;gap:10px}
+.task-item input[type="checkbox"]{width:18px;height:18px;cursor:pointer}
+.task-item.done .task-name{text-decoration:line-through;color:var(--muted)}
+.priority{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600}
+.priority.high{background:var(--red);color:#fff}
+.priority.mid{background:var(--amber);color:#000}
+.priority.low{background:var(--green);color:#000}
+.timer{font-size:48px;font-weight:700;text-align:center;color:var(--accent);margin:20px 0;font-family:'Fira Code',monospace}
+.timer-btn{display:flex;gap:10px;justify-content:center}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h1>📚 Study Planner Pro</h1>
+  <button class="active" data-panel="dashboard">📊 仪表盘</button>
+  <button data-panel="tasks">✅ 任务管理</button>
+  <button data-panel="pomodoro">🍅 番茄钟</button>
+  <button data-panel="notes">📝 笔记区</button>
+  <button data-panel="review">🔄 复习规划</button>
+</nav>
+
+<main class="main">
+
+  <!-- 仪表盘 -->
+  <div class="panel active" id="panel-dashboard">
+    <h2>学习仪表盘</h2>
+    <p class="desc">全局进度概览</p>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="num" id="totalTasks">0</div><div class="label">总任务</div></div>
+      <div class="stat-card"><div class="num" id="doneTasks" style="color:var(--green)">0</div><div class="label">已完成</div></div>
+      <div class="stat-card"><div class="num" id="todayMinutes" style="color:var(--amber)">0</div><div class="label">今日学习(分钟)</div></div>
+      <div class="stat-card"><div class="num" id="streak" style="color:#f472b6">0</div><div class="label">连续天数</div></div>
+    </div>
+    <div class="card"><h3>今日进度</h3><div class="progress-bar"><div class="progress-fill" id="todayProgress" style="width:0%"></div></div><p style="font-size:12px;color:#94a3b8;text-align:center" id="progressText">0 / 0 任务完成</p></div>
+  </div>
+
+  <!-- 任务管理 -->
+  <div class="panel" id="panel-tasks">
+    <h2>任务管理</h2>
+    <p class="desc">添加、排序、完成你的学习任务</p>
+    <div class="row">
+      <input type="text" id="taskInput" placeholder="新任务..." style="flex:1">
+      <select id="prioritySelect" style="width:100px"><option value="high">高优先</option><option value="mid" selected>中优先</option><option value="low">低优先</option></select>
+      <select id="subjectSelect" style="width:120px"><option>计算机</option><option>数学</option><option>英语</option><option>物理</option><option>哲学</option><option>其他</option></select>
+      <button class="btn primary" onclick="addTask()">+ 添加</button>
+    </div>
+    <div id="taskList"></div>
+  </div>
+
+  <!-- 番茄钟 -->
+  <div class="panel" id="panel-pomodoro">
+    <h2>番茄钟</h2>
+    <p class="desc">25 分钟专注 + 5 分钟休息</p>
+    <div class="timer" id="timerDisplay">25:00</div>
+    <div class="timer-btn">
+      <button class="btn primary" onclick="startTimer()" id="startBtn">▶ 开始</button>
+      <button class="btn" onclick="pauseTimer()" id="pauseBtn" disabled>⏸ 暂停</button>
+      <button class="btn" onclick="resetTimer()">↺ 重置</button>
+    </div>
+    <p style="text-align:center;margin-top:12px;color:#94a3b8;font-size:13px">已完成的番茄: <span id="pomodoroCount" style="color:var(--accent)">0</span></p>
+  </div>
+
+  <!-- 笔记 -->
+  <div class="panel" id="panel-notes">
+    <h2>课堂 / 自学笔记</h2>
+    <p class="desc">Markdown 风格快速笔记</p>
+    <div class="row">
+      <input type="text" id="noteTitle" placeholder="笔记标题..." style="flex:1">
+      <select id="noteSubject" style="width:120px"><option>计算机</option><option>数学</option><option>物理</option><option>哲学</option><option>其他</option></select>
+    </div>
+    <textarea id="noteContent" placeholder="笔记内容...&#10;支持简单 Markdown 语法" style="min-height:200px;margin-bottom:10px"></textarea>
+    <button class="btn primary" onclick="saveNote()">💾 保存笔记</button>
+    <div id="noteList" style="margin-top:16px"></div>
+  </div>
+
+  <!-- 复习规划 -->
+  <div class="panel" id="panel-review">
+    <h2>艾宾浩斯复习规划</h2>
+    <p class="desc">基于遗忘曲线的智能复习提醒</p>
+    <div class="row">
+      <input type="text" id="reviewInput" placeholder="学习内容（如：数据结构-二叉树）" style="flex:1">
+      <button class="btn primary" onclick="addReview()">+ 添加</button>
+    </div>
+    <div id="reviewList" style="margin-top:12px"></div>
+    <p style="font-size:11px;color:#94a3b8;margin-top:12px">复习间隔: 第1天 → 第2天 → 第4天 → 第7天 → 第15天</p>
+  </div>
+
+</main>
+
+<script>
+// Navigation
+document.querySelectorAll('.sidebar button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.sidebar button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.panel).classList.add('active');
+  });
+});
+
+// Data persistence
+function save(){localStorage.setItem('studyplanner',JSON.stringify(state))}
+function load(){try{const d=JSON.parse(localStorage.getItem('studyplanner'));if(d){state=d;renderAll()}}catch(e){}}
+let state={tasks:[],notes:[],reviews:[],pomodoroCount:0,todayMinutes:0,streak:0,lastDate:''};
+
+// Tasks
+function addTask(){
+  const name=document.getElementById('taskInput').value.trim();
+  if(!name)return;
+  state.tasks.push({id:Date.now(),name,priority:document.getElementById('prioritySelect').value,subject:document.getElementById('subjectSelect').value,done:false,createdAt:new Date().toISOString()});
+  document.getElementById('taskInput').value='';
+  save();renderTasks();updateDashboard();
+}
+function toggleTask(id){const t=state.tasks.find(t=>t.id===id);if(t){t.done=!t.done;save();renderTasks();updateDashboard()}}
+function deleteTask(id){state.tasks=state.tasks.filter(t=>t.id!==id);save();renderTasks();updateDashboard()}
+function renderTasks(){
+  const el=document.getElementById('taskList');
+  const tasks=[...state.tasks].reverse();
+  const subjects={};
+  tasks.forEach(t=>{if(!subjects[t.subject])subjects[t.subject]=[];subjects[t.subject].push(t)});
+  let html='';
+  for(const[subj,ts]of Object.entries(subjects)){
+    html+=`<h4 style="margin:12px 0 6px;color:#94a3b8;font-size:12px">📂 ${subj} (${ts.length})</h4>`;
+    ts.forEach(t=>{
+      html+=`<div class="task-item${t.done?' done':''}"><div class="left"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id})"><span class="task-name">${esc(t.name)}</span><span class="priority ${t.priority}">${t.priority==='high'?'高':t.priority==='mid'?'中':'低'}</span></div><button class="btn danger" style="padding:2px 8px;font-size:11px" onclick="deleteTask(${t.id})">×</button></div>`;
+    });
+  }
+  el.innerHTML=html||'<p style="color:#94a3b8;text-align:center;margin-top:30px">还没有任务，添加第一个吧！</p>';
+}
+
+// Pomodoro
+let timerInterval=null,timerSeconds=25*60,isRunning=false;
+function updateTimerDisplay(){const m=Math.floor(timerSeconds/60),s=timerSeconds%60;document.getElementById('timerDisplay').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function startTimer(){
+  if(isRunning)return;
+  isRunning=true;
+  document.getElementById('startBtn').disabled=true;
+  document.getElementById('pauseBtn').disabled=false;
+  timerInterval=setInterval(()=>{
+    timerSeconds--;
+    updateTimerDisplay();
+    if(timerSeconds<=0){
+      clearInterval(timerInterval);isRunning=false;timerSeconds=25*60;
+      state.pomodoroCount++;state.todayMinutes+=25;
+      document.getElementById('pomodoroCount').textContent=state.pomodoroCount;
+      document.getElementById('startBtn').disabled=false;
+      document.getElementById('pauseBtn').disabled=true;
+      updateTimerDisplay();save();updateDashboard();
+      alert('🍅 一个番茄完成！休息 5 分钟吧～');
+    }
+  },1000);
+}
+function pauseTimer(){clearInterval(timerInterval);isRunning=false;document.getElementById('startBtn').disabled=false;document.getElementById('pauseBtn').disabled=true}
+function resetTimer(){clearInterval(timerInterval);isRunning=false;timerSeconds=25*60;updateTimerDisplay();document.getElementById('startBtn').disabled=false;document.getElementById('pauseBtn').disabled=true}
+
+// Notes
+function saveNote(){
+  const title=document.getElementById('noteTitle').value.trim();
+  const content=document.getElementById('noteContent').value.trim();
+  if(!title||!content)return;
+  state.notes.push({id:Date.now(),title,content,subject:document.getElementById('noteSubject').value,date:new Date().toISOString()});
+  document.getElementById('noteTitle').value='';document.getElementById('noteContent').value='';
+  save();renderNotes();
+}
+function deleteNote(id){state.notes=state.notes.filter(n=>n.id!==id);save();renderNotes()}
+function renderNotes(){
+  const el=document.getElementById('noteList');
+  let html='';
+  [...state.notes].reverse().forEach(n=>{
+    html+=`<div class="card"><h3>${esc(n.title)} <span style="font-size:11px;color:#94a3b8;font-weight:400">${esc(n.subject)} · ${new Date(n.date).toLocaleDateString('zh-CN')}</span><button class="btn danger" style="padding:2px 8px;font-size:11px" onclick="deleteNote(${n.id})">×</button></h3><div style="white-space:pre-wrap;font-size:13px">${esc(n.content)}</div></div>`;
+  });
+  el.innerHTML=html||'<p style="color:#94a3b8;text-align:center;margin-top:20px">还没有笔记</p>';
+}
+
+// Review (Ebbinghaus)
+function addReview(){
+  const name=document.getElementById('reviewInput').value.trim();
+  if(!name)return;
+  state.reviews.push({id:Date.now(),name,startDate:new Date().toISOString(),intervals:[1,2,4,7,15],completed:[]});
+  document.getElementById('reviewInput').value='';
+  save();renderReviews();
+}
+function renderReviews(){
+  const el=document.getElementById('reviewList');
+  let html='';
+  [...state.reviews].reverse().forEach(r=>{
+    const start=new Date(r.startDate);
+    const due=r.intervals.filter((d,i)=>!r.completed.includes(i)).map(d=>{const dt=new Date(start);dt.setDate(dt.getDate()+d);return dt});
+    const today=new Date();today.setHours(0,0,0,0);
+    const overdue=due.filter(d=>d<=today);
+    html+=`<div class="card"><h3>${esc(r.name)} <span style="font-size:11px;color:${overdue.length?'var(--red)':'var(--green)'};font-weight:400">${overdue.length?overdue.length+' 项待复习':'全部完成'}</span></h3><div style="font-size:12px;color:#94a3b8">`;
+    r.intervals.forEach((d,i)=>{
+      const dt=new Date(start);dt.setDate(dt.getDate()+d);
+      const done=r.completed.includes(i);
+      html+=`<span style="margin-right:10px;${done?'color:var(--green)':dt<=today?'color:var(--red)':''}">第${d}天: ${dt.toLocaleDateString('zh-CN')} ${done?'✓':dt<=today?'⚠':''}</span>`;
+    });
+    html+=`</div></div>`;
+  });
+  el.innerHTML=html||'<p style="color:#94a3b8;text-align:center;margin-top:20px">添加学习内容，系统会根据艾宾浩斯遗忘曲线自动提醒复习</p>';
+}
+
+// Dashboard
+function updateDashboard(){
+  const total=state.tasks.length, done=state.tasks.filter(t=>t.done).length;
+  document.getElementById('totalTasks').textContent=total;
+  document.getElementById('doneTasks').textContent=done;
+  document.getElementById('todayMinutes').textContent=state.todayMinutes;
+  document.getElementById('streak').textContent=state.streak;
+  document.getElementById('todayProgress').style.width=total?Math.round(done/total*100)+'%':'0%';
+  document.getElementById('progressText').textContent=`${done} / ${total} 任务完成`;
+  document.getElementById('pomodoroCount').textContent=state.pomodoroCount;
+}
+function renderAll(){renderTasks();renderNotes();renderReviews();updateDashboard()}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// Check daily streak
+(function(){
+  const today=new Date().toISOString().split('T')[0];
+  if(state.lastDate&&state.lastDate!==today){
+    const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+    if(state.lastDate===yesterday.toISOString().split('T')[0])state.streak++;
+    else state.streak=1;
+  }else if(!state.lastDate)state.streak=1;
+  state.lastDate=today;
+  save();updateDashboard();
+})();
+
+updateTimerDisplay();load();
+</script>
+</body>
+</html>

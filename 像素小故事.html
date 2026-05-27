@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>像素小故事</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    min-height:100vh;
+    background:linear-gradient(180deg,#0b1440 0%,#16204a 40%,#1a2d5a 100%);
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    padding:20px;gap:20px;
+  }
+  .scene-wrapper{
+    background:linear-gradient(180deg,rgba(20,30,60,.8),rgba(15,20,40,.9));
+    border:6px solid #4a6fa5;
+    border-radius:4px;
+    padding:16px;
+    box-shadow:
+      0 0 0 4px #2a4a7a,0 0 0 8px rgba(20,30,60,.6),
+      0 0 40px rgba(100,150,220,.2),0 0 80px rgba(100,150,220,.1);
+    image-rendering:pixelated;
+  }
+  canvas{display:block;image-rendering:pixelated;border-radius:2px;}
+  .message-area{
+    text-align:center;
+    font-family:'Silkscreen','ZCOOL KuaiLe',monospace;
+    font-size:1.1rem;
+    color:#fde047;
+    text-shadow:0 0 12px rgba(253,224,71,.5),0 2px 0 #b45309;
+    letter-spacing:.06em;
+    line-height:2;
+    image-rendering:pixelated;
+    padding:8px 20px;
+    background:rgba(15,20,40,.8);
+    border:3px solid #7dd3fc;
+    border-radius:2px;
+    box-shadow:3px 3px 0 rgba(15,20,40,.6);
+  }
+  .message-area .name{color:#fb923c;font-size:1.25rem;}
+  .message-area .thumbs{font-size:1.5rem;}
+  @keyframes sparkle{
+    0%,100%{opacity:.4;transform:scale(1);}
+    50%{opacity:1;transform:scale(1.3);}
+  }
+  .sparkle-overlay{
+    position:absolute;pointer-events:none;
+    font-size:1.2rem;
+    animation:sparkle var(--d) ease-in-out infinite;
+    animation-delay:var(--dl);
+    opacity:.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="scene-wrapper">
+  <canvas id="mainCanvas"></canvas>
+</div>
+
+<div class="message-area">
+  <span class="name">万子轩</span>，你又完成了<br>一个小任务！
+  <span class="thumbs">👍</span>
+</div>
+
+<script>
+(function(){
+  const SCALE = 3;
+  const W = 142;
+  const H = 96;
+  const canvas = document.getElementById('mainCanvas');
+  canvas.width = W * SCALE;
+  canvas.height = H * SCALE;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+
+  const C = {
+    K:null,            // 0: transparent
+    sky1:'#0b1d5a',    // 1
+    sky2:'#132d7a',    // 2
+    sky3:'#1a3d9a',    // 3
+    sky4:'#2250b8',    // 4
+    sky5:'#2a60d0',    // 5
+    s1:'#fef08a',      // 6: bright star
+    s2:'#fde047',      // 7: star
+    s3:'#fbbf24',      // 8: dim star
+    s4:'#f59e0b',      // 9: warm star
+    skin:'#ffd4b8',    // 10: skin light
+    sk2:'#f0b890',     // 11: skin
+    sk3:'#d4946c',     // 12: skin shadow
+    hair:'#5c3317',    // 13: brown hair
+    h2:'#8b5a2b',      // 14: hair light
+    h3:'#3b1d08',      // 15: hair dark
+    red:'#ef4444',     // 16: bright red
+    r2:'#dc2626',      // 17: red
+    r3:'#b91c1c',      // 18: dark red
+    r4:'#991b1b',      // 19: deep red
+    wh:'#ffffff',      // 20: white
+    w2:'#e2e8f0',      // 21: off white
+    gr1:'#4ade80',     // 22: bright green
+    gr2:'#22c55e',     // 23: green
+    gr3:'#16a34a',     // 24: dark green
+    gr4:'#15803d',     // 25: deep green
+    yl:'#fef08a',      // 26: yellow
+    yl2:'#fde047',     // 27: gold yellow
+    or1:'#fb923c',     // 28: orange
+    or2:'#f97316',     // 29: dark orange
+    pk:'#f9a8d4',      // 30: pink
+    pk2:'#f472b6',     // 31: dark pink
+    pu:'#a78bfa',      // 32: purple
+    pu2:'#8b5cf6',     // 33: dark purple
+    cy:'#67e8f9',      // 34: cyan
+    cy2:'#22d3ee',     // 35: dark cyan
+    br:'#92400e',      // 36: dark brown (ground)
+    br2:'#78350f',     // 37: deeper brown
+    bl:'#1e1b4b',      // 38: near-black blue
+    bl2:'#0f0d2e',     // 39: deeper
+    fl1:'#fb7185',     // 40: flower pink
+    fl2:'#fbbf24',     // 41: flower yellow
+    fl3:'#a78bfa',     // 42: flower purple
+    fl4:'#ffffff',     // 43: flower white
+  };
+
+  const P = new Array(H).fill(null).map(()=>new Array(W).fill(0));
+
+  // ── Sky gradient ──
+  for(let y=0;y<62;y++){
+    const t=y/62;
+    let col;
+    if(t<0.2) col=1;
+    else if(t<0.4) col=2;
+    else if(t<0.6) col=3;
+    else if(t<0.8) col=4;
+    else col=5;
+    for(let x=0;x<W;x++) P[y][x]=col;
+  }
+
+  // ── Stars (seeded by position) ──
+  function rng(x,y){let h=((x*374761393)+(y*668265263))&0x7fffffff;return h/0x7fffffff;}
+  for(let y=2;y<56;y++){
+    for(let x=2;x<W-2;x++){
+      const r=rng(x,y);
+      if(r<0.038){
+        const sr=rng(x+99,y+33);
+        if(sr<0.25) P[y][x]=6;
+        else if(sr<0.55) P[y][x]=7;
+        else if(sr<0.8) P[y][x]=8;
+        else P[y][x]=9;
+        // Cross sparkle for bright stars
+        if(sr<0.25){
+          if(y>2 && P[y-1][x]===0) P[y-1][x]=7;
+          if(y<55 && P[y+1][x]===0) P[y+1][x]=7;
+          if(x>2 && P[y][x-1]===0) P[y][x-1]=7;
+          if(x<W-3 && P[y][x+1]===0) P[y][x+1]=7;
+        }
+      }
+    }
+  }
+
+  // ── Large Van Gogh style stars ──
+  const bigStars=[
+    [18,10,8],[105,8,7],[35,22,9],[120,25,6],[55,15,8],[90,30,7],
+    [12,35,9],[130,18,8],[70,6,6],[25,38,7],[110,35,8],[48,28,9],
+  ];
+  bigStars.forEach(([sx,sy,col])=>{
+    for(let dy=-3;dy<=3;dy++){
+      for(let dx=-3;dx<=3;dx++){
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<3.2 && sy+dy>0 && sy+dy<56 && sx+dx>0 && sx+dx<W-1){
+          if(d<1.2) P[sy+dy][sx+dx]=col;
+          else if(d<2.2) P[sy+dy][sx+dx]=(rng(sx+dx,sy+dy)<0.6)?col:0;
+          else if(rng(sx+dx,sy+dy)<0.35) P[sy+dy][sx+dx]=col;
+        }
+      }
+    }
+  });
+
+  // ── Distant hills ──
+  for(let y=48;y<62;y++){
+    const t=(y-48)/14;
+    for(let x=0;x<W;x++){
+      const h=Math.sin(x*0.04)*8+Math.sin(x*0.09+2)*5+Math.sin(x*0.02+1)*12;
+      if(y>56-h){
+        const col=t<0.45?24:t<0.75?25:23;
+        P[y][x]=col;
+      }
+    }
+  }
+
+  // ── Ground layers ──
+  for(let y=66;y<H;y++){
+    const ty=(y-66)/(H-66);
+    let col;
+    if(ty<0.25) col=23;
+    else if(ty<0.5) col=24;
+    else if(ty<0.75) col=36;
+    else col=37;
+    for(let x=0;x<W;x++) P[y][x]=col;
+  }
+  // Grass top edge (jagged)
+  for(let x=0;x<W;x++){
+    const h=Math.floor(Math.abs(Math.sin(x*0.3+1))*2.5+Math.abs(Math.sin(x*0.17))*1.5);
+    for(let dy=0;dy<h;dy++){
+      const y=66-dy;
+      if(y>=0) P[y][x]=22;
+    }
+  }
+
+  // ── Flowers ──
+  const flowers=[
+    [22,64,40],[38,63,41],[55,65,42],[78,63,40],[95,64,41],
+    [112,63,42],[128,64,40],[15,64,41],[48,64,42],[85,63,40],
+    [105,65,41],[62,63,42],[32,64,40],[120,64,41],[70,65,42],
+  ];
+  flowers.forEach(([fx,fy,fc])=>{
+    if(fy>0&&fy<H-1&&fx>0&&fx<W-1){
+      P[fy][fx]=fc;
+      if(fy-1>=0){P[fy-1][fx]=fc;P[fy-1][fx-1]=fc;P[fy-1][fx+1]=fc;}
+      if(fy-2>=0){P[fy-2][fx]=fc;}
+      P[fy][fx-1]=22;P[fy][fx+1]=22;
+    }
+  });
+
+  // ── Small cloud ──
+  const cloudPos=[[30,14],[42,12],[55,13],[68,14],[35,15],[60,14],[48,11]];
+  cloudPos.forEach(([cx,cy])=>{
+    for(let dy=-2;dy<=2;dy++){
+      for(let dx=-3;dx<=3;dx++){
+        if(cx+dx>0&&cx+dx<W&&cy+dy>0&&cy+dy<56){
+          const d=Math.sqrt((dx*1.3)**2+(dy*0.7)**2);
+          if(d<3.5&&rng(cx+dx,cy+dy)<0.65){
+            P[cy+dy][cx+dx]=21;
+          }
+        }
+      }
+    }
+  });
+
+  // ═══════ HERO SPRITE (16w x 20h) ═══════
+  // Celebration pose — arms raised, red cape, happy face
+  const heroX=63, heroY=42;
+  const hero=[
+  // 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+    [0, 0, 0, 0,15,15,13,13,13,13,15,15, 0, 0, 0, 0], // 0: hair top
+    [0, 0,15,15,13,13,13,13,13,13,13,13,15,15, 0, 0], // 1: hair
+    [0, 0,13,13,10,10,10,10,10,10,10,10,13,13, 0, 0], // 2: hair edge + face
+    [0, 0,13,10,10,10,10,10,10,10,10,10,10,13, 0, 0], // 3: face top
+    [0, 0, 0,10,10,20,10,10,10,20,10,10,10, 0, 0, 0], // 4: eyes
+    [0, 0, 0,10,10,11,12,11,11,12,11,10,10, 0, 0, 0], // 5: cheeks
+    [0, 0, 0,10,11,11,11,38,38,11,11,11,10, 0, 0, 0], // 6: smile area
+    [0,16,16,16,16,16,16,16,16,16,16,16,16,16,16, 0], // 7: CAPE/ARMS OUT
+    [0,16, 0,16,17,17,17,17,17,17,17,17,16, 0,16, 0], // 8: arms
+    [0, 0, 0,16,17,17,17,17,17,17,17,17,16, 0, 0, 0], // 9: shirt top
+    [0, 0, 0,16,17,17,17,17,17,17,17,17,16, 0, 0, 0], // 10: shirt
+    [0, 0, 0,16,18,17,17,18,18,17,17,18,16, 0, 0, 0], // 11: shirt detail
+    [0, 0, 0, 0,32,32,32,32,32,32,32,32, 0, 0, 0, 0], // 12: belt
+    [0, 0, 0, 0,32,32,33,33,33,33,32,32, 0, 0, 0, 0], // 13: pants
+    [0, 0, 0, 0,32,32,32,32,32,32,32,32, 0, 0, 0, 0], // 14: pants low
+    [0, 0, 0, 0, 0,15,15,13,13,15,15, 0, 0, 0, 0, 0], // 15: shoes
+    [0, 0, 0, 0, 0,15, 0, 0, 0, 0,15, 0, 0, 0, 0, 0], // 16: shoe bottom
+    [0, 0, 0, 0, 0,36,36, 0, 0,36,36, 0, 0, 0, 0, 0], // 17: ground shadow
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 18
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 19
+  ];
+
+  // ── Render hero ──
+  for(let hy=0;hy<hero.length;hy++){
+    for(let hx=0;hx<hero[0].length;hx++){
+      const col=hero[hy][hx];
+      if(col!==0){
+        const px=heroX+hx, py=heroY+hy;
+        if(px>=0&&px<W&&py>=0&&py<H) P[py][px]=col;
+      }
+    }
+  }
+
+  // ── Companion critter (small round creature, right side) ──
+  const cx=90, cy=58;
+  const critter=[
+    [0,0,28,28,28,0,0],
+    [0,28,29,29,29,28,0],
+    [28,29,29,20,29,29,28],
+    [28,29,20,38,20,29,28],
+    [28,29,29,38,29,29,28],
+    [0,28,29,29,29,28,0],
+    [0,0,28,28,28,0,0],
+  ];
+  for(let cy2=0;cy2<critter.length;cy2++){
+    for(let cx2=0;cx2<critter[0].length;cx2++){
+      const col=critter[cy2][cx2];
+      if(col!==0){
+        const px=cx+cx2, py=cy+cy2;
+        if(px>=0&&px<W&&py>=0&&py<H) P[py][px]=col;
+      }
+    }
+  }
+
+  // ── Tiny flag/banner ──
+  const flagX=105, flagY=52;
+  // Pole
+  for(let fy=0;fy<16;fy++) if(flagY+fy<H) P[flagY+fy][flagX]=36;
+  // Banner
+  for(let by=0;by<6;by++){
+    for(let bx=1;bx<8;bx++){
+      const col=bx<4?16:(bx<6?28:26);
+      const px=flagX+bx, py=flagY+2+by;
+      if(px<W&&py<H) P[py][px]=col;
+    }
+  }
+
+  // ── Sparkles around hero ──
+  const sparkles=[
+    [heroX-3,heroY-2,6],[heroX+17,heroY-1,7],[heroX+8,heroY-4,8],
+    [heroX-5,heroY+4,9],[heroX+19,heroY+6,6],[heroX-2,heroY+10,7],
+    [heroX+16,heroY-5,8],[heroX+10,heroY-6,6],[heroX-4,heroY-3,7],
+  ];
+  sparkles.forEach(([sx,sy,sc])=>{
+    if(sx>0&&sx<W-1&&sy>0&&sy<H-1){
+      P[sy][sx]=sc;
+      if(rng(sx,sy)>0.5&&sy-1>0) P[sy-1][sx]=sc;
+      if(rng(sx+1,sy)>0.5&&sx+1<W) P[sy][sx+1]=sc;
+    }
+  });
+
+  // ── Render everything to canvas ──
+  const colorMap=[
+    null,           // 0
+    C.sky1,C.sky2,C.sky3,C.sky4,C.sky5,
+    C.s1,C.s2,C.s3,C.s4,
+    C.skin,C.sk2,C.sk3,
+    C.hair,C.h2,C.h3,
+    C.red,C.r2,C.r3,C.r4,
+    C.wh,C.w2,
+    C.gr1,C.gr2,C.gr3,C.gr4,
+    C.yl,C.yl2,
+    C.or1,C.or2,
+    C.pk,C.pk2,
+    C.pu,C.pu2,
+    C.cy,C.cy2,
+    C.br,C.br2,
+    C.bl,C.bl2,
+    C.fl1,C.fl2,C.fl3,C.fl4,
+  ];
+
+  for(let y=0;y<H;y++){
+    for(let x=0;x<W;x++){
+      const colIdx=P[y][x];
+      if(colIdx===0||!colorMap[colIdx]) continue;
+      ctx.fillStyle=colorMap[colIdx];
+      ctx.fillRect(x*SCALE,y*SCALE,SCALE,SCALE);
+    }
+  }
+
+  // ── Subtle animation ──
+  let frame=0;
+  function animate(){
+    frame++;
+    // Twinkle effect: re-render certain stars with varying opacity
+    // (Simplified: just re-draw a few stars each frame)
+    if(frame%30===0){
+      const twinkleStars=[[18,10],[105,8],[35,22],[120,25],[55,15]];
+      twinkleStars.forEach(([sx,sy])=>{
+        const bright=Math.sin(frame*0.05+sx*0.3)>0;
+        for(let dy=-2;dy<=2;dy++){
+          for(let dx=-2;dx<=2;dx++){
+            const px=sx+dx, py=sy+dy;
+            if(px>=0&&px<W&&py>=0&&py<H&&P[py][px]>=6&&P[py][px]<=9){
+              ctx.fillStyle=bright?C.s1:colorMap[P[py][px]];
+              ctx.fillRect(px*SCALE,py*SCALE,SCALE,SCALE);
+            }
+          }
+        }
+      });
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+})();
+</script>
+</body>
+</html>

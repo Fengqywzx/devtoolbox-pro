@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>简历模板 — 极简风格 | 可直接打印</title>
+<style>
+:root{--bg:#fff;--text:#1a1a1a;--muted:#666;--line:#e0e0e0;--accent:#2563eb}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f5f5;display:flex;justify-content:center;padding:40px 20px;font-family:'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif;color:var(--text);line-height:1.6}
+.page{width:210mm;min-height:297mm;background:var(--bg);padding:25mm 20mm;box-shadow:0 2px 20px rgba(0,0,0,.1)}
+h1{font-size:28px;font-weight:700;letter-spacing:2px;margin-bottom:4px}
+.header-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.contact{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 16px}
+.contact span{white-space:nowrap}
+.divider{border:none;border-top:2px solid var(--accent);margin:16px 0}
+h2{font-size:16px;font-weight:700;letter-spacing:1px;margin-bottom:10px;color:var(--accent);text-transform:uppercase}
+.edu-item,.exp-item,.proj-item{margin-bottom:14px}
+.edu-item h3,.exp-item h3,.proj-item h3{font-size:15px;font-weight:600}
+.edu-item .meta,.exp-item .meta,.proj-item .meta{font-size:12px;color:var(--muted);margin:2px 0}
+ul{padding-left:18px;font-size:14px}
+li{margin-bottom:4px}
+.skills{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tag{padding:2px 10px;background:#f0f4ff;color:var(--accent);border-radius:3px;font-size:12px}
+.two-col{display:flex;gap:24px}
+.two-col>div{flex:1}
+@media print{
+  body{background:#fff;padding:0}
+  .page{box-shadow:none;width:100%;min-height:auto}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 编辑你的信息 -->
+  <div class="header-row">
+    <div>
+      <h1>张 三</h1>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:4px">计算机科学与技术 · 本科</div>
+    </div>
+  </div>
+  <div class="contact">
+    <span>📧 zhangsan@email.com</span>
+    <span>📱 138-0000-0000</span>
+    <span>🔗 github.com/zhangsan</span>
+    <span>📍 北京</span>
+  </div>
+
+  <hr class="divider">
+
+  <h2>教育背景</h2>
+  <div class="edu-item">
+    <h3>XX大学 · 计算机科学与技术</h3>
+    <div class="meta">2023.09 - 2027.06 | 本科 | GPA 3.8/4.0</div>
+    <ul>
+      <li>主修课程：数据结构、算法设计、操作系统、计算机网络、数据库原理</li>
+      <li>获得校级优秀学生奖学金（2024）</li>
+    </ul>
+  </div>
+
+  <h2>项目经历</h2>
+  <div class="proj-item">
+    <h3>DevToolbox Pro — 程序员效率工具箱</h3>
+    <div class="meta">个人项目 | HTML/CSS/JavaScript | 2025</div>
+    <ul>
+      <li>开发包含 8 个实用工具的 Web 工具箱，支持 JSON 格式化、Base64 编解码、正则测试等</li>
+      <li>采用暗色主题 UI 设计，实现侧边栏导航与单页应用切换</li>
+      <li>发布至闲鱼/淘宝作为数字商品销售</li>
+    </ul>
+  </div>
+  <div class="proj-item">
+    <h3>Buddy Pet — 像素宠物互动应用</h3>
+    <div class="meta">个人项目 | Canvas/JavaScript | 2025</div>
+    <ul>
+      <li>基于 Canvas 的像素艺术电子宠物，支持喂养/训练/进化系统</li>
+      <li>实现 localStorage 持久化存档、心情系统、自主行为 AI</li>
+    </ul>
+  </div>
+
+  <h2>技能</h2>
+  <div class="skills">
+    <span class="tag">JavaScript</span>
+    <span class="tag">HTML/CSS</span>
+    <span class="tag">Python</span>
+    <span class="tag">Node.js</span>
+    <span class="tag">Git</span>
+    <span class="tag">Linux</span>
+    <span class="tag">SQL</span>
+    <span class="tag">React</span>
+  </div>
+
+  <h2 style="margin-top:16px">自我评价</h2>
+  <p style="font-size:14px">热爱编程与技术创作，具备独立完成前端项目的能力。善于学习新技术，关注代码质量与用户体验。有多个个人项目经验，乐于通过数字产品创造价值。</p>
+
+</div>
+</body>
+</html>
