@@ -2,65 +2,62 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'bridge-of-voices/**'
-      - '.github/workflows/build-apk.yml'
 
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: bridge-of-voices
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
 
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+      - uses: actions/setup-java@v4
+        with: { distribution: 'temurin', java-version: '17' }
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: 'platforms;android-34 build-tools;34.0.0 platforms;android-33'
+          packages: 'platforms;android-34 build-tools;34.0.0'
 
-      - name: Accept Android SDK Licenses
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-
-      - name: Create local.properties
+      - name: Accept licenses & create local.properties
+        working-directory: bridge-of-voices
         run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
           echo "sdk.dir=$ANDROID_HOME" > android/local.properties
-          echo "sdk.dir=$ANDROID_SDK_ROOT" >> android/local.properties 2>/dev/null || true
 
-      - name: Install Dependencies
+      - name: Install npm dependencies
+        working-directory: bridge-of-voices
         run: npm install
 
-      - name: Sync Web Assets
+      - name: Build Web Assets
+        working-directory: bridge-of-voices
         run: npm run www
 
-      - name: Sync Capacitor
-        run: npx cap sync
+      - name: Sync Capacitor Android
+        working-directory: bridge-of-voices
+        run: npx cap sync android
 
-      - name: Build Debug APK
+      - name: Verify android project structure
+        working-directory: bridge-of-voices
         run: |
-          export ANDROID_HOME=${ANDROID_HOME:-$ANDROID_SDK_ROOT}
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          echo "=== gradle wrapper ===" && ls -la android/gradlew
+          echo "=== capacitor android ===" && ls -la node_modules/@capacitor/android/capacitor/build.gradle 2>/dev/null || echo "MISSING"
+          echo "=== capacitor settings ===" && cat android/capacitor.settings.gradle
 
-      - name: Upload APK Artifact
+      - name: Build APK with Gradle
+        working-directory: bridge-of-voices/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tail -80
+
+      - name: Find and Upload APK
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bridge-of-voices-apk
-          path: bridge-of-voices/android/app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            bridge-of-voices/android/app/build/outputs/apk/**/*.apk
           if-no-files-found: warn
