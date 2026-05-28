@@ -1,0 +1,418 @@
+/* === 声音的桥 — 聊天访谈样式 === */
+
+.interview-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 52px - var(--safe-bottom));
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* === 进度条 === */
+.interview-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 30px;
+  text-align: center;
+}
+
+/* === 聊天区域 === */
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  -webkit-overflow-scrolling: touch;
+  background: #f8fafc;
+}
+
+.chat-message {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  animation: msgIn 0.3s ease;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-message.bot {
+  flex-direction: row;
+}
+
+.chat-message.user {
+  flex-direction: row-reverse;
+}
+
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.chat-message.bot .chat-avatar {
+  background: var(--primary-bg);
+}
+
+.chat-message.user .chat-avatar {
+  background: #f0fdf4;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.chat-message.bot .chat-bubble {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-top-left-radius: 4px;
+  color: var(--text);
+}
+
+.chat-message.user .chat-bubble {
+  background: var(--primary);
+  color: #fff;
+  border-top-right-radius: 4px;
+}
+
+/* === 输入栏 === */
+.input-bar {
+  padding: 10px 16px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+}
+
+.input-hint {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  min-height: 16px;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-text-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 15px;
+  font-family: inherit;
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.chat-text-input:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.1);
+}
+
+.btn-send {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.btn-send:hover { background: #1e3a8a; }
+.btn-send:active { transform: scale(0.95); }
+
+.btn-chat-record {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.btn-chat-record:hover { border-color: var(--primary-light); }
+
+.btn-chat-record.recording {
+  border-color: var(--danger);
+  background: var(--danger);
+  animation: recordPulse 1s infinite;
+}
+
+.btn-chat-record.recording .mic-icon {
+  filter: grayscale(1) brightness(10);
+}
+
+@keyframes recordPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.btn-skip {
+  display: block;
+  margin: 8px auto 0;
+  font-size: 13px;
+}
+
+/* === TTS 按钮 === */
+.btn-tts-toggle {
+  font-size: 16px;
+}
+
+.btn-tts-toggle.active {
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+/* === 确认消息（积极倾听） === */
+.chat-message.ack {
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.chat-message.ack .chat-bubble {
+  max-width: 90%;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 4px 12px;
+  font-style: italic;
+}
+
+/* === 打字指示器 === */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 10px 14px;
+}
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  animation: typingBounce 1.2s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* === 聊天区域优化 === */
+.chat-area {
+  scroll-behavior: smooth;
+  background:
+    linear-gradient(rgba(248,250,252,0.95), rgba(248,250,252,0.95)),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 40px,
+      rgba(0,0,0,0.015) 40px,
+      rgba(0,0,0,0.015) 41px
+    );
+}
+.chat-message { margin-bottom: 14px; }
+.chat-message.bot .chat-bubble {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.chat-message.user .chat-bubble {
+  box-shadow: 0 2px 4px rgba(30,64,175,0.15);
+}
+
+/* === 输入栏优化 === */
+.input-bar { padding: 10px 16px 12px; }
+.chat-text-input { font-size: 16px; }
+.btn-chat-record { width: 48px; height: 48px; }
+.btn-send { width: 44px; height: 44px; }
+
+/* === v3: 深度对话增强样式 === */
+
+/* 法律提示气泡 */
+.chat-message.legal-snippet .chat-avatar {
+  background: #fef3c7;
+}
+.legal-bubble {
+  background: #fffbeb !important;
+  border: 1px solid #fcd34d !important;
+  font-size: 13px !important;
+  color: #92400e !important;
+}
+
+/* 深度信息气泡 */
+.chat-message.deep-info .chat-avatar {
+  background: #ede9fe;
+}
+.deep-bubble {
+  background: #f5f3ff !important;
+  border: 1px solid #c4b5fd !important;
+  font-size: 14px !important;
+}
+
+/* 打字指示器容器 */
+.typing-indicator-wrap {
+  margin-bottom: 14px;
+}
+
+/* 深度结果面板（在确认阶段显示） */
+.deep-result-panel {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.deep-stat-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+.deep-stat-row strong {
+  color: var(--primary);
+  font-size: 15px;
+}
+
+.deep-section {
+  margin-top: 10px;
+}
+.deep-section h4 {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.deep-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  margin: 2px 4px 2px 0;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+.difficulty-tag .tag-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.severity-高 .tag-dot { background: #dc2626; }
+.severity-中 .tag-dot { background: #f59e0b; }
+.severity-低 .tag-dot { background: #16a34a; }
+
+.deep-one-liner {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* 议价权报告样式 */
+.bargaining-report {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.bargaining-report h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: var(--primary);
+}
+.bargaining-report h4 {
+  font-size: 15px;
+  margin: 16px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.bargain-score {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+.leverage-item {
+  background: #f8fafc;
+  border-left: 3px solid var(--primary);
+  padding: 8px 12px;
+  margin: 8px 0;
+  border-radius: 0 8px 8px 0;
+}
+.leverage-item .script {
+  font-size: 13px;
+  color: var(--primary);
+  margin-top: 4px;
+  font-style: italic;
+}
+.urgent-note {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 12px;
+}
+
+/* === 响应式 === */
+@media (max-width: 400px) {
+  .chat-bubble { max-width: 85%; font-size: 14px; }
+  .chat-text-input { font-size: 16px; }
+  .deep-stat-row { gap: 6px; }
+  .deep-stat-row strong { font-size: 13px; }
+}

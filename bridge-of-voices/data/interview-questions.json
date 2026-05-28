@@ -1,0 +1,961 @@
+{
+  "_version": "3.0",
+  "_description": "声音的桥 v3 — 深度对话访谈问题树。每种类型20+轮次，含追问变体、共情桥接、法律知识嵌入、困境探测",
+
+  "greeting": {
+    "first": "你好，我是小桥。你最近工作上遇到了什么难处？不用紧张，想到什么说什么，就当跟朋友唠嗑。",
+    "returning": "欢迎回来！要继续上次没弄完的，还是说个新的事？",
+    "tts": "你好，我是小桥。你最近工作上遇到了什么困难？慢慢说，不着急。",
+    "variants": [
+      "你好呀，我是小桥。不管遇到什么事，先说给我听听？",
+      "嗨，坐下来慢慢说。工作上碰到什么麻烦了吗？",
+      "我是小桥，专门帮劳动者把遭遇写成正式材料的。你最近怎样？"
+    ]
+  },
+
+  "typeConfirmation": {
+    "wage_arrears": [
+      "听着像是老板欠工资了，对不对？",
+      "我理解的是——工资没按时发，是这个情况吗？",
+      "所以主要问题是老板拖欠了你的工资，对吗？让我确认一下。"
+    ],
+    "no_contract": [
+      "听着像是没给签劳动合同，对不对？",
+      "所以你在那干活但没有签正式合同，是这个意思吗？",
+      "我理解——公司一直没有跟你签劳动合同，对吗？"
+    ],
+    "work_injury": [
+      "听着像是工作时候受伤了，对不对？",
+      "所以在上班的时候出了事故受了伤，是这个情况吗？",
+      "我理解——你是工作时受的伤，对吗？需要我帮你走工伤的程序吗？"
+    ],
+    "overtime": [
+      "听着像是加班太多了还没给够钱，对不对？",
+      "所以公司让你大量加班但不按法律规定给加班费，是这个情况吗？",
+      "我理解——超时加班而且加班费没给到位，对吗？"
+    ],
+    "unfair_dismissal": [
+      "听着像是被无故开除了，对不对？",
+      "所以公司没有正当理由就把你辞退了，是这个情况吗？",
+      "我理解——公司辞退你的方式或理由有问题，对吗？"
+    ]
+  },
+
+  "acknowledgments": [
+    "明白了，我记下来了。",
+    "好的，这个信息很重要。",
+    "我听懂了，接着说。",
+    "嗯，了解了。",
+    "收到了，你说得很清楚。",
+    "好的好的，都记着呢。",
+    "嗯嗯，你继续说。",
+    "了解，这个细节很有用。",
+    "谢谢你告诉我这些——我认真听了。",
+    "好的，这一点我理解清楚了。",
+    "行，我知道是怎么回事了。",
+    "嗯，确实是这样——法律上也有相应的说法。",
+    "好的，这个我回头会在文书里专门写出来。",
+    "辛苦了，这些细节说起来也不容易。",
+    "嗯，我听到了。你说得很对。"
+  ],
+
+  "empathyBridges": [
+    "我能感觉到这让你很不好受——",
+    "换谁遇到这种事都会这样——",
+    "你说的我完全理解——",
+    "先不管法律怎么说，首先这确实让人难受——",
+    "谢谢你愿意跟我说这些——",
+    "我知道说出来不容易——",
+    "这件事压在心头肯定不好过——",
+    "你的感受完全合理——"
+  ],
+
+  "clarificationPrompts": [
+    "能再说细一点吗？这个信息挺关键的。",
+    "我没太听明白，换个方式说一下？",
+    "这个很重要，你能再确认一下吗？",
+    "慢慢说，不着急，说清楚就好。",
+    "能再具体些吗？越具体越好。",
+    "能不能举个例子？这样我更好理解。",
+    "不好意思，我刚才可能没问清楚——换个说法："
+  ],
+
+  "skipPrompts": [
+    "没关系，这个先跳过，后面想起来了再补。",
+    "好的，这个问题先放着，咱接着聊。",
+    "行，不急，后面还能补充。",
+    "没关系，不知道也正常，我们聊下一个。"
+  ],
+
+  "completionPrompts": [
+    "好的，基本情况我都了解了。你稍等一下，我帮你把这些整理成正式材料。",
+    "差不多了，我来把你说的话变成法律文书。",
+    "好，信息收集得差不多了。接下来帮你整理成正式文件。",
+    "辛苦了，聊了这么多。现在我把这些都变成法律语言。"
+  ],
+
+  "deepProbes": {
+    "lifeImpact": [
+      "工资发不下来这段时间，你生活上怎么应对的？房租、吃饭这些怎么办？",
+      "这件事对你家里的生活影响大吗？家里人知道吗？",
+      "这段时间你是怎么熬过来的？有没有找人帮忙？",
+      "除了工资这事，还有没有别的让你晚上睡不着的？"
+    ],
+    "emotionalImpact": [
+      "这件事里，最让你觉得憋屈或者委屈的是什么？",
+      "有没有因为这个事，觉得特别无助的时候？",
+      "你跟别人说过这件事吗？他们的反应是什么？"
+    ],
+    "previousAttempts": [
+      "你之前有没有试过什么办法来解决？结果怎么样？",
+      "你跟老板直接聊过这事吗？他怎么说？",
+      "有没有找过其他部门或者机构？比如劳动局、派出所？"
+    ],
+    "futureConcerns": [
+      "你有没有担心——比如去告了会不会被报复、会不会影响以后找工作？",
+      "如果这件事能解决，你最想要的结果是什么？",
+      "除了钱的问题，你心里还有什么放不下的？"
+    ],
+    "safetyCheck": [
+      "现在你的人身安全有没有受到威胁？如果有的话一定要跟我说。",
+      "对方有没有说过什么让你感到害怕的话？",
+      "你一个人去见对方的时候，有没有觉得不安全？"
+    ]
+  },
+
+  "questions": {
+    "wage_arrears": [
+      {
+        "id": "wage_narrative",
+        "phase": "narrative",
+        "text": "跟我说说怎么回事吧。从什么时候开始不发工资的？中间有没有说过什么？随便说，想到哪说到哪。",
+        "variants": [
+          "你尽管说，把整件事从头到尾讲一遍。中间想起来什么细节都可以说。",
+          "先不着急，你说说大致情况。怎么开始的、现在是什么状况。"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "wage_who"
+      },
+      {
+        "id": "wage_who",
+        "phase": "identity",
+        "text": "先告诉你叫什么名字？放心，这些信息都存在你手机上，不会传出去的。",
+        "variants": [
+          "方便告诉我你的名字吗？写文书需要用，但我保证这些信息是安全的。",
+          "先说一下你怎么称呼？你的真名——仲裁申请书必须要用。"
+        ],
+        "ttsText": "先告诉我，你叫什么名字？你的信息都存在手机上，不会传出去。",
+        "field": "who", "type": "open", "required": true,
+        "followUp": "wage_who_retry",
+        "nextQuestion": "wage_whom",
+        "hint": "比如：张建国"
+      },
+      {
+        "id": "wage_who_retry",
+        "phase": "identity",
+        "text": "写仲裁申请书必须要你的真名，方便再说一次吗？",
+        "variants": [
+          "仲裁委需要真实姓名才能立案——再告诉我一次你的名字好吗？",
+          "我理解你可能有些顾虑，但真名是绕不开的——仲裁委必须要。能再说一次吗？"
+        ],
+        "ttsText": "写申请书需要你的名字，能再说一次吗？",
+        "field": "who", "type": "open", "required": true,
+        "nextQuestion": "wage_whom"
+      },
+      {
+        "id": "wage_whom",
+        "phase": "employer",
+        "text": "欠你工资的是哪家公司？或者老板叫什么？在哪个区哪条街？越具体越好。这个信息决定去哪个仲裁委。",
+        "variants": [
+          "对方是谁？公司名字叫什么？老板叫什么？在什么地方？",
+          "这个最关键——你得告诉我对方是谁。公司全名、地址。不知道全名的话，描述一下也行。"
+        ],
+        "ttsText": "欠工资的是哪个公司？在什么地方？",
+        "field": "whom", "type": "open", "required": true,
+        "followUp": "wage_whom_detail",
+        "nextQuestion": "wage_whom_detail",
+        "hint": "比如：龙华区观澜街道XX电子厂，老板姓王。不知道全称的话，说个大概也行"
+      },
+      {
+        "id": "wage_whom_detail",
+        "phase": "employer",
+        "text": "这个信息对找到该告谁特别重要。能再说细一点吗？公司牌子写的什么？或者之前发工资的时候，转账记录上显示的是什么名字？",
+        "variants": [
+          "你打开微信或支付宝，看看工资转账记录——对方账户名是什么？那个可能就是公司名字。",
+          "工牌上写的什么？或者工作服上有没有公司名字？"
+        ],
+        "ttsText": "能再具体一点吗？比如公司牌子写的什么名字？",
+        "field": "whom", "type": "open", "required": true,
+        "nextQuestion": "wage_when_start",
+        "hint": "打开微信或支付宝，看看工资转账记录里对方账号叫什么"
+      },
+      {
+        "id": "wage_when_start",
+        "phase": "timeline",
+        "text": "你什么时候开始在那干的？从什么时候开始不发工资的？中间有没有发过一部分？",
+        "variants": [
+          "时间线挺重要的——你什么时候入职的？欠薪从什么时候开始？",
+          "咱们把时间理清楚：入职时间、开始欠薪的时间、中间有没有发过一部分。"
+        ],
+        "ttsText": "你什么时候开始在那里工作的？欠薪从什么时候开始？",
+        "field": "when", "type": "open", "required": true,
+        "followUp": "wage_when_detail",
+        "nextQuestion": "wage_when_detail",
+        "hint": "比如：2024年3月开始干的，从今年1月开始再没发过工资，已经5个月了"
+      },
+      {
+        "id": "wage_when_detail",
+        "phase": "timeline",
+        "text": "那欠工资是从什么时候开始的？到现在一共几个月没发了？中间有没有发过一部分？",
+        "variants": [
+          "一共几个月没发工资了？每个月该发多少？中间有没有给过一两千应付一下？",
+          "你算一下——从最后一次发工资到现在，一共过了几个月？"
+        ],
+        "ttsText": "一共几个月没发了？中间有没有给过一部分？",
+        "field": "when", "type": "open", "required": true,
+        "nextQuestion": "wage_job",
+        "hint": "比如：从今年1月开始就再没发过，已经5个月了"
+      },
+      {
+        "id": "wage_job",
+        "phase": "details",
+        "text": "你在那做什么活儿？有没有固定的岗位？一个月正常工资多少？怎么发的——现金还是转账？",
+        "variants": [
+          "你做什么工作的？有没有签劳动合同？工资是现金还是打到卡上？",
+          "说说你的工作——做什么、怎么算钱、怎么发的。这些信息都关系到后面怎么算赔偿。"
+        ],
+        "ttsText": "你在那里做什么工作？工资怎么发的？",
+        "field": "jobType", "type": "open", "required": false,
+        "nextQuestion": "wage_amount",
+        "hint": "比如：流水线装配、外卖骑手、工地小工、饭店服务员。月薪6000现金发的"
+      },
+      {
+        "id": "wage_amount",
+        "phase": "details",
+        "text": "你一个月工资多少钱？老板一共欠了多少？不用特别精确，说个大数就行。",
+        "variants": [
+          "工资怎么算的？固定月薪还是按天/计件？一个月大概多少？一共欠了多少？",
+          "你自己算过没有？一个月该拿多少，到现在一共欠了多少？"
+        ],
+        "ttsText": "你一个月工资多少？一共欠了多少？",
+        "field": "howMuch", "type": "open", "required": true,
+        "followUp": "wage_amount_confirm",
+        "nextQuestion": "wage_amount_confirm",
+        "hint": "比如：一个月6000块，欠了3个月，大概1万8"
+      },
+      {
+        "id": "wage_amount_confirm",
+        "phase": "details",
+        "text": "我确认一下——欠薪一共是你说的这么多，对吧？这个数字写在申请书上的，仲裁委就按这个数来判，所以尽量说准一点。差一点没关系，但别差太多。",
+        "variants": [
+          "这个金额很重要——仲裁委判多少就看这个了。你刚才说的数目，再确认一下？",
+          "我得再确认一遍金额——这是写在正式申请书上的，不是随便说说的。你再想想，刚才说的数目准不准？"
+        ],
+        "ttsText": "我确认一下金额。这个数字很重要，仲裁委按这个判。",
+        "legalSnippet": "你知道吗？根据《劳动合同法》第85条，欠薪不仅要还，还要加付50%-100%的赔偿金。所以除了本金，你还可以多要一笔。",
+        "field": "howMuch", "type": "confirm", "required": true,
+        "nextQuestion": "wage_contract"
+      },
+      {
+        "id": "wage_contract",
+        "phase": "details",
+        "text": "你们签了劳动合同吗？如果没有合同，有没有别的东西能证明你在这上过班？比如工牌、工服、打卡记录？",
+        "variants": [
+          "有没有签过什么合同或者协议？入职的时候有没有填过什么表？",
+          "合同签了吗？如果没有——没关系，法律也保护没签合同的劳动者。但你要告诉我有什么能证明你在这上过班的东西。"
+        ],
+        "legalSnippet": "没签合同的话，从入职第2个月到第12个月，公司每月还要多付你一倍工资——这是《劳动合同法》第82条规定的。",
+        "field": "evidence", "type": "open", "required": false,
+        "nextQuestion": "wage_evidence",
+        "hint": "工牌、工服、工资转账记录、微信工作群截图——有一两样就够"
+      },
+      {
+        "id": "wage_evidence",
+        "phase": "evidence",
+        "text": "你手头有没有能证明这些事的材料？别担心说没有——好多人一开始都没有，我后面会教你怎么收集。什么都算：微信聊天记录、转账截图、工牌工服、考勤记录、工友电话。",
+        "variants": [
+          "咱们盘点一下你手头有什么：聊天记录？转账截图？工牌？打卡记录？任何能当证据的东西。",
+          "证据这事不急——你先说现在有什么，缺的我会一步一步教你收集。"
+        ],
+        "ttsText": "手头有什么能证明的材料吗？没有也没关系。",
+        "field": "evidence", "type": "open", "required": false,
+        "nextQuestion": "wage_communication",
+        "hint": "什么都算：微信聊天记录、转账截图、工牌工服、考勤打卡记录、工友电话"
+      },
+      {
+        "id": "wage_communication",
+        "phase": "evidence",
+        "text": "你有没有跟老板提过要工资的事？当面说的还是微信上说的？老板怎么回复的？",
+        "variants": [
+          "催过工资没有？跟谁催的？怎么说？对方怎么回？——这些对话记录本身就是证据。",
+          "你要过工资吗？有没有微信记录或者通话录音？如果有，这些很重要。"
+        ],
+        "field": "evidence", "type": "open", "required": false,
+        "nextQuestion": "wage_coworkers",
+        "hint": "如果有微信催工资的聊天记录，马上截图保存"
+      },
+      {
+        "id": "wage_coworkers",
+        "phase": "evidence",
+        "text": "你其他同事呢？他们也一样被欠工资吗？有没有人已经去告了或者去找过劳动局了？",
+        "variants": [
+          "跟你一起干活的工友什么情况？他们也被欠工资吗？",
+          "有没有其他同事也在讨薪？人多力量大，联合起来效果更好。"
+        ],
+        "field": "evidence", "type": "open", "required": false,
+        "nextQuestion": "wage_previous_action",
+        "hint": "工友的联系方式也是重要资源——至少记下1-2个愿意作证的人"
+      },
+      {
+        "id": "wage_previous_action",
+        "phase": "impact",
+        "text": "你之前有没有试过什么办法来解决？去劳动局问过吗？打过12333吗？结果怎么样？",
+        "variants": [
+          "你为这事做过什么努力吗？找过谁？去过哪？结果呢？",
+          "有没有尝试过什么渠道？不管有没有用，你都跟我说说。"
+        ],
+        "field": "what", "type": "open", "required": false,
+        "nextQuestion": "wage_life_impact",
+        "hint": "之前的尝试无论有没有用，都能说明你一直在积极解决问题"
+      },
+      {
+        "id": "wage_life_impact",
+        "phase": "impact",
+        "text": "工资发不下来这段时间，你生活上怎么应对的？房租还能交吗？家里开销还够吗？有没有跟家里人说？",
+        "variants": [
+          "这几个月没有收入，你是怎么过的？吃了不少苦头吧。",
+          "说实话——这段时间怎么熬过来的？有没有什么特别难的时刻？"
+        ],
+        "deepProbe": true,
+        "field": "emotionalImpact", "type": "open", "required": false,
+        "nextQuestion": "wage_employer_status",
+        "hint": "这些困难我都记下来——虽然法律文书里不一定写，但行动指引里会专门针对这些给建议"
+      },
+      {
+        "id": "wage_employer_status",
+        "phase": "details",
+        "text": "你了解公司现在的经营状况吗？老板还在不在？厂子还开着吗？有没有听说要关门或者搬走？",
+        "variants": [
+          "公司现在怎么样？还正常开着吗？老板还在吗？",
+          "对方现在是什么状态？这个关系到你要不要赶紧行动——如果对方有跑路的迹象，得抓紧。"
+        ],
+        "field": "what", "type": "open", "required": false,
+        "nextQuestion": "wage_demand",
+        "hint": "如果对方有转移资产/关门的迹象——要立即行动，不要再等了"
+      },
+      {
+        "id": "wage_demand",
+        "phase": "demand",
+        "text": "你心里怎么想的？只要把欠的工资要回来就行，还是想要额外的赔偿？",
+        "variants": [
+          "你想要的最理想结果是什么？是光把欠的工资要回来，还是也想让老板付出点代价？",
+          "说心里话——你希望这事怎么了结？"
+        ],
+        "legalSnippet": "根据法律，除了欠你的工资，你还可以主张50%-100%的加付赔偿金。另外如果没签合同，还能要双倍工资。",
+        "ttsText": "你怎么想的？只要回工资，还是也要赔偿？",
+        "field": "demand", "type": "choice",
+        "choices": ["把欠的工资要回来就行", "要回工资 + 经济赔偿", "不太确定，你帮我参谋参谋", "我要对方付出代价——法律能支持什么我就要什么"],
+        "required": true,
+        "nextQuestion": "wage_urgency"
+      },
+      {
+        "id": "wage_urgency",
+        "phase": "demand",
+        "text": "最后一个问题——你觉得这个事情有多急？是越快越好，还是可以等一等？你心里有没有个期限？",
+        "variants": [
+          "你有多着急？需要马上解决还是可以从容准备？",
+          "时间方面你怎么想的？有没有什么关键时间节点——比如马上要交房租了、或者准备回老家？"
+        ],
+        "field": "urgencyLevel", "type": "open", "required": false,
+        "nextQuestion": null
+      }
+    ],
+
+    "no_contract": [
+      {
+        "id": "nc_narrative",
+        "phase": "narrative",
+        "text": "跟我说说情况吧。什么时候开始在那干的？当初怎么说的——工资多少、做什么、有没有提过签合同？",
+        "variants": [
+          "从头说说：怎么找到这份工作的？当时怎么谈的？有没有提合同的事？",
+          "你尽管说，把整个过程讲一遍——从找工作到现在的情况。"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "nc_who"
+      },
+      {
+        "id": "nc_who",
+        "phase": "identity",
+        "text": "先告诉我你叫什么名字？你的信息只存在手机上，安全的。",
+        "variants": ["方便告诉我你的名字吗？", "你的名字是？写文书需要用到。"],
+        "field": "who", "type": "open", "required": true,
+        "followUp": "nc_who_retry", "nextQuestion": "nc_whom",
+        "hint": "比如：李芳"
+      },
+      {
+        "id": "nc_who_retry",
+        "phase": "identity",
+        "text": "仲裁申请书需要你的真名，能再说一次吗？",
+        "field": "who", "type": "open", "required": true,
+        "nextQuestion": "nc_whom"
+      },
+      {
+        "id": "nc_whom",
+        "phase": "employer",
+        "text": "你在哪个公司上班？全称叫什么？在哪个区？具体什么位置？这个信息决定去哪个仲裁委。",
+        "variants": [
+          "公司叫什么？在什么地方？——这个信息关系到管辖权，很重要。",
+          "对方是谁？公司全名和地址。不知道的话，看看工资转账记录上的名字。"
+        ],
+        "field": "whom", "type": "open", "required": true,
+        "followUp": "nc_whom_detail", "nextQuestion": "nc_whom_detail",
+        "hint": "不知道全名的话，看看工牌或者工资转账记录上的名字"
+      },
+      {
+        "id": "nc_whom_detail",
+        "phase": "employer",
+        "text": "公司地址在哪条街？或者附近有什么大家都知道的地方？有没有负责人的联系方式？",
+        "variants": [
+          "说细一点——在哪个区、哪条路、附近有什么标志性建筑？",
+          "地址越具体越好——仲裁委要确定管辖。"
+        ],
+        "field": "whom", "type": "open", "required": true,
+        "nextQuestion": "nc_when",
+        "hint": "比如：南山区科技园南区，靠近地铁高新园站"
+      },
+      {
+        "id": "nc_when",
+        "phase": "timeline",
+        "text": "什么时候开始在那上班的？干到现在多久了？中间有没有人跟你提过签合同的事？",
+        "variants": [
+          "入职时间还记得吗？到现在干了多久？",
+          "什么时候入职的？干到现在一共多长时间？"
+        ],
+        "field": "when", "type": "open", "required": true,
+        "nextQuestion": "nc_job",
+        "hint": "比如：2024年6月到现在，干了快两年了"
+      },
+      {
+        "id": "nc_job",
+        "phase": "details",
+        "text": "做什么工作？一个月大概挣多少？工资怎么发的——现金还是转账？有交社保吗？",
+        "variants": [
+          "你具体做什么？工资多少？怎么发的？社保交没交？",
+          "说说你的工作内容和工资——这些关系到赔偿怎么算。"
+        ],
+        "field": "jobType", "type": "open", "required": true,
+        "nextQuestion": "nc_contract_conversation",
+        "hint": "比如：仓库管理员，每月5000左右，微信转账，没交社保"
+      },
+      {
+        "id": "nc_contract_conversation",
+        "phase": "details",
+        "text": "当初招你的时候有没有提过签合同的事？中间你自己有没有提过要签？对方怎么说的？",
+        "variants": [
+          "有没有任何关于合同的对话？招人的时候怎么说？你问过合同的事吗？",
+          "有没有人跟你说过'过段时间签''转正了签'之类的话？"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "nc_other_workers",
+        "hint": "如果对方说过'过段时间签'但一直没签——记下来，说明是公司的问题不是你不想签"
+      },
+      {
+        "id": "nc_other_workers",
+        "phase": "details",
+        "text": "公司其他同事签合同了吗？还是大家都没签？别的同事什么情况？",
+        "variants": [
+          "你同事有合同的吗？还是所有人都没签？",
+          "其他人签了吗？如果大家都没签——这是公司的惯常做法，对你更有利。"
+        ],
+        "field": "evidence", "type": "open", "required": false,
+        "nextQuestion": "nc_evidence",
+        "hint": "如果大家都说没签——公司是系统性违法，你的案子更有力"
+      },
+      {
+        "id": "nc_evidence",
+        "phase": "evidence",
+        "text": "虽然没有劳动合同，但法律也保护你。你手头有什么能证明你在这家公司上过班的东西吗？",
+        "variants": [
+          "盘点一下：有没有工牌、工服、工资转账记录、微信工作群、钉钉打卡？",
+          "没有合同没关系——其他证据也行。你现在有什么？"
+        ],
+        "legalSnippet": "你知道吗？即使没签合同，只要能证明你在那上过班，劳动关系就成立——工资记录、工牌、工友证言、微信群记录都可以。",
+        "field": "evidence", "type": "open", "required": true,
+        "nextQuestion": "nc_double_salary",
+        "hint": "工牌、工服、工资转账记录、微信工作群聊天记录、钉钉打卡截图、工友的联系方式——有一两样就够"
+      },
+      {
+        "id": "nc_double_salary",
+        "phase": "legalEdu",
+        "text": "你知道没签合同的话，可以要求公司多付你一倍工资吗？从入职第2个月到第12个月，每个月都要多付一倍。这个你知道吗？",
+        "variants": [
+          "有个重要的事——没签合同你可以主张双倍工资。从入职第二个月开始算，最多能要11个月的额外工资。",
+          "《劳动合同法》第82条规定了双倍工资——你可能能多拿一大笔钱。"
+        ],
+        "legalSnippet": "双倍工资差额最多11个月——如果你月薪5000，干了10个月没签合同，可以额外要45000元。",
+        "field": "demand", "type": "confirm", "required": false,
+        "nextQuestion": "nc_impact",
+        "hint": "这个双倍工资就是你和对方谈判时最大的筹码"
+      },
+      {
+        "id": "nc_impact",
+        "phase": "impact",
+        "text": "没签合同这事对你有什么实际影响？有没有因此担心过——比如不敢请假、不敢跟老板提要求？",
+        "variants": [
+          "没有合同，你在工作中有什么不方便或者担心的地方吗？",
+          "这事除了经济上的损失，有没有让你心里不踏实？"
+        ],
+        "deepProbe": true,
+        "field": "emotionalImpact", "type": "open", "required": false,
+        "nextQuestion": "nc_demand",
+        "hint": "没有劳动合同带来的不安全感是真实的——这些我都会考虑到后续的建议里"
+      },
+      {
+        "id": "nc_demand",
+        "phase": "demand",
+        "text": "你想达到什么结果？是补签合同就行，还是要双倍工资赔偿，还是两个都要？",
+        "variants": [
+          "你心里想要什么结果？光补签合同够不够？",
+          "你怎么想的——是只要个合同就踏实了，还是想要赔偿？"
+        ],
+        "legalSnippet": "双倍工资+补签合同——这两个诉求可以同时主张。而且《劳动合同法》第14条规定满1年不签合同视为无固定期限合同，你更安全。",
+        "field": "demand", "type": "choice",
+        "choices": ["让公司补签劳动合同就行", "要双倍工资赔偿", "两个都要", "你帮我参谋参谋哪个更实际"],
+        "required": true, "nextQuestion": null
+      }
+    ],
+
+    "work_injury": [
+      {
+        "id": "wi_narrative",
+        "phase": "narrative",
+        "text": "跟我说说受伤的事吧。什么时候、在哪、做什么的时候受的伤？现在情况怎样了？",
+        "variants": [
+          "从头说说——怎么受伤的？现在恢复得怎样？",
+          "把受伤那天的事详细说一遍，越细越好。"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "wi_who"
+      },
+      {
+        "id": "wi_who",
+        "phase": "identity",
+        "text": "受伤的人是你还是你的工友？叫什么名字？",
+        "field": "who", "type": "open", "required": true,
+        "followUp": "wi_who_retry", "nextQuestion": "wi_whom",
+        "hint": "你的真实姓名——工伤认定必须要"
+      },
+      {
+        "id": "wi_who_retry",
+        "phase": "identity",
+        "text": "工伤认定必须要真实姓名，能再说一次吗？",
+        "field": "who", "type": "open", "required": true,
+        "nextQuestion": "wi_whom"
+      },
+      {
+        "id": "wi_whom",
+        "phase": "employer",
+        "text": "在哪个公司干活时受的伤？公司全名是什么？有没有缴工伤保险？",
+        "variants": [
+          "在哪家公司工作时出的事？公司给你交工伤保险了吗？",
+          "公司全名叫什么？有没有社保？这关系到费用谁出。"
+        ],
+        "field": "whom", "type": "open", "required": true,
+        "followUp": "wi_whom_detail", "nextQuestion": "wi_what",
+        "hint": "公司全称，以及有没有交社保/工伤保险——这个信息非常关键"
+      },
+      {
+        "id": "wi_whom_detail",
+        "phase": "employer",
+        "text": "公司地址在哪？负责人叫什么？有没有电话？出事后有没有联系过你？",
+        "field": "whom", "type": "open", "required": false,
+        "nextQuestion": "wi_what"
+      },
+      {
+        "id": "wi_what",
+        "phase": "details",
+        "text": "跟我说说当时怎么回事？什么时候、在哪个地方、做什么事的时候受的伤？说得越细越好。有没有目击的人？",
+        "variants": [
+          "把事发经过仔细说一遍：时间、地点、在做什么、怎么受伤的、谁看到了。",
+          "还原一下当时的情况——越详细对工伤认定越有利。"
+        ],
+        "ttsText": "跟我说说怎么受伤的？什么时候、在哪、做什么的时候？慢慢说。",
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "wi_injury",
+        "hint": "比如：2025年5月20号下午3点左右，在车间操作冲床时，左手食指被压伤。当时工友王XX在场"
+      },
+      {
+        "id": "wi_injury",
+        "phase": "details",
+        "text": "伤到哪了？去医院看了没？去的哪个医院？医生怎么说的？有没有住院？做了哪些检查或手术？",
+        "variants": [
+          "伤得怎么样？去了哪个医院？医生诊断是什么？住院了吗？",
+          "把治疗过程说一下——从受伤到现在，去了几次医院、做了什么治疗。"
+        ],
+        "ttsText": "伤到哪了？去医院了吗？医生怎么说？",
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "wi_cost",
+        "hint": "把医院的诊断证明、病历、医药费单据都收好——这些是最关键的证据"
+      },
+      {
+        "id": "wi_cost",
+        "phase": "details",
+        "text": "医药费花了多少？是你自己垫的还是公司出的？后续还需要治疗吗？大概还要花多少？",
+        "variants": [
+          "花了多少钱？谁出的？公司有没有给过一分钱？后面还需要治疗和康复吗？",
+          "经济账算一下——到目前为止花了多少、后面还要花多少。"
+        ],
+        "field": "howMuch", "type": "open", "required": true,
+        "nextQuestion": "wi_employer_response",
+        "hint": "所有花销都记下来：挂号费、药费、住院费、来回医院的车费、护工费——全部都算"
+      },
+      {
+        "id": "wi_employer_response",
+        "phase": "details",
+        "text": "出了事之后公司/老板什么反应？来看过你吗？有没有说怎么处理？有没有给过钱？",
+        "variants": [
+          "公司什么态度？管不管？有没有来看过你或者打电话问过？",
+          "出事后老板怎么说？是积极处理还是推脱不管？"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "wi_evidence",
+        "hint": "公司的态度和处理方式——都记下来。如果公司不管不问，这在仲裁时对你不利（对公司不利）"
+      },
+      {
+        "id": "wi_evidence",
+        "phase": "evidence",
+        "text": "手头有什么证据？最重要的是：①医院的病历和诊断证明 ②事发时在场的工友联系方式 ③事发现场照片 ④和老板/公司的聊天记录。",
+        "variants": [
+          "盘点一下手头的证据——医疗记录、证人、现场照片、聊天记录。",
+          "证据越多越好——你现在有什么？缺什么我教你怎么收集。"
+        ],
+        "field": "evidence", "type": "open", "required": true,
+        "nextQuestion": "wi_insurance",
+        "hint": "最重要的：①医院的病历和诊断证明 ②事发时在场的工友联系方式 ③事发现场照片 ④和老板/公司的聊天记录"
+      },
+      {
+        "id": "wi_insurance",
+        "phase": "details",
+        "text": "公司有没有给你交工伤保险？你可以在微信/支付宝的社保查询里看。如果没交——公司要自己掏全部费用。",
+        "variants": [
+          "查过社保吗？工伤保险交了没？这个非常关键——没交的话公司要自己出全部费用。",
+          "有没有工伤保险——这决定了后续费用走社保基金还是找公司要。你知道吗？"
+        ],
+        "legalSnippet": "如果公司没缴工伤保险——根据《社会保险法》第41条，公司要自己支付全部工伤待遇。如果公司不付，工伤保险基金先垫付再向公司追偿。所以你不用担心拿不到钱。",
+        "field": "insuranceStatus", "type": "open", "required": false,
+        "nextQuestion": "wi_recovery",
+        "hint": "打开微信→我→服务→城市服务→社保查询。或者支付宝→市民中心→社保"
+      },
+      {
+        "id": "wi_recovery",
+        "phase": "impact",
+        "text": "你现在恢复到什么程度了？医生有没有说多久能好？会不会留下后遗症？对以后干活有影响吗？",
+        "variants": [
+          "恢复得怎么样？能正常活动了吗？对将来工作有没有影响？",
+          "伤好了多少？有没有后遗症？这关系到伤残等级鉴定。"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "wi_life_impact",
+        "hint": "如果可能留下后遗症——一定要做劳动能力鉴定，这直接影响赔偿金额"
+      },
+      {
+        "id": "wi_life_impact",
+        "phase": "impact",
+        "text": "受伤这段时间，你生活上怎么过来的？有没有人照顾你？家里开销怎么办？家里人怎么看这事？",
+        "variants": [
+          "受伤之后生活受了多大影响？家里有没有因此压力很大？",
+          "这段时间肯定不容易——怎么撑过来的？"
+        ],
+        "deepProbe": true,
+        "field": "emotionalImpact", "type": "open", "required": false,
+        "nextQuestion": "wi_demand"
+      },
+      {
+        "id": "wi_demand",
+        "phase": "demand",
+        "text": "你想怎么解决？是要求公司承担全部医药费+赔偿，还是还有别的想法？有没有做过劳动能力鉴定？",
+        "variants": [
+          "你想要什么结果？医疗费+误工费+伤残赔偿？还是别的？",
+          "你心里预期的结果是什么？我们拿法律标准来对照一下。"
+        ],
+        "legalSnippet": "工伤待遇包括：医疗费全额报销 + 停工留薪期工资（最长24个月）+ 伤残补助金（7-27个月工资）+ 如需要还有护理费/辅助器具费。加起来可能远比你想象的多。",
+        "field": "demand", "type": "choice",
+        "choices": ["申请工伤认定 + 医疗费报销", "医疗费 + 误工费 + 伤残赔偿", "不太清楚，你帮我全面分析一下", "公司想'私了'——我不知道该不该接受"],
+        "required": true, "nextQuestion": null
+      }
+    ],
+
+    "overtime": [
+      {
+        "id": "ot_narrative",
+        "phase": "narrative",
+        "text": "跟我说说加班的事吧。从什么时候开始加班的？每天要加多久？周末也上班吗？加班费怎么算的？",
+        "variants": [
+          "说说你的工作时间——正常几点到几点？加班怎么安排的？给钱了吗？",
+          "把加班的情况说一下——怎么开始的、每天加多久、给不给钱。"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "ot_who"
+      },
+      {
+        "id": "ot_who",
+        "phase": "identity",
+        "text": "先说你叫什么名字？",
+        "field": "who", "type": "open", "required": true,
+        "followUp": "ot_who_retry", "nextQuestion": "ot_whom",
+        "hint": "你的真实姓名"
+      },
+      {
+        "id": "ot_who_retry",
+        "phase": "identity",
+        "text": "写申请书必须用真名，再说一次好吗？",
+        "field": "who", "type": "open", "required": true,
+        "nextQuestion": "ot_whom"
+      },
+      {
+        "id": "ot_whom",
+        "phase": "employer",
+        "text": "哪个公司让你加班的？公司做什么的？有多大规模？",
+        "field": "whom", "type": "open", "required": true,
+        "nextQuestion": "ot_when",
+        "hint": "公司名字或者老板名字"
+      },
+      {
+        "id": "ot_when",
+        "phase": "timeline",
+        "text": "从什么时候开始加班的？每天正常几点到几点？加班又到几点？周末也上班吗？",
+        "variants": [
+          "时间线详细说一下——正常工作时间、加班时间、周末情况。",
+          "你一周大概工作多少小时？每天几点到几点？周末休息吗？"
+        ],
+        "ttsText": "从什么时候开始加班？每天加班到几点？周末也要上班吗？",
+        "field": "when", "type": "open", "required": true,
+        "nextQuestion": "ot_detail",
+        "hint": "比如：从去年10月开始，每天早上8点到晚上10点，周末也经常要上，一个月就休两天"
+      },
+      {
+        "id": "ot_detail",
+        "phase": "details",
+        "text": "加班费怎么算的？正常工资多少一小时？加班给多少？跟你算一下——法律规定的加班费是平时1.5倍、周末2倍、节假日3倍。公司给够了吗？",
+        "variants": [
+          "我们来算一下加班费——你正常一小时多少钱？加班一小时给多少？跟法定标准差多少？",
+          "加班工资怎么发的？是按你说的时薪×倍数吗？还是随便给点？"
+        ],
+        "ttsText": "加班费怎么算的？给够了吗？",
+        "legalSnippet": "法定加班工资：平日1.5倍、休息日2倍（或补休）、法定节假日3倍。注意——休息日加班可以用补休替代，但平日和节假日加班必须给钱。",
+        "field": "howMuch", "type": "open", "required": true,
+        "nextQuestion": "ot_force",
+        "hint": "比如：说起来每小时15块，但加班只给20块，节假日也才30块，从来没按1.5倍/2倍/3倍算过"
+      },
+      {
+        "id": "ot_force",
+        "phase": "details",
+        "text": "加班是强制的还是'自愿'的？如果你拒绝加班会怎样？有没有人因为不加班被穿小鞋或者被辞退的？",
+        "variants": [
+          "加班是你自己愿意的，还是公司要求的？不去会有什么后果？",
+          "公司说'自愿加班'——但真的是自愿吗？不去加班领导会不会给脸色？"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "ot_record",
+        "hint": "如果公司说'自愿加班'但实际不加班会受影响——这在法律上属于变相强制，加班费仍然要给"
+      },
+      {
+        "id": "ot_record",
+        "phase": "evidence",
+        "text": "有能证明你加班的东西吗？考勤记录、钉钉打卡截图、工作群加班通知、加班审批单——有没有一样？",
+        "variants": [
+          "有没有什么能证明你加班的记录？考勤、打卡、群通知都算。",
+          "证据方面——你的加班有记录吗？如果没有也没关系，我告诉你怎么弄。"
+        ],
+        "field": "evidence", "type": "open", "required": true,
+        "nextQuestion": "ot_health",
+        "hint": "考勤记录、钉钉/企业微信打卡、工作群里的加班通知、加班时拍的工作照片——这些都能当证据"
+      },
+      {
+        "id": "ot_health",
+        "phase": "impact",
+        "text": "加班这么多对你的身体有什么影响吗？有没有觉得特别累、生病、或者精神压力很大？",
+        "variants": [
+          "身体吃得消吗？有没有因为加班身体出了什么问题？",
+          "长期加班对你的身心影响大不大？"
+        ],
+        "deepProbe": true,
+        "field": "emotionalImpact", "type": "open", "required": false,
+        "nextQuestion": "ot_overtime_hours",
+        "hint": "长期超时加班对身体的损害——虽然量化困难，但在仲裁中可以作为一个加重情节提出"
+      },
+      {
+        "id": "ot_overtime_hours",
+        "phase": "details",
+        "text": "你自己算过没有——一个月大概加班多少小时？法律规定每月加班不能超过36小时，你超了多少？",
+        "variants": [
+          "你一个月加班大概多少小时？看看是不是超过了法定的36小时上限。",
+          "算一下：平均每天加班X小时×每月Y天=一个月加班Z小时。对比36小时的上限。"
+        ],
+        "legalSnippet": "根据《劳动法》第41条，每月加班不得超过36小时。如果超过——公司本身就违法了，劳动监察可以责令改正并罚款。",
+        "field": "what", "type": "open", "required": false,
+        "nextQuestion": "ot_coworkers"
+      },
+      {
+        "id": "ot_coworkers",
+        "phase": "evidence",
+        "text": "其他同事也是这个情况吗？有没有人也觉得加班费不对的？有没有人已经反映过这个问题？",
+        "field": "evidence", "type": "open", "required": false,
+        "nextQuestion": "ot_demand",
+        "hint": "如果很多人都有同样的问题——联合起来力量更大，劳动监察也更重视"
+      },
+      {
+        "id": "ot_demand",
+        "phase": "demand",
+        "text": "你想要什么结果？是把加班费差额要回来就行，还是也要赔偿？还是想让公司停止强制加班？",
+        "variants": [
+          "你心里想要的结果是什么？",
+          "你最想改变什么——钱的问题还是工作时间的问题？"
+        ],
+        "legalSnippet": "加班费差额+加付赔偿金。此外如果公司每月加班超过36小时，还可以向劳动监察举报，让公司被处罚。",
+        "field": "demand", "type": "choice",
+        "choices": ["补发加班费差额", "补发加班费 + 赔偿金", "让公司停止强制超时加班", "都要——该我的钱要拿回来，违法的事也要停"],
+        "required": true, "nextQuestion": null
+      }
+    ],
+
+    "unfair_dismissal": [
+      {
+        "id": "ud_narrative",
+        "phase": "narrative",
+        "text": "跟我说说被辞退的事吧。什么时候被辞退的？怎么跟你说的？给了什么理由？",
+        "variants": [
+          "从头说说——怎么就被辞退了？公司怎么说的？",
+          "把被辞退那天的情况详细说一下。"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "ud_who"
+      },
+      {
+        "id": "ud_who",
+        "phase": "identity",
+        "text": "先告诉我你叫什么名字？",
+        "field": "who", "type": "open", "required": true,
+        "followUp": "ud_who_retry", "nextQuestion": "ud_whom",
+        "hint": "你的真实姓名"
+      },
+      {
+        "id": "ud_who_retry",
+        "phase": "identity",
+        "text": "仲裁申请书需要真名，再说一次好吗？",
+        "field": "who", "type": "open", "required": true,
+        "nextQuestion": "ud_whom"
+      },
+      {
+        "id": "ud_whom",
+        "phase": "employer",
+        "text": "被哪个公司辞退的？公司全名是什么？在什么地方？",
+        "field": "whom", "type": "open", "required": true,
+        "nextQuestion": "ud_when",
+        "hint": "公司全名或至少知道叫什么"
+      },
+      {
+        "id": "ud_when",
+        "phase": "timeline",
+        "text": "你是哪年哪月入职的？又在什么时候被辞退的？一共干了多长时间？",
+        "variants": [
+          "入职时间、辞退时间——这两个时间点很重要，关系到赔偿金算几个月。",
+          "干多久了？什么时候开始、什么时候结束？"
+        ],
+        "field": "when", "type": "open", "required": true,
+        "nextQuestion": "ud_what",
+        "hint": "比如：2023年2月入职，2025年4月20号被辞退的——干了2年2个月"
+      },
+      {
+        "id": "ud_what",
+        "phase": "details",
+        "text": "公司是怎么跟你说要辞退你的？给了什么理由？是口头上说的还是给了书面通知？有没有提前一个月通知你？",
+        "variants": [
+          "怎么通知你的？当面说的？微信说的？有书面文件吗？",
+          "辞退的理由是什么？你觉得这个理由站得住脚吗？"
+        ],
+        "ttsText": "公司怎么跟你说的？给了什么理由？有书面通知吗？",
+        "legalSnippet": "公司只有在6种特定情况下才能合法辞退你（《劳动合同法》第39条）——包括严重违纪、被追究刑事责任等。除此之外的辞退都是违法的。",
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "ud_process",
+        "hint": "比如：老板口头说'明天别来了'，没给书面通知，也没说理由。注意——口头辞退在法律上也算数"
+      },
+      {
+        "id": "ud_process",
+        "phase": "details",
+        "text": "辞退的时候有没有让你签什么东西？有没有提赔偿的事？给了多少？你有没有签'自愿离职'之类的东西？",
+        "variants": [
+          "辞退流程是怎样的？让你签字了吗？给了多少钱？",
+          "有没有让你签离职协议？你有没有签？——这个非常关键！"
+        ],
+        "field": "what", "type": "open", "required": true,
+        "nextQuestion": "ud_job",
+        "hint": "千万注意——如果签了'自愿离职'或'协商一致解除'，就很难再主张违法辞退赔偿了"
+      },
+      {
+        "id": "ud_job",
+        "phase": "details",
+        "text": "你在那做什么工作？一个月挣多少？工资包括哪些——基本工资、绩效、奖金、加班费？这些都会影响赔偿金的计算。",
+        "variants": [
+          "你的工资情况——基本工资多少、有没有绩效奖金、平均下来一个月拿多少？",
+          "工资结构说一下——赔偿金是按离职前12个月平均工资算的，不只是基本工资。"
+        ],
+        "legalSnippet": "赔偿金的计算基数不是你合同上写的'基本工资'——而是离职前12个月的平均工资，含奖金、提成、加班费。两者可能差很多。",
+        "field": "jobType", "type": "open", "required": true,
+        "nextQuestion": "ud_discrimination",
+        "hint": "这关系到赔偿金怎么算——一般是每干满一年赔一个月工资。月工资=过去12个月的平均工资（含奖金提成）"
+      },
+      {
+        "id": "ud_discrimination",
+        "phase": "details",
+        "text": "你觉得被辞退跟你个人的什么特征有关吗？比如年龄、性别、有没有怀孕、是不是生病了、跟领导关系不好？",
+        "variants": [
+          "被辞退的真正原因你觉得是什么？有没有歧视的成分在里面？",
+          "是不是因为什么事得罪了领导？或者公司想'淘汰'老员工？"
+        ],
+        "legalSnippet": "如果你是孕期/产期/哺乳期女职工——根据《劳动合同法》第42条，公司根本不能辞退你。辞退行为是严重违法。",
+        "field": "what", "type": "open", "required": false,
+        "nextQuestion": "ud_evidence",
+        "hint": "如果存在歧视（年龄/性别/怀孕/生病）——违法程度加重，你的谈判地位更强"
+      },
+      {
+        "id": "ud_evidence",
+        "phase": "evidence",
+        "text": "有什么能证明你被辞退的证据？有没有辞退通知书？有没有和老板/HR的聊天记录？被踢出工作群了吗？有没有同事愿意帮你作证？",
+        "variants": [
+          "证据盘点——辞退通知、聊天记录、工作群截图、录音、工友证言。",
+          "你现在手头有什么能证明'被公司辞退'的证据？"
+        ],
+        "field": "evidence", "type": "open", "required": true,
+        "nextQuestion": "ud_reemployment",
+        "hint": "最关键：①辞退通知书（如果有）②和老板/HR的微信聊天记录 ③被踢出工作群的截图 ④工友能帮你作证的联系方式"
+      },
+      {
+        "id": "ud_reemployment",
+        "phase": "impact",
+        "text": "被辞退之后你去找工作了吗？有没有因为这个事影响你找下一份工作？这件事对你打击大吗？",
+        "variants": [
+          "失业这段时间怎么过的？好找工作吗？心理上受了多大影响？",
+          "被辞退这件事对你后面找工作的影响大不大？"
+        ],
+        "deepProbe": true,
+        "field": "emotionalImpact", "type": "open", "required": false,
+        "nextQuestion": "ud_demand",
+        "hint": "被违法辞退期间没有工资收入——这部分损失可以主张"
+      },
+      {
+        "id": "ud_demand",
+        "phase": "demand",
+        "text": "你想达到什么结果？是想回去继续上班，还是拿赔偿金走人？还是两个都行？",
+        "variants": [
+          "你心里怎么想的——回去？还是拿钱走？",
+          "如果给你选，你更想要哪个结果？"
+        ],
+        "legalSnippet": "根据《劳动合同法》第48条，你可以选择①要求恢复工作（公司必须安排）或②拿2N赔偿金。这是你的权利——不是公司说了算。计算：工作N年=N个月工资×2。如果工作了3年，月薪5000，2N=30000元。",
+        "field": "demand", "type": "choice",
+        "choices": ["回去继续上班", "要2N赔偿金走人", "两个都行——对方哪个更难接受我就主张哪个", "你帮我分析分析哪个更有利"],
+        "required": true, "nextQuestion": null
+      }
+    ]
+  }
+}

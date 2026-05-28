@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>风信标 — 骑手安全助手</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app">
+  <!-- 顶部状态栏 -->
+  <header>
+    <div class="status-bar">
+      <span class="app-name">🌬 风信标</span>
+      <span id="gps-indicator" class="gps-off">● GPS</span>
+      <span id="battery-safe" class="safe-badge">安全</span>
+    </div>
+  </header>
+
+  <!-- 骑行仪表盘（主页） -->
+  <section id="dashboard" class="view active">
+    <!-- 速度卡片 -->
+    <div class="speed-card" id="speed-card">
+      <div class="speed-value" id="speed-display">--</div>
+      <div class="speed-unit">km/h</div>
+      <div class="speed-label">当前速度</div>
+    </div>
+
+    <!-- 实时指标 -->
+    <div class="metrics-row">
+      <div class="metric" id="metric-trip">
+        <div class="metric-value" id="trip-count">0</div>
+        <div class="metric-label">今日行程</div>
+      </div>
+      <div class="metric" id="metric-time">
+        <div class="metric-value" id="ride-time">00:00</div>
+        <div class="metric-label">骑行时长</div>
+      </div>
+      <div class="metric" id="metric-safety">
+        <div class="metric-value" id="safety-score">100</div>
+        <div class="metric-label">安全评分</div>
+      </div>
+    </div>
+
+    <!-- 警告条 -->
+    <div id="alert-banner" class="alert-banner hidden">
+      <span class="alert-icon">⚠️</span>
+      <span id="alert-text"></span>
+    </div>
+
+    <!-- 骑行控制 -->
+    <div class="ride-controls">
+      <button id="btn-start-ride" class="btn-ride-start">▶ 开始骑行</button>
+      <button id="btn-end-ride" class="btn-ride-end hidden">⏹ 结束骑行</button>
+    </div>
+
+    <!-- 实时事件流 -->
+    <div id="event-stream" class="event-stream">
+      <h3>实时事件</h3>
+      <div id="event-list" class="event-list">
+        <p class="event-empty">准备就绪，等待骑行开始</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 行程历史页面 -->
+  <section id="history" class="view">
+    <h2>📋 行程历史</h2>
+    <div class="history-summary">
+      <div class="summary-item">
+        <div class="summary-value" id="total-trips">0</div>
+        <div class="summary-label">总行程</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-value" id="total-distance">0 km</div>
+        <div class="summary-label">总里程</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-value" id="total-earnings">¥0</div>
+        <div class="summary-label">总收入</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-value" id="avg-hourly">¥0</div>
+        <div class="summary-label">平均时薪</div>
+      </div>
+    </div>
+    <div id="trip-list" class="trip-list">
+      <p class="event-empty">还没有行程记录</p>
+    </div>
+  </section>
+
+  <!-- 申诉辅助页面 -->
+  <section id="appeal" class="view">
+    <h2>📝 申诉辅助</h2>
+    <p class="hint">基于你的行程记录，生成超时理由说明或误扣款证据</p>
+
+    <div class="appeal-type-select">
+      <button class="appeal-type active" data-type="delay">超时理由说明</button>
+      <button class="appeal-type" data-type="deduction">误扣款证据</button>
+    </div>
+
+    <div id="appeal-output" class="appeal-output">
+      <p class="event-empty">选择申诉类型后，基于你最近的行程数据自动生成</p>
+    </div>
+
+    <div class="btn-row">
+      <button id="btn-copy-appeal" class="btn-primary">📋 复制申诉文本</button>
+      <button id="btn-export-data" class="btn-secondary">📥 导出完整数据(加密)</button>
+    </div>
+  </section>
+
+  <!-- 底部导航 -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="dashboard">
+      <span class="nav-icon">🛵</span>
+      <span class="nav-label">骑行</span>
+    </button>
+    <button class="nav-item" data-view="history">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label">历史</span>
+    </button>
+    <button class="nav-item" data-view="appeal">
+      <span class="nav-icon">📝</span>
+      <span class="nav-label">申诉</span>
+    </button>
+  </nav>
+</div>
+
+<script src="js/trip-recorder.js"></script>
+<script src="js/ride-monitor.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/appeal-helper.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

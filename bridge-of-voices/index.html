@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1e40af">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="声音的桥">
+<meta name="description" content="说出你的遭遇，AI帮你生成法律文书——劳动仲裁申请书、证据清单、维权流程图">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<title>声音的桥 — 语音→法律文书</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/interview.css">
+<link rel="stylesheet" href="css/print.css" media="print">
+</head>
+<body>
+
+<!-- ========== 应用容器 ========== -->
+<div id="app">
+
+  <!-- 顶部导航栏 -->
+  <header class="app-header">
+    <button class="header-btn btn-back hidden" data-navigate="type-select" aria-label="返回">←</button>
+    <span class="mode-badge mode-offline" id="modeBadge" title="基础模式：本地正则提取">📋 基础</span>
+    <h1 class="header-title">🔉 声音的桥</h1>
+    <button class="header-btn btn-settings" id="btnSettings" aria-label="AI设置" title="AI 设置">⚙️</button>
+  </header>
+
+  <!-- ========== 阶段 0：欢迎引导 ========== -->
+  <section id="stage-welcome" class="stage">
+    <div class="welcome-container">
+      <div class="welcome-screens">
+        <div class="welcome-screen active">
+          <div class="welcome-icon">🔉</div>
+          <h2>说出你的遭遇</h2>
+          <p>把工作中的不公——欠薪、工伤、被辞退——<br>用你自己的话说出来</p>
+        </div>
+        <div class="welcome-screen">
+          <div class="welcome-icon">🤖</div>
+          <h2>AI 帮你翻译</h2>
+          <p>像朋友聊天一样，我问你答<br>不用懂法律术语，不用会写文书</p>
+        </div>
+        <div class="welcome-screen">
+          <div class="welcome-icon">📄</div>
+          <h2>拿到正式文书</h2>
+          <p>自动生成仲裁申请书、证据清单<br>告诉你该去哪、带什么、打什么电话</p>
+        </div>
+      </div>
+
+      <div class="welcome-dots">
+        <span class="welcome-dot active"></span>
+        <span class="welcome-dot"></span>
+        <span class="welcome-dot"></span>
+      </div>
+
+      <div class="welcome-actions">
+        <button class="btn-primary welcome-next">下一步 →</button>
+        <button class="btn-text welcome-skip">跳过引导</button>
+      </div>
+    </div>
+    <p class="welcome-footer">你的隐私安全 · 数据只存在你手机里</p>
+  </section>
+
+  <!-- ========== 阶段 0.5：恢复草稿 ========== -->
+  <section id="stage-resume" class="stage">
+    <div class="card-center">
+      <div class="resume-icon">📝</div>
+      <h2>发现未完成的案例</h2>
+      <p>你上次没有完成，要继续吗？</p>
+      <div class="btn-row-vertical">
+        <button class="btn-primary btn-resume-continue">继续上次 →</button>
+        <button class="btn-outline btn-resume-new">开始新的</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 阶段 1：问题类型选择 ========== -->
+  <section id="stage-type" class="stage">
+    <div class="card">
+      <h2>你遇到了什么问题？</h2>
+      <p class="hint">选一个最接近的，我会问你几个问题</p>
+
+      <div class="type-grid">
+        <button class="type-card" data-type="wage_arrears">
+          <span class="type-icon">💰</span>
+          <span class="type-name">拖欠工资</span>
+          <span class="type-desc">老板欠薪、少发工资</span>
+        </button>
+        <button class="type-card" data-type="no_contract">
+          <span class="type-icon">📝</span>
+          <span class="type-name">没签合同</span>
+          <span class="type-desc">不给签劳动合同</span>
+        </button>
+        <button class="type-card" data-type="work_injury">
+          <span class="type-icon">🏥</span>
+          <span class="type-name">工伤</span>
+          <span class="type-desc">工作中受伤</span>
+        </button>
+        <button class="type-card" data-type="overtime">
+          <span class="type-icon">⏰</span>
+          <span class="type-name">超时加班</span>
+          <span class="type-desc">加班不给钱</span>
+        </button>
+        <button class="type-card" data-type="unfair_dismissal">
+          <span class="type-icon">🚫</span>
+          <span class="type-name">违法辞退</span>
+          <span class="type-desc">被无故开除</span>
+        </button>
+      </div>
+
+      <div class="divider"><span>不确定？直接说</span></div>
+
+      <textarea class="free-describe-input" rows="3" placeholder="比如：老板欠了我三个月工资，也没签合同..."></textarea>
+      <button class="btn-primary btn-free-describe">开始对话 →</button>
+    </div>
+
+    <button class="btn-text btn-view-cases" data-navigate="cases">📂 查看历史案例</button>
+  </section>
+
+  <!-- ========== 阶段 2：对话式访谈 ========== -->
+  <section id="stage-interview" class="stage">
+    <div class="interview-container">
+      <!-- 进度条 -->
+      <div class="interview-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 0%"></div>
+        </div>
+        <span class="progress-text">0/0</span>
+        <button class="btn-icon btn-tts-toggle" title="开启语音播报">🔊</button>
+        <button class="btn-icon btn-interview-back" title="返回上一个问题">↩</button>
+      </div>
+
+      <!-- 聊天区域 -->
+      <div class="chat-area" aria-live="polite" aria-label="对话区域"></div>
+
+      <!-- 输入栏 -->
+      <div class="input-bar">
+        <span class="input-hint"></span>
+        <div class="input-row">
+          <button class="btn-icon btn-chat-record" aria-label="按住说话">
+            <span class="mic-icon">🎤</span>
+          </button>
+          <input type="text" class="chat-text-input" placeholder="输入你的回答…" aria-label="输入回答">
+          <button class="btn-icon btn-send" aria-label="发送">↑</button>
+        </div>
+        <button class="btn-text btn-skip">跳过这个问题 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 阶段 3：事实确认 ========== -->
+  <section id="stage-review" class="stage">
+    <div class="card">
+      <h2>确认关键信息</h2>
+      <p class="hint">以下是 AI 整理的内容，请检查并修改</p>
+
+      <!-- 完整性评分 -->
+      <div class="completeness-widget">
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" style="width: 0%"></div>
+        </div>
+        <span class="completeness-score">0%</span>
+      </div>
+
+      <!-- 缺失项提示 -->
+      <div class="missing-fields hidden"></div>
+
+      <!-- 事实表单 -->
+      <div class="facts-form">
+        <div class="fact-group">
+          <label>当事人姓名</label>
+          <input type="text" id="fact-who" placeholder="你的姓名">
+        </div>
+        <div class="fact-group">
+          <label>对方（公司/雇主）</label>
+          <input type="text" id="fact-whom" placeholder="公司全称或老板姓名">
+        </div>
+        <div class="fact-group">
+          <label>事情经过</label>
+          <textarea id="fact-what" rows="4" placeholder="具体发生了什么事"></textarea>
+        </div>
+        <div class="fact-row">
+          <div class="fact-group">
+            <label>时间</label>
+            <input type="text" id="fact-when" placeholder="何时开始/发生">
+          </div>
+          <div class="fact-group">
+            <label>地点</label>
+            <input type="text" id="fact-where" placeholder="工作地址">
+          </div>
+        </div>
+        <div class="fact-group">
+          <label>涉及金额</label>
+          <input type="text" id="fact-howMuch" placeholder="欠薪数额 / 赔偿诉求">
+        </div>
+        <div class="fact-group">
+          <label>手头证据 <button class="btn-text evidence-help-btn" id="btnEvidenceHelp" style="font-size:12px;padding:2px 8px;">📸 怎么收集证据？</button></label>
+          <textarea id="fact-evidence" rows="2" placeholder="微信记录、转账截图、工牌…"></textarea>
+          <div class="evidence-guide hidden" id="evidenceGuide">
+            <div class="evidence-steps">
+              <p class="evidence-guide-title">📸 证据收集指南 — 现在就做</p>
+              <div class="evidence-item">
+                <span class="evidence-num">1</span>
+                <div><strong>微信聊天记录</strong><br>打开和老板/HR的聊天 → 从第一条相关消息开始逐屏截图 → 发给一个信得过的朋友备份</div>
+              </div>
+              <div class="evidence-item">
+                <span class="evidence-num">2</span>
+                <div><strong>工资转账记录</strong><br>微信→我→服务→钱包→账单→搜索对方名字 → 截图所有工资相关记录</div>
+              </div>
+              <div class="evidence-item">
+                <span class="evidence-num">3</span>
+                <div><strong>工作群消息</strong><br>截图所有包含"加班""排班""工资""罚款"等关键词的群消息</div>
+              </div>
+              <div class="evidence-item">
+                <span class="evidence-num">4</span>
+                <div><strong>工牌/工服/工作环境</strong><br>拍照，下载"今日水印相机"APP加上时间和日期</div>
+              </div>
+              <div class="evidence-item">
+                <span class="evidence-num">5</span>
+                <div><strong>录音</strong><br>和老板/HR对话前打开手机录音机——在中国告知对方你在录音不违法</div>
+              </div>
+              <div class="evidence-item">
+                <span class="evidence-num">6</span>
+                <div><strong>打卡记录</strong><br>截图钉钉/企业微信的考勤页面；如果被踢出系统了，回忆每天上下班时间写下来</div>
+              </div>
+              <div class="evidence-item">
+                <span class="evidence-num">7</span>
+                <div><strong>工友作证</strong><br>找愿意帮你作证的工友，记下姓名+电话，最少要1个</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fact-group">
+          <label>你的诉求</label>
+          <textarea id="fact-demand" rows="2" placeholder="你希望怎么解决？"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" id="btn-back-interview">← 返回修改</button>
+        <button class="btn-primary" id="btn-gen-doc">生成法律文书 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 阶段 4：文档展示 ========== -->
+  <section id="stage-document" class="stage">
+    <div class="card">
+      <h2>法律文书已生成</h2>
+
+      <!-- 文档标签栏 -->
+      <div class="doc-tabs">
+        <button class="doc-tab active" data-doc="arbitration">仲裁申请书</button>
+        <button class="doc-tab" data-doc="evidence">证据清单</button>
+        <button class="doc-tab" data-doc="flowchart">维权流程图</button>
+        <button class="doc-tab" data-doc="actionPlan">行动指引</button>
+        <button class="doc-tab doc-tab-bargain hidden" data-doc="bargainingReport">⚖ 议价权分析</button>
+      </div>
+
+      <!-- 文档内容 -->
+      <div class="doc-area" id="doc-content"></div>
+
+      <!-- 操作按钮 -->
+      <div class="doc-actions">
+        <button class="btn-primary" id="btn-copy">📋 复制</button>
+        <button class="btn-secondary" id="btn-download">📥 下载</button>
+        <button class="btn-secondary" id="btn-print">🖨 打印</button>
+      </div>
+      <div class="doc-actions-secondary">
+        <button class="btn-outline" id="btn-new">🔄 创建新案例</button>
+        <button class="btn-text" id="btn-cases">📂 查看历史案例</button>
+      </div>
+
+      <div class="disclaimer">
+        ⚠️ 本工具仅做文书翻译，不构成法律建议。提交前建议咨询当地法律援助中心（<strong>12348</strong>）。
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 阶段 5：案例历史 ========== -->
+  <section id="stage-cases" class="stage">
+    <div class="card">
+      <h2>历史案例</h2>
+      <div class="case-list"><div class="loading">加载中…</div></div>
+      <button class="btn-outline" id="btn-back-type" style="margin-top:16px;width:100%;">← 返回首页</button>
+    </div>
+  </section>
+
+
+  <!-- ========== AI 设置弹窗 ========== -->
+  <div class="modal-overlay hidden" id="settingsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>⚙️ AI 设置</h3>
+        <button class="btn-icon modal-close" id="btnModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-group">
+          <label>AI 服务商</label>
+          <select id="settingProvider">
+            <option value="deepseek">DeepSeek（推荐 · 便宜 · 中文好）</option>
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Anthropic Claude</option>
+            <option value="custom">自定义 OpenAI 兼容接口</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label>API Key</label>
+          <div class="apikey-row">
+            <input type="password" id="settingApiKey" placeholder="sk-…">
+            <button class="btn-text btn-toggle-key" id="btnToggleKey" title="显示/隐藏">👁</button>
+          </div>
+          <span class="setting-hint" id="apiKeyHint">
+            <a href="https://platform.deepseek.com/api_keys" target="_blank" id="apiKeyLink">获取 DeepSeek API Key（新用户有免费额度）→</a>
+          </span>
+        </div>
+        <div class="setting-group" id="groupBaseUrl">
+          <label>接口地址</label>
+          <input type="text" id="settingBaseUrl" placeholder="https://api.deepseek.com/v1">
+        </div>
+        <div class="setting-group">
+          <label>模型</label>
+          <input type="text" id="settingModel" placeholder="deepseek-chat">
+        </div>
+        <div class="setting-status" id="settingStatus"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btnTestLLM">🔍 测试连接</button>
+        <button class="btn-primary" id="btnSaveLLM" style="width:auto;flex:1;">保存</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#app -->
+
+  <!-- ========== 紧急求助面板 ========== -->
+  <button class="emergency-fab" id="btnEmergency" title="紧急求助">🆘</button>
+
+  <div class="modal-overlay hidden" id="emergencyModal">
+    <div class="modal-card emergency-card">
+      <div class="modal-header emergency-header">
+        <h3>🆘 紧急求助</h3>
+        <button class="btn-icon modal-close" id="btnEmerClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="emergency-subtitle">这些是你现在就能做的事，按顺序来——</p>
+
+        <div class="emergency-actions">
+          <a href="tel:12348" class="emergency-btn emergency-primary">
+            <span class="emergency-icon">📞</span>
+            <span class="emergency-label">一键拨打 12348</span>
+            <span class="emergency-desc">免费法律援助热线 · 24小时</span>
+          </a>
+
+          <div class="emergency-btn" id="btnEmerSafety">
+            <span class="emergency-icon">⚠️</span>
+            <span class="emergency-label">人身安全受到威胁</span>
+            <span class="emergency-desc">点开看怎么办</span>
+          </div>
+
+          <div class="emergency-btn" id="btnEmerEvidence">
+            <span class="emergency-icon">📸</span>
+            <span class="emergency-label">紧急证据保全</span>
+            <span class="emergency-desc">现在立刻要做的事</span>
+          </div>
+
+          <div class="emergency-btn" id="btnEmerSMS">
+            <span class="emergency-icon">📱</span>
+            <span class="emergency-label">给老板发法律提示短信</span>
+            <span class="emergency-desc">复制模板 → 发微信/SMS</span>
+          </div>
+
+          <div class="emergency-btn" id="btnEmerHotline">
+            <span class="emergency-icon">🆘</span>
+            <span class="emergency-label">更多求助电话</span>
+            <span class="emergency-desc">报警 / 劳动监察 / 妇联</span>
+          </div>
+        </div>
+
+        <div class="emergency-detail hidden" id="emergencyDetail"></div>
+      </div>
+    </div>
+  </div>
+
+<!-- ========== JS ========== -->
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/llm-client.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/speech-tts.js"></script>
+<script src="js/validator.js"></script>
+<script src="js/extractor.js"></script>
+<script src="js/document-renderer.js"></script>
+<script src="js/document-gen.js"></script>
+<script src="js/case-manager.js"></script>
+<script src="js/bargaining-analyzer.js"></script>
+<script src="js/deep-dialogue.js"></script>
+<script src="js/interview-engine.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

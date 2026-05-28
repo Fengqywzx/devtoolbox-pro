@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="12" fill="#0f172a"/>
+  <!-- wind vane body -->
+  <line x1="32" y1="54" x2="32" y2="10" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+  <!-- cross arms -->
+  <line x1="32" y1="26" x2="14" y2="38" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="32" y1="26" x2="50" y2="38" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- arrow head -->
+  <polygon points="14,38 8,32 8,44" fill="#38bdf8"/>
+  <!-- tail -->
+  <rect x="46" y="35" width="10" height="6" rx="1" fill="#475569" transform="rotate(-30 51 38)"/>
+  <!-- center dot -->
+  <circle cx="32" cy="26" r="3" fill="#22c55e"/>
+  <!-- wind lines -->
+  <line x1="8" y1="16" x2="18" y2="16" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+  <line x1="6" y1="20" x2="20" y2="20" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+  <line x1="10" y1="24" x2="16" y2="24" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+</svg>

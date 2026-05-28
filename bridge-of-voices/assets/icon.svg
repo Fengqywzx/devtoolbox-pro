@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="12" fill="#1e40af"/>
+  <!-- sound waves -->
+  <path d="M32 12 Q24 24 24 32 Q24 40 32 52" stroke="#93c5fd" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M32 8 Q20 24 20 32 Q20 40 32 56" stroke="#93c5fd" stroke-width="2" fill="none" opacity="0.3"/>
+  <!-- mic body -->
+  <rect x="27" y="20" width="10" height="16" rx="5" fill="#bfdbfe"/>
+  <!-- mic grill -->
+  <line x1="29" y1="26" x2="35" y2="26" stroke="#1e40af" stroke-width="1"/>
+  <line x1="29" y1="29" x2="35" y2="29" stroke="#1e40af" stroke-width="1"/>
+  <line x1="29" y1="32" x2="35" y2="32" stroke="#1e40af" stroke-width="1"/>
+  <!-- bridge/arc -->
+  <path d="M22 44 Q32 30 42 44" stroke="#fbbf24" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

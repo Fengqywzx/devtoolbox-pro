@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>铁脊柱 — 开源被动式外骨骼</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>🦴 铁脊柱</h1>
+    <p class="subtitle">开源被动式外骨骼 · 目标成本 ¥300-500</p>
+  </header>
+
+  <!-- 步骤导航 -->
+  <div class="step-nav">
+    <button class="step-dot active" data-step="1">1. 身体参数</button>
+    <button class="step-dot" data-step="2">2. 设计预览</button>
+    <button class="step-dot" data-step="3">3. 物料清单</button>
+    <button class="step-dot" data-step="4">4. 组装指南</button>
+  </div>
+
+  <!-- 步骤1：身体参数输入 -->
+  <section id="step-params" class="step active">
+    <h2>输入你的身体参数</h2>
+    <p class="hint">系统会根据你的人体工学数据自动计算设计参数</p>
+
+    <div class="params-form">
+      <div class="param-group">
+        <label>身高 (cm)</label>
+        <input type="number" id="param-height" value="170" min="140" max="210" step="1">
+      </div>
+      <div class="param-group">
+        <label>体重 (kg)</label>
+        <input type="number" id="param-weight" value="70" min="40" max="150" step="1">
+      </div>
+      <div class="param-group">
+        <label>腰围 (cm)</label>
+        <input type="number" id="param-waist" value="85" min="60" max="140" step="1">
+      </div>
+      <div class="param-group">
+        <label>主要工作姿势</label>
+        <select id="param-posture">
+          <option value="bend">反复弯腰（搬运 / 装卸）</option>
+          <option value="stand">长时间站立（流水线 / 操作台）</option>
+          <option value="kneel">经常蹲跪（瓦工 / 地砖）</option>
+          <option value="lift">重物提举（仓库 / 物流）</option>
+        </select>
+      </div>
+      <div class="param-group">
+        <label>工作强度</label>
+        <select id="param-intensity">
+          <option value="light">轻度（偶尔搬运 <15kg）</option>
+          <option value="medium" selected>中度（频繁弯腰，15-30kg）</option>
+          <option value="heavy">重度（持续负重，>30kg）</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="btn-calculate" class="btn-primary">计算设计参数 →</button>
+  </section>
+
+  <!-- 步骤2：设计预览 -->
+  <section id="step-design" class="step">
+    <h2>定制化设计参数</h2>
+    <div id="design-params" class="design-params"></div>
+
+    <div class="module-selector">
+      <h3>选择模块</h3>
+      <div class="module-cards">
+        <div class="module-card selected" data-module="back">
+          <div class="module-icon">🔙</div>
+          <div class="module-name">背撑模块</div>
+          <div class="module-note">核心 · 必须</div>
+        </div>
+        <div class="module-card" data-module="knee">
+          <div class="module-icon">🦵</div>
+          <div class="module-name">膝撑模块</div>
+          <div class="module-note">可选 · ¥60-80</div>
+        </div>
+        <div class="module-card" data-module="shoulder">
+          <div class="module-icon">💪</div>
+          <div class="module-name">肩撑模块</div>
+          <div class="module-note">可选 · ¥80-120</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="design-preview" id="design-preview">
+      <canvas id="design-canvas" width="360" height="400"></canvas>
+    </div>
+
+    <div class="btn-row">
+      <button id="btn-back-params" class="btn-secondary">← 修改参数</button>
+      <button id="btn-to-bom" class="btn-primary">生成物料清单 →</button>
+    </div>
+  </section>
+
+  <!-- 步骤3：物料清单 -->
+  <section id="step-bom" class="step">
+    <h2>物料清单 (BOM)</h2>
+    <p class="hint">以下是你需要采购的全部材料，含淘宝搜索关键词和预估价格</p>
+
+    <div id="bom-content" class="bom-content"></div>
+
+    <div class="total-cost" id="total-cost"></div>
+
+    <div class="btn-row">
+      <button id="btn-back-design" class="btn-secondary">← 修改设计</button>
+      <button id="btn-export-bom" class="btn-primary">📋 导出购物清单</button>
+      <button id="btn-to-build" class="btn-outline">查看组装指南 →</button>
+    </div>
+  </section>
+
+  <!-- 步骤4：组装指南 -->
+  <section id="step-build" class="step">
+    <h2>组装指南</h2>
+    <div id="build-guide-content" class="build-guide-content"></div>
+
+    <div class="btn-row">
+      <button id="btn-back-bom" class="btn-secondary">← 回到物料清单</button>
+      <button id="btn-reset" class="btn-outline">🔄 重新配置</button>
+    </div>
+  </section>
+
+  <!-- 社区面板 -->
+  <section class="community-panel">
+    <h3>🌐 铁脊柱社区</h3>
+    <div class="community-links">
+      <div class="community-card">
+        <div class="community-icon">📐</div>
+        <div class="community-title">STL 生成器</div>
+        <div class="community-desc">身体参数 → 定制 3D 打印件</div>
+        <span class="badge-soon">即将上线</span>
+      </div>
+      <div class="community-card">
+        <div class="community-icon">🎬</div>
+        <div class="community-title">组装视频</div>
+        <div class="community-desc">多语种 AI 配音讲解</div>
+        <span class="badge-soon">即将上线</span>
+      </div>
+      <div class="community-card">
+        <div class="community-icon">💬</div>
+        <div class="community-title">反馈社区</div>
+        <div class="community-desc">上传改进方案和使用效果</div>
+        <span class="badge-soon">即将上线</span>
+      </div>
+    </div>
+
+    <div class="philosophy-quote">
+      "最好的技术不是最贵的，是能用废品站材料造出来的。"
+    </div>
+  </section>
+</div>
+
+<script src="js/configurator.js"></script>
+<script src="js/bom-generator.js"></script>
+<script src="js/design-viewer.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

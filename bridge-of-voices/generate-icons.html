@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PWA 图标生成器 — 声音的桥</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 22px; color: #1e40af; margin-bottom: 4px; }
+  .subtitle { font-size: 14px; color: #64748b; margin-bottom: 20px; }
+
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 500px) { .icon-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .icon-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .icon-item img {
+    display: block;
+    margin: 0 auto 6px;
+    border-radius: 6px;
+    image-rendering: auto;
+  }
+  .icon-size { font-size: 12px; font-weight: 600; color: #334155; }
+  .icon-dim { font-size: 11px; color: #94a3b8; }
+
+  .btn-download-all {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #1e40af;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: background 0.2s;
+  }
+  .btn-download-all:hover { background: #1e3a8a; }
+  .btn-download-all:disabled { background: #94a3b8; cursor: not-allowed; }
+
+  .progress-bar {
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #1e40af;
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .progress-text {
+    text-align: center;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+
+  .instructions {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .instructions strong { color: #92400e; }
+  code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: "SF Mono", "Fira Code", monospace;
+  }
+
+  .done-check {
+    display: none;
+    text-align: center;
+    padding: 12px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    color: #16a34a;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .done-check.visible { display: block; }
+</style>
+</head>
+<body>
+
+<h1>🔉 声音的桥 — PWA 图标生成器</h1>
+<p class="subtitle">一键生成全尺寸 PWA 图标，支持安装到手机主屏幕</p>
+
+<div class="icon-grid" id="iconGrid"></div>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text" id="progressLabel">准备就绪</div>
+
+<div class="done-check" id="doneCheck">✅ 全部 8 张图标已生成！将它们放入 <code>bridge-of-voices/assets/icons/</code> 目录即可</div>
+
+<button class="btn-download-all" id="btnDownloadAll" onclick="downloadAll()">
+  📥 一键下载全部图标（8 张）
+</button>
+
+<div class="instructions">
+  <strong>📌 下载后：</strong><br>
+  1. 将下载的 8 个 PNG 文件放入 <code>bridge-of-voices/assets/icons/</code> 目录<br>
+  2. 文件列表：<code>icon-72.png</code> <code>icon-96.png</code> <code>icon-128.png</code> <code>icon-144.png</code> <code>icon-152.png</code> <code>icon-192.png</code> <code>icon-384.png</code> <code>icon-512.png</code><br>
+  3. 完成后打开 <code>index.html</code>，浏览器地址栏会出现"安装"按钮<br>
+  <strong style="color:#dc2626;">⚠ 不要重命名文件！</strong> 文件名必须和 manifest.json 里声明的一致
+</div>
+
+<script>
+const SIZES = [72, 96, 128, 144, 152, 192, 384, 512];
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+
+function drawIcon(size) {
+  canvas.width = size;
+  canvas.height = size;
+  const s = size;
+  const cx = s * 0.5, cy = s * 0.55;
+
+  ctx.fillStyle = '#1e40af';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, s, s, s * 0.18);
+  ctx.fill();
+
+  const lw = Math.max(1.5, s * 0.03);
+  ctx.strokeStyle = '#93c5fd';
+  ctx.lineWidth = lw;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.arc(cx, cy, s * 0.35, Math.PI * 1.1, Math.PI * 1.9);
+  ctx.stroke();
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, s * 0.43, Math.PI * 1.12, Math.PI * 1.88);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  const micW = s * 0.16, micH = s * 0.28;
+  const micX = cx - micW / 2, micY = cy - micH * 0.7;
+  ctx.fillStyle = '#bfdbfe';
+  ctx.beginPath();
+  ctx.roundRect(micX, micY, micW, micH, micW * 0.45);
+  ctx.fill();
+
+  ctx.strokeStyle = '#1e40af';
+  ctx.lineWidth = Math.max(0.8, s * 0.012);
+  for (let i = 0; i < 3; i++) {
+    const ly = micY + micH * 0.3 + i * micH * 0.18;
+    ctx.beginPath();
+    ctx.moveTo(micX + micW * 0.22, ly);
+    ctx.lineTo(micX + micW * 0.78, ly);
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = Math.max(2, s * 0.045);
+  ctx.beginPath();
+  ctx.arc(cx, cy + micH * 0.1, micW * 1.3, Math.PI * 1.3, Math.PI * 1.7);
+  ctx.stroke();
+
+  return canvas.toDataURL('image/png');
+}
+
+// 渲染预览
+const grid = document.getElementById('iconGrid');
+const dataUrls = {};
+for (const size of SIZES) {
+  const url = drawIcon(size);
+  dataUrls[size] = url;
+  const item = document.createElement('div');
+  item.className = 'icon-item';
+  item.innerHTML = `
+    <img src="${url}" width="${Math.min(size, 96)}" height="${Math.min(size, 96)}" alt="${size}x${size}">
+    <div class="icon-size">icon-${size}.png</div>
+    <div class="icon-dim">${size}×${size}</div>
+  `;
+  grid.appendChild(item);
+}
+
+async function downloadAll() {
+  const btn = document.getElementById('btnDownloadAll');
+  const progress = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  const done = document.getElementById('doneCheck');
+
+  btn.disabled = true;
+  btn.textContent = '生成中…';
+
+  for (let i = 0; i < SIZES.length; i++) {
+    const size = SIZES[i];
+    label.textContent = `正在下载 icon-${size}.png（${i + 1}/${SIZES.length}）…`;
+    progress.style.width = `${((i + 1) / SIZES.length) * 100}%`;
+
+    const a = document.createElement('a');
+    a.href = dataUrls[size];
+    a.download = `icon-${size}.png`;
+    a.click();
+    await sleep(400);
+  }
+
+  progress.style.width = '100%';
+  label.textContent = '全部完成！';
+  btn.textContent = '✅ 下载完成 — 可再次下载';
+  btn.disabled = false;
+  done.classList.add('visible');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>

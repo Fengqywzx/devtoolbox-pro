@@ -1,0 +1,21 @@
+{
+  "name": "bridge-of-voices",
+  "version": "3.0.0",
+  "description": "声音的桥 — 语音→法律文书AI助手",
+  "main": "index.html",
+  "scripts": {
+    "www": "mkdir -p www && cp index.html manifest.json sw.js www/ && cp -r css js data assets www/",
+    "apk:setup": "npm run www && npx cap add android",
+    "apk:sync": "npm run www && npx cap sync",
+    "apk:build": "npm run www && npx cap sync && npx cap open android"
+  },
+  "author": "万子轩",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/core": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/android": "^6.0.0"
+  }
+}

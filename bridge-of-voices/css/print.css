@@ -1,0 +1,194 @@
+/* === 声音的桥 — 打印样式 === */
+/* 打印时隐藏 UI，只显示文档内容 */
+
+@media print {
+  /* 隐藏所有非文档元素 */
+  .app-header,
+  .interview-progress,
+  .input-bar,
+  .btn-row,
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline,
+  .btn-text,
+  .btn-icon,
+  .doc-tabs,
+  .doc-actions,
+  .doc-actions-secondary,
+  .disclaimer,
+  .completeness-widget,
+  .missing-fields,
+  .facts-form input,
+  .facts-form textarea,
+  .welcome-container,
+  .type-grid,
+  .divider,
+  .free-describe-input,
+  .btn-free-describe,
+  .btn-view-cases,
+  .btn-row-vertical,
+  .case-card-actions,
+  .chat-area,
+  #stage-welcome,
+  #stage-resume,
+  #stage-type,
+  #stage-interview,
+  #stage-review,
+  #stage-cases,
+  .btn-skip,
+  .btn-back {
+    display: none !important;
+  }
+
+  /* 显示所有非文档阶段为不可见 */
+  .stage {
+    display: none !important;
+  }
+
+  /* 只显示文档阶段 */
+  #stage-document {
+    display: block !important;
+  }
+
+  /* 重置布局 */
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+
+  #app {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .card {
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .card h2 {
+    display: none;
+  }
+
+  .doc-area {
+    max-height: none;
+    overflow: visible;
+    border: none;
+    padding: 0;
+    background: #fff;
+    font-size: 11pt;
+    line-height: 1.7;
+  }
+
+  /* 文档标题样式 */
+  .doc-area h2 {
+    font-size: 16pt;
+    text-align: center;
+    margin-bottom: 12pt;
+    padding-bottom: 6pt;
+    border-bottom: 2px solid #000;
+  }
+
+  .doc-area h3 {
+    font-size: 13pt;
+    margin: 10pt 0 6pt;
+    color: #000;
+  }
+
+  .doc-area h4 {
+    font-size: 12pt;
+    margin: 8pt 0 4pt;
+  }
+
+  /* 表格 */
+  .doc-table td, .doc-table th {
+    padding: 4pt 6pt;
+    border: 1px solid #ccc;
+    font-size: 10pt;
+  }
+
+  .doc-table .label {
+    background: #f5f5f5;
+    width: 60pt;
+  }
+
+  .evidence-table th {
+    background: #eee;
+  }
+
+  /* 占位符 */
+  .placeholder {
+    color: #999;
+    font-style: italic;
+  }
+
+  /* 提示框 */
+  .doc-tips {
+    background: #fffde7;
+    border: 1px solid #ddd;
+    padding: 8pt;
+    break-inside: avoid;
+  }
+
+  /* 法律引用 */
+  .legal-ref-item {
+    border-left: 3px solid #000;
+    background: #fafafa;
+    padding: 6pt 8pt;
+    break-inside: avoid;
+  }
+
+  /* 流程图 */
+  .flow-step {
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+
+  .flow-number {
+    background: #000;
+    color: #fff;
+  }
+
+  .flow-arrow {
+    color: #000;
+  }
+
+  /* 场馆卡片 */
+  .venue-card {
+    border: 1px solid #ddd;
+    background: #fafafa;
+  }
+
+  /* 避免断页 */
+  .doc-section {
+    break-inside: avoid;
+  }
+
+  /* 页脚 */
+  .doc-footer {
+    margin-top: 20pt;
+  }
+
+  .doc-signature {
+    text-align: right;
+  }
+
+  /* 复选框 */
+  .checklist input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+    appearance: checkbox;
+    width: 12pt;
+    height: 12pt;
+  }
+
+  /* 页面设置 */
+  @page {
+    margin: 15mm;
+    size: A4;
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "description": "城市高风险路段数据 — 基于公开交通事故数据标注。骑手接近这些区域时风信标会提前语音提醒。",
+  "version": "1.0",
+  "lastUpdated": "2026-05-28",
+  "zones": [
+    {
+      "id": "sz-001",
+      "city": "深圳",
+      "district": "龙华区",
+      "name": "民治大道",
+      "lat": 22.6200,
+      "lng": 114.0400,
+      "radius": 500,
+      "riskType": "high_traffic",
+      "riskLevel": 4,
+      "description": "早晚高峰车流量大，非机动车道不连续",
+      "advice": "尽量走辅路，避开7:30-9:00和17:30-19:00"
+    },
+    {
+      "id": "sz-002",
+      "city": "深圳",
+      "district": "南山区",
+      "name": "科技园南路",
+      "lat": 22.5431,
+      "lng": 113.9500,
+      "radius": 400,
+      "riskType": "intersection",
+      "riskLevel": 3,
+      "description": "多个十字路口，右转车辆频繁",
+      "advice": "过每个路口减速观察右侧来车"
+    },
+    {
+      "id": "sz-003",
+      "city": "深圳",
+      "district": "宝安区",
+      "name": "西乡立交桥下",
+      "lat": 22.5800,
+      "lng": 113.8700,
+      "radius": 300,
+      "riskType": "poor_visibility",
+      "riskLevel": 4,
+      "description": "桥下光线暗，路面坑洼",
+      "advice": "减速至15km/h以下，开前灯"
+    },
+    {
+      "id": "bj-001",
+      "city": "北京",
+      "district": "朝阳区",
+      "name": "国贸桥区域",
+      "lat": 39.9087,
+      "lng": 116.4605,
+      "radius": 600,
+      "riskType": "high_traffic",
+      "riskLevel": 5,
+      "description": "北京事故高发区域，多车道交汇",
+      "advice": "建议绕行通惠河北路辅路"
+    }
+  ],
+  "riskTypeLabels": {
+    "high_traffic": "车流量大",
+    "intersection": "多路口",
+    "poor_visibility": "视线不佳",
+    "poor_road": "路况差",
+    "accident_hotspot": "事故高发"
+  }
+}

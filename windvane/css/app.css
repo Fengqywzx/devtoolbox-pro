@@ -1,0 +1,359 @@
+/* === 风信标 — 骑手友好：大字体·高对比度·大按钮 === */
+
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --accent: #38bdf8;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #22c55e;
+  --border: #334155;
+  --radius: 16px;
+  --font-xl: 48px;
+  --font-lg: 22px;
+  --font-md: 16px;
+  --font-sm: 13px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-text-size-adjust: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: 80px; /* 底部导航栏高度 */
+}
+
+/* === 顶部状态栏 === */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-name { font-size: var(--font-md); font-weight: 600; }
+
+.gps-off { color: var(--text-secondary); font-size: var(--font-sm); }
+.gps-on { color: var(--success); font-size: var(--font-sm); }
+
+.safe-badge {
+  padding: 2px 10px;
+  border-radius: 10px;
+  background: var(--success);
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* === 视图切换 === */
+.view { display: none; padding: 16px; }
+.view.active { display: block; }
+
+/* === 速度卡片 === */
+.speed-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 32px 20px;
+  text-align: center;
+  margin-bottom: 12px;
+  border: 2px solid var(--border);
+  transition: border-color 0.3s;
+}
+
+.speed-card.warning { border-color: var(--warning); }
+.speed-card.danger { border-color: var(--danger); }
+
+.speed-value {
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.speed-card.danger .speed-value { color: var(--danger); }
+
+.speed-unit { font-size: var(--font-lg); color: var(--text-secondary); }
+
+.speed-label {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* === 指标行 === */
+.metrics-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.metric {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px 8px;
+  text-align: center;
+}
+
+.metric-value {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* === 警告条 === */
+.alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  font-size: var(--font-md);
+  font-weight: 500;
+}
+
+.alert-banner.warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+.alert-banner.danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+.alert-banner.hidden { display: none; }
+
+.alert-icon { font-size: 20px; }
+
+/* === 骑行控制 === */
+.ride-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.btn-ride-start, .btn-ride-end {
+  flex: 1;
+  padding: 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: var(--font-lg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-ride-start {
+  background: var(--success);
+  color: #000;
+}
+
+.btn-ride-end {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-ride-start:active, .btn-ride-end:active {
+  transform: scale(0.97);
+}
+
+.hidden { display: none !important; }
+
+/* === 事件流 === */
+.event-stream {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.event-stream h3 {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.event-list { max-height: 200px; overflow-y: auto; }
+
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--font-sm);
+}
+
+.event-item:last-child { border-bottom: none; }
+
+.event-time { color: var(--text-secondary); font-variant-numeric: tabular-nums; min-width: 48px; }
+.event-type { font-weight: 500; min-width: 56px; }
+.event-detail { color: var(--text-secondary); flex: 1; }
+
+.event-empty {
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  text-align: center;
+  padding: 20px;
+}
+
+/* === 历史页面 === */
+.history-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.summary-item {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px 12px;
+  text-align: center;
+}
+
+.summary-value { font-size: var(--font-lg); font-weight: 700; }
+.summary-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+.trip-list { display: flex; flex-direction: column; gap: 8px; }
+
+.trip-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trip-card .trip-date { font-size: var(--font-sm); color: var(--text-secondary); }
+.trip-card .trip-distance { font-size: var(--font-md); font-weight: 600; }
+.trip-card .trip-safety { font-size: var(--font-sm); }
+
+/* === 申诉页面 === */
+.hint { font-size: var(--font-sm); color: var(--text-secondary); margin-bottom: 12px; }
+
+.appeal-type-select {
+  display: flex;
+  gap: 4px;
+  background: var(--card);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 12px;
+}
+
+.appeal-type {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.appeal-type.active {
+  background: var(--accent);
+  color: #000;
+  font-weight: 500;
+}
+
+.appeal-output {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  font-size: var(--font-sm);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+/* === 按钮 === */
+.btn-primary {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-size: var(--font-md);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: var(--font-md);
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-row { margin-top: 12px; }
+
+/* === 底部导航 === */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-item.active { color: var(--accent); }
+
+.nav-icon { font-size: 22px; }
+
+@media (max-width: 360px) {
+  .speed-value { font-size: 56px; }
+  .speed-card { padding: 24px 16px; }
+  .metrics-row { grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+}
