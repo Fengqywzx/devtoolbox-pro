@@ -25,11 +25,18 @@ class LLMClient {
       model: 'claude-haiku-4-5-20251001',
       apiKeyUrl: 'https://console.anthropic.com/keys',
       type: 'anthropic'
+    },
+    zhipu: {
+      name: '智谱GLM（免费额度·中文极佳）',
+      baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
+      model: 'glm-4-flash',
+      apiKeyUrl: 'https://open.bigmodel.cn/usercenter/apikeys',
+      type: 'openai-compatible'
     }
   };
 
   constructor(options = {}) {
-    this.provider = options.provider || 'deepseek';
+    this.provider = options.provider || 'zhipu';
     this.apiKey = '';
     this.baseUrl = '';
     this.model = '';

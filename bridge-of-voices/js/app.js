@@ -33,11 +33,39 @@ class VoiceBridge {
   async _init() {
     await this._loadData();
     this.tts.loadPreference();
+    this._autoConfigZhipu();
     this._bindGlobalEvents();
     this._initSettings();
     this._initEmergency();
     this._updateModeBadge();
     this._checkReturningUser();
+  }
+
+  _autoConfigZhipu() {
+    // 如果未配置任何LLM，尝试从本地配置文件加载智谱GLM Key
+    if (!this.llm.isConfigured) {
+      const saved = localStorage.getItem('bv_llm_config');
+      if (!saved) {
+        // 尝试从 gitignored 配置文件加载
+        fetch('data/zhipu-key.json')
+          .then(r => r.json())
+          .then(cfg => {
+            if (cfg.apiKey) {
+              this.llm.saveConfig({
+                provider: 'zhipu',
+                apiKey: cfg.apiKey,
+                baseUrl: cfg.baseUrl || 'https://open.bigmodel.cn/api/paas/v4',
+                model: cfg.model || 'glm-4-flash'
+              });
+              this._updateModeBadge();
+              console.log('[App] Auto-configured ZhiPu GLM from local config');
+            }
+          })
+          .catch(() => {
+            console.log('[App] No ZhiPu local config found — click ⚙️ to set API Key');
+          });
+      }
+    }
   }
 
   async _loadData() {
