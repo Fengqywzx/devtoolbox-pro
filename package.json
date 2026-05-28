@@ -23,6 +23,7 @@
     "url": ""
   },
   "dependencies": {
+    "sharp": "^0.34.5",
     "simple-git": "^3.36.0"
   },
   "devDependencies": {

@@ -1,0 +1,30 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace "com.wanzixuan.bridgeofvoices"
+    compileSdk 34
+    defaultConfig {
+        applicationId "com.wanzixuan.bridgeofvoices"
+        minSdk 22
+        targetSdk 34
+        versionCode 3
+        versionName "3.0.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+        debug {
+            applicationIdSuffix ".debug"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.webkit:webkit:1.9.0'
+}
