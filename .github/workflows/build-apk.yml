@@ -1,18 +1,15 @@
-name: Build Android APK
+name: Build APK
 
 on:
   workflow_dispatch:
 
 jobs:
-  build-apk:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
 
       - uses: actions/setup-java@v4
         with: { distribution: 'temurin', java-version: '17' }
@@ -22,42 +19,31 @@ jobs:
         with:
           packages: 'platforms;android-34 build-tools;34.0.0'
 
-      - name: Accept licenses & create local.properties
-        working-directory: bridge-of-voices
+      - name: Accept SDK licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
+
+      - name: Copy Web Assets to APK project
         run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
-          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+          cp -r bridge-of-voices/www/* bridge-of-voices/android-apk/app/src/main/assets/
+          echo "Web assets copied. Files:"
+          ls bridge-of-voices/android-apk/app/src/main/assets/ | head -10
 
-      - name: Install npm dependencies
-        working-directory: bridge-of-voices
-        run: npm install
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_HOME" > bridge-of-voices/android-apk/local.properties
 
-      - name: Build Web Assets
-        working-directory: bridge-of-voices
-        run: npm run www
-
-      - name: Sync Capacitor Android
-        working-directory: bridge-of-voices
-        run: npx cap sync android
-
-      - name: Verify android project structure
-        working-directory: bridge-of-voices
+      - name: Build Debug APK
+        working-directory: bridge-of-voices/android-apk
         run: |
-          echo "=== gradle wrapper ===" && ls -la android/gradlew
-          echo "=== capacitor android ===" && ls -la node_modules/@capacitor/android/capacitor/build.gradle 2>/dev/null || echo "MISSING"
-          echo "=== capacitor settings ===" && cat android/capacitor.settings.gradle
-
-      - name: Build APK with Gradle
-        working-directory: bridge-of-voices/android
-        run: |
+          # Download gradle wrapper if needed
+          if [ ! -f gradlew ]; then
+            gradle wrapper --gradle-version 8.2.1
+          fi
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tail -80
+          ./gradlew assembleDebug --no-daemon
 
-      - name: Find and Upload APK
-        if: always()
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: bridge-of-voices-apk
-          path: |
-            bridge-of-voices/android/app/build/outputs/apk/**/*.apk
-          if-no-files-found: warn
+          name: 声音的桥-v3.0.0
+          path: bridge-of-voices/android-apk/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
