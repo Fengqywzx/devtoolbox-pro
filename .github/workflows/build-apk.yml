@@ -18,15 +18,13 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           packages: 'platforms;android-34 build-tools;34.0.0'
+          accept-android-sdk-licenses: true
 
-      - name: Accept SDK licenses
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
-
-      - name: Copy Web Assets to APK project
+      - name: Copy Web Assets
         run: |
           cp -r bridge-of-voices/www/* bridge-of-voices/android-apk/app/src/main/assets/
-          echo "Web assets copied. Files:"
-          ls bridge-of-voices/android-apk/app/src/main/assets/ | head -10
+          echo "Assets copied. Count:"
+          ls bridge-of-voices/android-apk/app/src/main/assets/ | wc -l
 
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_HOME" > bridge-of-voices/android-apk/local.properties
@@ -34,10 +32,7 @@ jobs:
       - name: Build Debug APK
         working-directory: bridge-of-voices/android-apk
         run: |
-          # Download gradle wrapper if needed
-          if [ ! -f gradlew ]; then
-            gradle wrapper --gradle-version 8.2.1
-          fi
+          gradle wrapper --gradle-version 8.2.1
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
