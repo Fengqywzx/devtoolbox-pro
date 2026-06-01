@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e0ddd8" stroke-width="0.3"/>
+    </pattern>
+    <pattern id="gridBold" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#d0ccc5" stroke-width="0.6"/>
+    </pattern>
+    <marker id="arrowEnd" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#d97706"/>
+    </marker>
+    <marker id="arrowBoth" markerWidth="12" markerHeight="6" refX="9" refY="3" orient="auto">
+      <path d="M0,3 L3,0 L3,6 Z M12,3 L9,0 L9,6 Z" fill="#2c2c2c"/>
+    </marker>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="1000" fill="#fafaf8"/>
+  <rect width="800" height="1000" fill="url(#grid)"/>
+  <rect width="800" height="1000" fill="url(#gridBold)"/>
+
+  <!-- 安全边距 -->
+  <rect x="40" y="100" width="720" height="840" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="8,4"/>
+
+  <!-- 标题栏 -->
+  <rect x="40" y="40" width="720" height="50" rx="4" fill="#2c2c2c"/>
+  <text x="400" y="72" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="bold" fill="#fff">铁脊柱 · 膝撑模块 — 铰链定位图</text>
+
+  <!-- ===== 人体腿部参考 ===== -->
+  <g opacity="0.2">
+    <line x1="400" y1="160" x2="380" y2="580" stroke="#94a3b8" stroke-width="20" stroke-linecap="round"/>
+    <line x1="380" y1="580" x2="370" y2="780" stroke="#94a3b8" stroke-width="18" stroke-linecap="round"/>
+    <circle cx="385" cy="580" r="30" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <text x="450" y="175" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#94a3b8">大腿</text>
+    <text x="450" y="700" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#94a3b8">小腿</text>
+  </g>
+
+  <!-- ===== 膝撑支撑杆 ===== -->
+  <g id="knee-bar">
+    <!-- 上段杆 -->
+    <rect x="355" y="240" width="60" height="280" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+    <!-- 下段杆 -->
+    <rect x="355" y="620" width="60" height="220" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+    <!-- 标签 -->
+    <text x="385" y="385" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#92400e" transform="rotate(-90, 385, 385)">上臂杆 玻纤板 28cm</text>
+    <text x="385" y="725" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#92400e" transform="rotate(-90, 385, 725)">下臂杆 玻纤板 22cm</text>
+  </g>
+
+  <!-- ===== 膝关节铰链 ===== -->
+  <g id="hinge">
+    <!-- 外圈 -->
+    <circle cx="385" cy="560" r="32" fill="#f5f5f4" stroke="#78716c" stroke-width="3"/>
+    <!-- 内圈 -->
+    <circle cx="385" cy="560" r="16" fill="#e7e5e4" stroke="#78716c" stroke-width="2"/>
+    <!-- 中心轴 -->
+    <circle cx="385" cy="560" r="6" fill="#57534e"/>
+    <!-- 旋转范围弧 -->
+    <path d="M 385,528 A 32,32 0 0,1 385,592" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <!-- 箭头 -->
+    <polygon points="390,532 398,532 394,536" fill="#d97706"/>
+    <polygon points="380,590 372,590 376,586" fill="#d97706"/>
+
+    <!-- 标注 -->
+    <text x="425" y="555" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#57534e">铰链轴</text>
+    <text x="425" y="570" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#d97706">活动范围 130°</text>
+    <!-- 铰链放大细节 -->
+    <text x="430" y="585" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#78716c">M8不锈钢螺栓</text>
+    <text x="430" y="597" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#78716c">内置推力轴承</text>
+  </g>
+
+  <!-- ===== 绑带位置 ===== -->
+  <g id="straps">
+    <!-- 大腿绑带 -->
+    <g transform="translate(270, 320)">
+      <rect x="0" y="0" width="230" height="35" rx="5" fill="#e7e5e4" stroke="#78716c" stroke-width="2"/>
+      <line x1="0" y1="17" x2="230" y2="17" stroke="#a8a29e" stroke-width="0.5" stroke-dasharray="3,3"/>
+      <text x="115" y="15" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#57534e">尼龙绑带 5cm — 大腿固定</text>
+      <line x1="230" y1="17" x2="260" y2="17" stroke="#78716c" stroke-width="1" stroke-dasharray="4,2"/>
+    </g>
+    <!-- 小腿绑带 -->
+    <g transform="translate(270, 700)">
+      <rect x="0" y="0" width="230" height="35" rx="5" fill="#e7e5e4" stroke="#78716c" stroke-width="2"/>
+      <line x1="0" y1="17" x2="230" y2="17" stroke="#a8a29e" stroke-width="0.5" stroke-dasharray="3,3"/>
+      <text x="115" y="15" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#57534e">尼龙绑带 5cm — 小腿固定</text>
+      <line x1="230" y1="17" x2="260" y2="17" stroke="#78716c" stroke-width="1" stroke-dasharray="4,2"/>
+    </g>
+
+    <!-- 绑带标注 -->
+    <text x="130" y="335" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#78716c">魔术贴调节</text>
+    <text x="130" y="715" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#78716c">魔术贴调节</text>
+  </g>
+
+  <!-- ===== 弹力绳 ===== -->
+  <g id="bungee">
+    <!-- 前方弹力绳 -->
+    <path d="M 355,300 Q 310,430 355,560" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="8,3"/>
+    <!-- 后方弹力绳 -->
+    <path d="M 415,300 Q 460,430 415,560" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="8,3"/>
+    <!-- 下方弹力绳 -->
+    <path d="M 355,620 Q 310,720 355,820" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="8,3"/>
+
+    <!-- 锚点 -->
+    <circle cx="355" cy="300" r="5" fill="#ef4444"/>
+    <circle cx="355" cy="560" r="5" fill="#ef4444"/>
+    <circle cx="415" cy="300" r="5" fill="#ef4444"/>
+    <circle cx="415" cy="560" r="5" fill="#ef4444"/>
+    <circle cx="355" cy="620" r="5" fill="#ef4444"/>
+    <circle cx="355" cy="820" r="5" fill="#ef4444"/>
+
+    <text x="270" y="430" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#ef4444">弹力绳 前</text>
+    <text x="470" y="430" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#ef4444">弹力绳 后</text>
+    <text x="270" y="720" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#ef4444">弹力绳 下</text>
+  </g>
+
+  <!-- ===== 钻孔位置标注 ===== -->
+  <g id="drill-positions">
+    <!-- 上段杆钻孔 -->
+    <g transform="translate(385, 280)">
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#dc2626" stroke-width="1.5"/>
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#dc2626" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(385, 500)">
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#dc2626" stroke-width="1.5"/>
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#dc2626" stroke-width="1.5"/>
+    </g>
+    <!-- 下段杆钻孔 -->
+    <g transform="translate(385, 640)">
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#dc2626" stroke-width="1.5"/>
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#dc2626" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(385, 800)">
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#dc2626" stroke-width="1.5"/>
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#dc2626" stroke-width="1.5"/>
+    </g>
+  </g>
+
+  <!-- ===== 尺寸标注 ===== -->
+  <g id="dimensions" stroke="#2c2c2c" stroke-width="1" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2c2c2c">
+    <!-- 上臂杆长 -->
+    <line x1="550" y1="240" x2="560" y2="240"/>
+    <line x1="550" y1="520" x2="560" y2="520"/>
+    <line x1="560" y1="240" x2="560" y2="520"/>
+    <text x="572" y="385" font-size="12" font-weight="bold" transform="rotate(90, 572, 385)">280mm</text>
+
+    <!-- 下臂杆长 -->
+    <line x1="550" y1="620" x2="560" y2="620"/>
+    <line x1="550" y1="840" x2="560" y2="840"/>
+    <line x1="560" y1="620" x2="560" y2="840"/>
+    <text x="572" y="730" font-size="12" font-weight="bold" transform="rotate(90, 572, 730)">220mm</text>
+
+    <!-- 铰链到绑带 -->
+    <line x1="270" y1="340" x2="260" y2="340"/>
+    <line x1="270" y1="560" x2="260" y2="560"/>
+    <line x1="260" y1="340" x2="260" y2="560"/>
+    <text x="248" y="460" text-anchor="middle" font-size="9" transform="rotate(-90, 248, 460)">220mm (铰链→大腿绑带)</text>
+  </g>
+
+  <!-- ===== 组件清单 ===== -->
+  <g id="parts-list">
+    <rect x="40" y="870" width="720" height="110" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="60" y="892" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#2c2c2c">膝撑模块 — 组件清单</text>
+
+    <!-- 表格 -->
+    <line x1="60" y1="900" x2="740" y2="900" stroke="#e2e8f0"/>
+    <text x="70" y="918" font-family="sans-serif" font-size="9" fill="#57534e">玻纤板 3mm (上臂杆)</text>
+    <text x="230" y="918" font-family="sans-serif" font-size="9" fill="#57534e">280×50mm ×1</text>
+    <text x="350" y="918" font-family="sans-serif" font-size="9" fill="#57534e">玻纤板 3mm (下臂杆)</text>
+    <text x="510" y="918" font-family="sans-serif" font-size="9" fill="#57534e">220×50mm ×1</text>
+    <text x="630" y="918" font-family="sans-serif" font-size="9" fill="#57534e">¥20-30</text>
+
+    <text x="70" y="936" font-family="sans-serif" font-size="9" fill="#57534e">M8不锈钢螺栓+螺母</text>
+    <text x="230" y="936" font-family="sans-serif" font-size="9" fill="#57534e">铰链轴 ×1</text>
+    <text x="350" y="936" font-family="sans-serif" font-size="9" fill="#57534e">M8推力轴承</text>
+    <text x="510" y="936" font-family="sans-serif" font-size="9" fill="#57534e">内径8mm ×1</text>
+    <text x="630" y="936" font-family="sans-serif" font-size="9" fill="#57534e">¥3-5</text>
+
+    <text x="70" y="954" font-family="sans-serif" font-size="9" fill="#57534e">弹力绳 8mm</text>
+    <text x="230" y="954" font-family="sans-serif" font-size="9" fill="#57534e">约1.2m</text>
+    <text x="350" y="954" font-family="sans-serif" font-size="9" fill="#57534e">尼龙织带 5cm</text>
+    <text x="510" y="954" font-family="sans-serif" font-size="9" fill="#57534e">约1.5m</text>
+    <text x="630" y="954" font-family="sans-serif" font-size="9" fill="#57534e">¥20-30</text>
+
+    <text x="70" y="972" font-family="sans-serif" font-size="9" fill="#57534e">EVA泡棉 3mm</text>
+    <text x="230" y="972" font-family="sans-serif" font-size="9" fill="#57534e">膝窝衬垫 ×2</text>
+    <text x="350" y="972" font-family="sans-serif" font-size="9" fill="#57534e">PLA 3D打印件</text>
+    <text x="510" y="972" font-family="sans-serif" font-size="9" fill="#57534e">锚点+垫片 ×4</text>
+    <text x="630" y="972" font-family="sans-serif" font-size="9" fill="#57534e">¥8-15</text>
+  </g>
+</svg>

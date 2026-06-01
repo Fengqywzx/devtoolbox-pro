@@ -1,0 +1,422 @@
+/* === 橘子衣 — 环卫工人健康守护 === */
+/* 设计原则：大字体、高对比度、少操作、离线可用 */
+
+:root {
+  --orange: #f97316;
+  --orange-dark: #c2410c;
+  --orange-light: #fed7aa;
+  --orange-bg: #fff7ed;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --warning: #f59e0b;
+  --warning-bg: #fffbeb;
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --text: #1c1917;
+  --text-secondary: #57534e;
+  --border: #e7e5e4;
+  --card: #ffffff;
+  --bg: #fafaf9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 18px; /* 大字体基准 */
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px;
+  padding-bottom: 40px;
+}
+
+/* === 头部 === */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+  color: #fff;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.app-header h1 {
+  font-size: 28px;
+  flex: 1;
+}
+.header-sub {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* SOS 按钮 */
+.btn-sos {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--danger);
+  color: #fff;
+  border: 3px solid #fff;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+  animation: pulse-sos 2s infinite;
+}
+@keyframes pulse-sos {
+  0%, 100% { box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4); }
+  50% { box-shadow: 0 4px 24px rgba(220, 38, 38, 0.7); }
+}
+
+/* === 卡片 === */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.card-header h2 {
+  font-size: 20px;
+  flex: 1;
+}
+.card-icon { font-size: 24px; }
+
+/* === 天气卡片 === */
+.weather-card { border-left: 5px solid var(--orange); }
+.weather-main {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.weather-detail {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+.alert-tag {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 4px 4px 4px 0;
+}
+.alert-tag.red { background: var(--danger-bg); color: var(--danger); border: 2px solid #fecaca; }
+.alert-tag.orange { background: var(--orange-bg); color: var(--orange-dark); border: 2px solid var(--orange-light); }
+.alert-tag.yellow { background: var(--warning-bg); color: #92400e; border: 2px solid #fde68a; }
+.alert-desc {
+  font-size: 17px;
+  color: var(--text);
+  margin-top: 8px;
+  padding: 12px;
+  background: var(--orange-bg);
+  border-radius: 10px;
+  line-height: 1.7;
+}
+
+/* === 健康卡片 === */
+.health-card { border-left: 5px solid #ef4444; }
+.last-check {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* === 受伤记录 === */
+.injury-card { border-left: 5px solid #8b5cf6; }
+.badge-count {
+  font-size: 14px;
+  background: #f1f5f9;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+/* 时间线 */
+.timeline { margin-top: 12px; }
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+.timeline-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.timeline-content {
+  flex: 1;
+  font-size: 16px;
+}
+.timeline-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.timeline-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.timeline-tag.injury { background: var(--danger-bg); color: var(--danger); }
+.timeline-tag.near_miss { background: var(--warning-bg); color: #92400e; }
+.timeline-tag.unsafe { background: var(--orange-bg); color: var(--orange-dark); }
+.timeline-tag.harassment { background: #fdf2f8; color: #be185d; }
+.timeline-tag.equipment { background: #f0fdf4; color: #15803d; }
+
+/* === 附近设施 === */
+.nearby-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.nearby-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 8px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+.nearby-item:active { background: var(--orange-light); border-color: var(--orange); }
+.nearby-icon { font-size: 32px; }
+.nearby-label { font-weight: 600; }
+
+/* === 按钮 === */
+.btn-primary, .btn-secondary, .btn-outline {
+  display: block;
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  margin-top: 12px;
+  font-family: inherit;
+  transition: all 0.15s;
+  min-height: 56px;
+}
+.btn-primary {
+  background: var(--orange);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+}
+.btn-primary:active { background: var(--orange-dark); }
+.btn-secondary {
+  background: var(--bg);
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+.btn-secondary:active { background: var(--border); }
+
+/* === 弹窗 === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  padding: 24px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.modal-card h2 {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+/* 表单 */
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+}
+.form-group select,
+.form-group textarea,
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 18px;
+  font-family: inherit;
+  background: var(--bg);
+}
+.form-group select:focus,
+.form-group textarea:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.btn-row .btn-primary,
+.btn-row .btn-secondary {
+  flex: 1;
+  margin-top: 0;
+}
+
+/* SOS 弹窗 */
+.sos-modal {
+  text-align: center;
+}
+.sos-modal h2 { font-size: 28px; }
+.sos-modal p { font-size: 18px; margin-bottom: 20px; color: var(--text-secondary); }
+.sos-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.btn-sos-call {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  border-radius: 14px;
+  font-size: 24px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+}
+.btn-sos-call:nth-child(1) { background: var(--danger); }
+.btn-sos-call:nth-child(2) { background: #1e40af; }
+.btn-sos-call:nth-child(3) { background: #b45309; }
+
+/* 健康检查弹窗 */
+.health-modal { text-align: center; }
+.health-progress {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+.health-question {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.health-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.health-option {
+  padding: 16px 20px;
+  border: 3px solid var(--border);
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  background: #fff;
+  transition: all 0.15s;
+}
+.health-option:active, .health-option.selected {
+  border-color: var(--orange);
+  background: var(--orange-bg);
+  color: var(--orange-dark);
+}
+
+/* 健康检测结果 */
+.health-result {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 17px;
+  line-height: 1.7;
+}
+.health-result.low { background: var(--success-bg); border: 2px solid #bbf7d0; color: var(--success); }
+.health-result.medium { background: var(--warning-bg); border: 2px solid #fde68a; color: #92400e; }
+.health-result.high { background: var(--danger-bg); border: 2px solid #fecaca; color: var(--danger); }
+
+/* 底部 */
+.app-footer {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+.footer-sub {
+  font-size: 14px;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  z-index: 200;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+.toast.success { background: var(--success); color: #fff; }
+.toast.error { background: var(--danger); color: #fff; }

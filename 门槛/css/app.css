@@ -1,0 +1,282 @@
+/* === 门槛 — 家政工人权益守护 === */
+/* 设计原则：大字体、一键隐蔽切换、紫色主题（尊严感） */
+
+:root {
+  --primary: #7c3aed;
+  --primary-dark: #5b21b6;
+  --primary-light: #ddd6fe;
+  --primary-bg: #f5f3ff;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --warning: #f59e0b;
+  --warning-bg: #fffbeb;
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --text: #1c1917;
+  --text-secondary: #57534e;
+  --border: #e7e5e4;
+  --card: #ffffff;
+  --bg: #fafaf9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-text-size-adjust: 100%;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px;
+  padding-bottom: 40px;
+}
+
+/* === 隐蔽模式 === */
+.stealth-mode .app-header {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+}
+.stealth-mode .app-header h1::before {
+  content: '📋 备忘录';
+}
+.stealth-mode .app-header h1 {
+  font-size: 18px !important;
+}
+.stealth-mode .card { border-left-color: #94a3b8 !important; }
+.stealth-mode .checkin-sos { display: none !important; }
+
+/* === 头部 === */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.app-header h1 { font-size: 28px; flex: 1; }
+.header-sub { font-size: 14px; opacity: 0.85; }
+
+.btn-stealth {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  color: #fff; border: none;
+  font-size: 22px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* === 卡片 === */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--primary);
+}
+.card-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 14px;
+}
+.card-header h2 { font-size: 20px; flex: 1; }
+.card-icon { font-size: 24px; }
+.card-hint {
+  font-size: 16px; color: var(--text-secondary);
+  margin-bottom: 12px; line-height: 1.6;
+}
+
+/* === 签到 === */
+.checkin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.checkin-btn {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+  padding: 20px 8px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer; font-size: 16px;
+  background: #fff;
+  font-family: inherit; font-weight: 600;
+  transition: all 0.15s;
+}
+.checkin-btn:active { background: var(--primary-light); border-color: var(--primary); }
+.checkin-icon { font-size: 36px; }
+.checkin-sos { border-color: var(--danger); }
+.checkin-sos:active { background: var(--danger-bg); }
+
+.checkin-log {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.checkin-entry {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+/* === 工资工时 === */
+.wage-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.wage-stat {
+  text-align: center;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 12px;
+}
+.wage-label { font-size: 14px; color: var(--text-secondary); display: block; }
+.wage-value { font-size: 28px; font-weight: 800; color: var(--primary); }
+
+/* === 权益知识 === */
+.rights-grid {
+  display: grid;
+  gap: 8px;
+}
+.rights-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+.rights-item:active { background: var(--primary-light); }
+.rights-icon { font-size: 28px; }
+
+/* === 合同结果 === */
+.contract-result {
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--primary-bg);
+  border-radius: 12px;
+}
+.risk-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--primary-light);
+}
+.risk-item:last-child { border-bottom: none; }
+.risk-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-right: 8px;
+}
+.risk-badge.high { background: var(--danger-bg); color: var(--danger); }
+.risk-badge.medium { background: var(--warning-bg); color: #92400e; }
+.risk-badge.low { background: var(--success-bg); color: var(--success); }
+
+/* === 按钮 === */
+.btn-primary, .btn-secondary {
+  display: block; width: 100%;
+  padding: 16px 24px; border-radius: 12px;
+  font-size: 20px; font-weight: 700;
+  cursor: pointer; text-align: center;
+  border: none; margin-top: 12px;
+  font-family: inherit;
+  min-height: 56px;
+  transition: all 0.15s;
+}
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+.btn-primary:active { background: var(--primary-dark); }
+.btn-secondary {
+  background: var(--bg); color: var(--text);
+  border: 2px solid var(--border);
+}
+.btn-secondary:active { background: var(--border); }
+
+/* === 弹窗 === */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 100;
+  display: flex; align-items: flex-end;
+  padding: 20px;
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  padding: 24px;
+  width: 100%; max-width: 480px;
+  margin: 0 auto;
+  max-height: 80vh; overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.modal-card h2 {
+  font-size: 22px; margin-bottom: 16px;
+}
+
+/* 表单 */
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block; font-size: 17px; font-weight: 600;
+  margin-bottom: 6px; color: var(--text-secondary);
+}
+.form-group input {
+  width: 100%; padding: 14px 16px;
+  border: 2px solid var(--border); border-radius: 10px;
+  font-size: 18px; font-family: inherit;
+  background: var(--bg);
+}
+.form-group input:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+}
+.btn-row {
+  display: flex; gap: 10px; margin-top: 12px;
+}
+.btn-row .btn-primary, .btn-row .btn-secondary {
+  flex: 1; margin-top: 0;
+}
+
+/* 底部 */
+.app-footer {
+  text-align: center; padding: 24px 12px;
+  color: var(--text-secondary); font-size: 16px;
+}
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 24px; border-radius: 12px;
+  font-size: 17px; font-weight: 600;
+  z-index: 200;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+.toast.success { background: var(--success); color: #fff; }
+.toast.error { background: var(--danger); color: #fff; }

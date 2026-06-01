@@ -1,0 +1,48 @@
+{
+  "appId": "com.laborapps.dev",
+  "appName": "劳动者数字工具箱",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": ["*"]
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#1e40af"
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon",
+      "iconColor": "#1e40af"
+    },
+    "Geolocation": {
+      "permissions": ["location"]
+    }
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "release.keystore",
+      "keystorePassword": "${KEYSTORE_PASSWORD}",
+      "keystoreAlias": "release",
+      "keystoreAliasPassword": "${KEYSTORE_ALIAS_PASSWORD}"
+    },
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "subProjects": [
+    { "name": "声音的桥", "path": "声之桥", "appId": "com.laborapps.bridgeofvoices" },
+    { "name": "风信标", "path": "风向标", "appId": "com.laborapps.windvane" },
+    { "name": "铁脊柱", "path": "铁脊", "appId": "com.laborapps.ironspine" },
+    { "name": "橘子衣", "path": "橘色夹克", "appId": "com.laborapps.orangejacket" },
+    { "name": "门槛", "path": "门槛", "appId": "com.laborapps.threshold" },
+    { "name": "节拍器", "path": "节拍器", "appId": "com.laborapps.metronome" },
+    { "name": "方向盘", "path": "方向盘", "appId": "com.laborapps.steeringwheel" },
+    { "name": "脚手架", "path": "脚手架", "appId": "com.laborapps.scaffold" },
+    { "name": "温度计", "path": "温度计", "appId": "com.laborapps.thermometer" },
+    { "name": "谷雨", "path": "谷雨", "appId": "com.laborapps.grainrain" },
+    { "name": "遮阳伞", "path": "阳伞", "appId": "com.laborapps.parasol" },
+    { "name": "渡桥", "path": "渡桥", "appId": "com.laborapps.ferrybridge" }
+  ]
+}

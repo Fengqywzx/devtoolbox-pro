@@ -1,0 +1,10 @@
+// 温度计 v3+v4 — AI情感耗竭预测+个性化关怀建议+身体劳损联动(铁脊柱)+离线PWA
+class ThermometerV3{constructor(){this.ai=AIInsights.forProject('thermometer');this.crosslink=new CrossLinker('thermometer');this.reminder=new SmartReminder({projectId:'thermometer'});this.offline=new OfflineBundle({appName:'温度计',version:'3.0'});this.moods=this._ls('th_moods',[]);this.init()}
+async init(){await this.offline.init();const burnout=this._predictBurnout();if(burnout?.risk==='high'){this.reminder.schedule(()=>alert(burnout.advice),{id:'burnout',intervalMinutes:120,priority:'high'});this.crosslink.renderWidget('crosslinkWidget',{backPain:true})}this.reminder.schedule(()=>this._selfCareReminder(),{id:'selfcare',intervalMinutes:180,priority:'normal'})}
+_ls(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
+// AI情感耗竭预测
+_predictBurnout(){const recent=this.moods.slice(-14);if(recent.length<7)return null;const avg=recent.reduce((s,m)=>s+(m.score||5),0)/recent.length;const trend=TrendAnalyzer.linearTrend(recent.map(m=>m.score||5));const risk=avg<3.5||(trend.direction==='falling'&&trend.confidence>60)?'high':avg<5?'medium':'low';return{risk,avgScore:Math.round(avg*10)/10,trend:trend.direction,advice:risk==='high'?'💙 检测到情感耗竭风险。建议：①减少加班 ②每天记录3件感恩的事 ③与同伴交流 ④如持续2周请寻求专业心理支持':risk==='medium'?'📊 情绪偏低，注意自我关怀。':'✅ 情绪状态良好。'}}
+// 个性化自我关怀
+generateSelfCarePlan(moodScore){const plans={low:[{icon:'🌿',action:'深呼吸5分钟'},{icon:'📞',action:'给亲友打个电话'},{icon:'🚶',action:'出门散步20分钟'},{icon:'🎵',action:'听喜欢的音乐'}],medium:[{icon:'☕',action:'泡杯热茶休息10分钟'},{icon:'📖',action:'读几页书'},{icon:'💆',action:'做个简单的拉伸'}],high:[{icon:'😊',action:'继续保持！'},{icon:'🌟',action:'帮助一位同事'},{icon:'📝',action:'写下今天的成就'}]};return moodScore<4?plans.low:moodScore<7?plans.medium:plans.high}
+_selfCareReminder(){const avg=this.moods.slice(-7).reduce((s,m)=>s+(m.score||5),0)/Math.max(1,this.moods.slice(-7).length);const tips=avg<4?['🌿 暂停5分钟深呼吸','💙 你辛苦了','📞 找人说说话吧']:['🌟 今天有什么值得感恩的？','☕ 给自己泡杯茶','💆 记得活动一下肩膀'];return tips[Math.floor(Math.random()*tips.length)]}
+}

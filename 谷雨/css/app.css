@@ -1,0 +1,26 @@
+/* 谷雨 — 农业工人守护 · 绿色大地主题 */
+:root{--primary:#65a30d;--primary-dark:#4d7c0f;--primary-light:#d9f99d;--primary-bg:#f7fee7;--danger:#dc2626;--danger-bg:#fef2f2;--warning:#f59e0b;--warning-bg:#fffbeb;--success:#16a34a;--success-bg:#f0fdf4;--text:#1c1917;--text2:#57534e;--border:#e7e5e4;--card:#fff;--bg:#fafaf9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:18px;line-height:1.6;background:var(--bg);color:var(--text)}
+#app{max-width:480px;margin:0 auto;padding:12px 12px 40px}
+.app-header{display:flex;align-items:center;gap:10px;padding:16px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border-radius:16px;margin-bottom:16px}
+.app-header h1{font-size:28px;flex:1}.header-sub{font-size:14px;opacity:.85}
+.card{background:var(--card);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid var(--border);border-left:5px solid var(--primary)}
+.card-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}.card-header h2{font-size:20px;flex:1}.card-icon{font-size:24px}.card-hint{font-size:16px;color:var(--text2);margin-bottom:12px}.badge{font-size:13px;padding:3px 10px;border-radius:999px;font-weight:600;background:var(--primary-bg);color:var(--primary-dark)}
+.job-item{padding:14px;background:var(--bg);border-radius:10px;margin-bottom:8px;font-size:16px}
+.job-item strong{color:var(--primary-dark)}.job-meta{font-size:14px;color:var(--text2);margin-top:4px}
+.wage-item,.pest-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:16px}
+.health-warning{padding:12px;background:var(--warning-bg);border-radius:8px;font-size:15px;margin-top:8px;line-height:1.7}
+.form-group{margin-bottom:14px}.form-group label{display:block;font-size:17px;font-weight:600;margin-bottom:4px;color:var(--text2)}
+.form-group input,.form-group select{width:100%;padding:14px;border:2px solid var(--border);border-radius:10px;font-size:18px;font-family:inherit;background:var(--bg)}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary)}
+.btn-primary,.btn-secondary{display:block;width:100%;padding:16px;border-radius:12px;font-size:20px;font-weight:700;cursor:pointer;text-align:center;border:none;margin-top:12px;font-family:inherit;min-height:56px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:active{background:var(--primary-dark)}
+.btn-secondary{background:var(--bg);color:var(--text);border:2px solid var(--border)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:flex;align-items:flex-end;padding:20px}.modal-overlay.hidden{display:none}
+.modal-card{background:#fff;border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:480px;margin:0 auto;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-card h2{font-size:22px;margin-bottom:16px}
+.btn-row{display:flex;gap:10px;margin-top:12px}.btn-row .btn-primary,.btn-row .btn-secondary{flex:1;margin-top:0}
+.app-footer{text-align:center;padding:24px;color:var(--text2);font-size:16px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:14px 24px;border-radius:12px;font-size:17px;font-weight:600;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.15)}.toast.success{background:var(--success);color:#fff}.toast.error{background:var(--danger);color:#fff}

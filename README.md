@@ -94,18 +94,18 @@ git clone https://github.com/Fengqywzx/devtoolbox-pro.git
 cd devtoolbox-pro
 
 # 用浏览器打开
-open agentflow.html    # macOS
-start agentflow.html   # Windows
+open 智能体工作流.html    # macOS
+start 智能体工作流.html   # Windows
 ```
 
 ### 方式二：本地服务器
 ```bash
 python -m http.server 8000
-# 访问 http://localhost:8000/agentflow.html
+# 访问 http://localhost:8000/智能体工作流.html
 ```
 
 ### 方式三：启用真实AI（可选）
-1. 打开 `agentflow.html`
+1. 打开 `智能体工作流.html`
 2. 在浏览器控制台执行：
 ```javascript
 localStorage.setItem('af_api_key', 'your-api-key');

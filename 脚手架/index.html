@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>脚手架 — 建筑工人安全守护</title>
+<link rel="stylesheet" href="css/app.css">
+<meta name="theme-color" content="#ca8a04">
+</head>
+<body>
+
+<div id="app">
+  <header class="app-header">
+    <h1>🏗 脚手架</h1>
+    <span class="header-sub">站在高处，不该只有恐惧</span>
+  </header>
+
+  <!-- 今日安全评分 -->
+  <section class="card safety-card">
+    <div class="card-header">
+      <span class="card-icon">🛡</span>
+      <h2>今日施工安全评分</h2>
+    </div>
+    <div class="safety-score" id="safetyScore">
+      <div class="score-circle" id="scoreCircle">--</div>
+      <div class="score-detail" id="scoreDetail"></div>
+    </div>
+    <div class="weather-factors" id="weatherFactors"></div>
+  </section>
+
+  <!-- 工资账本 -->
+  <section class="card wage-card">
+    <div class="card-header">
+      <span class="card-icon">📒</span>
+      <h2>工资账本</h2>
+      <span class="badge" id="wageStatus">未结算</span>
+    </div>
+    <div class="wage-summary">
+      <span>本月工时：<strong id="scaffoldMonthHours">0h</strong></span>
+      <span>应发：<strong id="scaffoldMonthWage">¥0</strong></span>
+    </div>
+    <button class="btn-primary btn-large" id="btnAddWorkDay">+ 记录今天出工</button>
+    <div class="wage-log" id="wageLog"></div>
+  </section>
+
+  <!-- 安全知识 -->
+  <section class="card training-card">
+    <div class="card-header">
+      <span class="card-icon">🎮</span>
+      <h2>安全知识闯关</h2>
+      <span class="badge" id="trainingBadge">新手</span>
+    </div>
+    <p class="card-hint">答对问题，解锁安全等级。关键时刻能救命。</p>
+    <button class="btn-primary btn-large" id="btnStartQuiz">开始答题 →</button>
+    <div class="quiz-result" id="quizResult" hidden></div>
+  </section>
+
+  <footer class="app-footer">
+    <p>🏗 脚手架 · 平安回家比什么都重要</p>
+  </footer>
+</div>
+
+<!-- 出工记录弹窗 -->
+<div class="modal-overlay hidden" id="workModal">
+  <div class="modal-card">
+    <h2>📝 记录出工</h2>
+    <div class="form-group">
+      <label>工作小时数</label>
+      <input type="number" id="scaffoldHours" min="1" max="16" value="8" step="0.5">
+    </div>
+    <div class="form-group">
+      <label>日工资（元）</label>
+      <input type="number" id="scaffoldWage" min="0" value="0" step="1">
+    </div>
+    <div class="form-group">
+      <label>工作内容</label>
+      <input type="text" id="scaffoldTask" placeholder="如：绑钢筋、砌砖…">
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="btnWorkCancel">取消</button>
+      <button class="btn-primary" id="btnWorkSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 答题弹窗 -->
+<div class="modal-overlay hidden" id="quizModal">
+  <div class="modal-card">
+    <h2>🎮 安全知识闯关</h2>
+    <div class="quiz-progress" id="quizProgress">第1题/5题</div>
+    <div class="quiz-question" id="quizQuestion"></div>
+    <div class="quiz-options" id="quizOptions"></div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

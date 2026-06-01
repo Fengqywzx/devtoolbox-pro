@@ -33,7 +33,7 @@ jobs:
     - name: Copy Web Assets
       run: |
         rm -rf /tmp/apk-build/bridge/www/*
-        cp -r bridge-of-voices/www/* /tmp/apk-build/bridge/www/
+        cp -r 声之桥/www/* /tmp/apk-build/bridge/www/
         echo "Files in www:" && ls /tmp/apk-build/bridge/www/
 
     - name: Add Android Platform

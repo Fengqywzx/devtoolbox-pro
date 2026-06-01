@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>橘子衣 — 环卫工人健康守护</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f97316">
+</head>
+<body>
+
+<div id="app">
+  <!-- 头部 -->
+  <header class="app-header">
+    <h1>🍊 橘子衣</h1>
+    <span class="header-sub">你的健康守护者</span>
+    <button class="btn-sos" id="btnSOS" title="紧急求助">🆘</button>
+  </header>
+
+  <!-- 天气预警卡片 -->
+  <section class="card weather-card" id="weatherCard">
+    <div class="card-header">
+      <span class="card-icon">🌤</span>
+      <h2>今日天气预警</h2>
+      <span class="badge" id="alertLevel" hidden></span>
+    </div>
+    <div class="weather-body" id="weatherBody">
+      <div class="weather-main" id="weatherMain">加载中…</div>
+      <div class="weather-alerts" id="weatherAlerts"></div>
+    </div>
+  </section>
+
+  <!-- 健康自检卡片 -->
+  <section class="card health-card">
+    <div class="card-header">
+      <span class="card-icon">❤</span>
+      <h2>今日健康自检</h2>
+      <span class="last-check" id="lastCheckTime">未检查</span>
+    </div>
+    <div class="health-questions" id="healthQuestions"></div>
+    <button class="btn-primary btn-large" id="btnHealthCheck">开始健康自检 →</button>
+    <div class="health-result" id="healthResult" hidden></div>
+  </section>
+
+  <!-- 工伤记录卡片 -->
+  <section class="card injury-card">
+    <div class="card-header">
+      <span class="card-icon">📋</span>
+      <h2>工作事件记录</h2>
+      <span class="badge-count" id="injuryCount">0条</span>
+    </div>
+    <button class="btn-secondary btn-large" id="btnRecordEvent">📝 记录今天发生的事</button>
+    <div class="timeline" id="injuryTimeline"></div>
+  </section>
+
+  <!-- 附近设施卡片 -->
+  <section class="card nearby-card">
+    <div class="card-header">
+      <span class="card-icon">📍</span>
+      <h2>附近设施</h2>
+    </div>
+    <div class="nearby-grid">
+      <button class="nearby-item" data-type="water">
+        <span class="nearby-icon">🚰</span>
+        <span class="nearby-label">饮水点</span>
+      </button>
+      <button class="nearby-item" data-type="rest">
+        <span class="nearby-icon">🏠</span>
+        <span class="nearby-label">休息点</span>
+      </button>
+      <button class="nearby-item" data-type="hospital">
+        <span class="nearby-icon">🏥</span>
+        <span class="nearby-label">医院</span>
+      </button>
+      <button class="nearby-item" data-type="pharmacy">
+        <span class="nearby-icon">💊</span>
+        <span class="nearby-label">药店</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 底部信息 -->
+  <footer class="app-footer">
+    <p>🍊 橘子衣 · 为环卫工人而生</p>
+    <p class="footer-sub">橘色的衣服在黑夜里应该被看见</p>
+  </footer>
+</div>
+
+<!-- SOS 弹窗 -->
+<div class="modal-overlay hidden" id="sosModal">
+  <div class="modal-card sos-modal">
+    <h2>🆘 紧急求助</h2>
+    <p>点击下方按钮将立即拨打急救电话</p>
+    <div class="sos-buttons">
+      <a href="tel:120" class="btn-sos-call">🚑 急救 120</a>
+      <a href="tel:110" class="btn-sos-call">👮 报警 110</a>
+      <a href="tel:119" class="btn-sos-call">🚒 火警 119</a>
+    </div>
+    <button class="btn-secondary" id="btnSOSClose">关闭</button>
+  </div>
+</div>
+
+<!-- 事件记录弹窗 -->
+<div class="modal-overlay hidden" id="eventModal">
+  <div class="modal-card">
+    <h2>📝 记录事件</h2>
+    <div class="form-group">
+      <label>事件类型</label>
+      <select id="eventType">
+        <option value="injury">受伤</option>
+        <option value="near_miss">差点出事</option>
+        <option value="unsafe">不安全的工作条件</option>
+        <option value="harassment">被骚扰/被刁难</option>
+        <option value="equipment">工具/设备问题</option>
+        <option value="other">其他</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>描述</label>
+      <textarea id="eventDesc" rows="3" placeholder="简单描述发生了什么…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>时间</label>
+      <input type="datetime-local" id="eventTime">
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="btnEventCancel">取消</button>
+      <button class="btn-primary" id="btnEventSave">保存记录</button>
+    </div>
+  </div>
+</div>
+
+<!-- 健康检查弹窗 -->
+<div class="modal-overlay hidden" id="healthModal">
+  <div class="modal-card health-modal">
+    <h2>❤ 今日健康自检</h2>
+    <p class="health-progress">问题 <span id="qCurrent">1</span>/<span id="qTotal">8</span></p>
+    <div class="health-question" id="healthQuestionText"></div>
+    <div class="health-options" id="healthOptions"></div>
+    <button class="btn-secondary" id="btnHealthBack" hidden>← 上一题</button>
+  </div>
+</div>
+
+<script src="js/weather-engine.js"></script>
+<script src="js/health-check.js"></script>
+<script src="js/injury-log.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

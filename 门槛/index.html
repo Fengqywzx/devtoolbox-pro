@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>门槛 — 家政工人权益守护</title>
+<link rel="stylesheet" href="css/app.css">
+<meta name="theme-color" content="#7c3aed">
+</head>
+<body>
+
+<div id="app">
+  <!-- 头部（含隐蔽模式切换） -->
+  <header class="app-header">
+    <h1>🚪 门槛</h1>
+    <span class="header-sub">家政工人权益守护</span>
+    <button class="btn-stealth" id="btnStealth" title="切换普通界面">🔀</button>
+  </header>
+
+  <!-- 安全签到卡片 -->
+  <section class="card checkin-card">
+    <div class="card-header">
+      <span class="card-icon">✅</span>
+      <h2>安全签到</h2>
+    </div>
+    <div class="checkin-grid">
+      <button class="checkin-btn" data-type="enter">
+        <span class="checkin-icon">🚶</span>
+        <span class="checkin-label">我进门了</span>
+      </button>
+      <button class="checkin-btn" data-type="leave">
+        <span class="checkin-icon">🏃</span>
+        <span class="checkin-label">我离开了</span>
+      </button>
+      <button class="checkin-btn checkin-sos" data-type="sos" id="btnSOSHidden">
+        <span class="checkin-icon">📞</span>
+        <span class="checkin-label">紧急</span>
+      </button>
+    </div>
+    <div class="checkin-log" id="checkinLog"></div>
+  </section>
+
+  <!-- 合同审查卡片 -->
+  <section class="card contract-card">
+    <div class="card-header">
+      <span class="card-icon">📄</span>
+      <h2>合同审查</h2>
+    </div>
+    <p class="card-hint">拍照上传你的劳动合同，AI 帮你翻译成大白话，标记可能的风险条款</p>
+    <div class="contract-upload" id="contractUpload">
+      <button class="btn-primary btn-large" id="btnUploadContract">
+        📷 拍照或选择合同照片
+      </button>
+      <input type="file" id="contractFileInput" accept="image/*" capture="environment" hidden>
+    </div>
+    <div class="contract-result" id="contractResult" hidden></div>
+  </section>
+
+  <!-- 工资工时记录卡片 -->
+  <section class="card wage-card">
+    <div class="card-header">
+      <span class="card-icon">💰</span>
+      <h2>工资工时记录</h2>
+    </div>
+    <div class="wage-summary" id="wageSummary">
+      <div class="wage-stat">
+        <span class="wage-label">本月工时</span>
+        <span class="wage-value" id="monthHours">0h</span>
+      </div>
+      <div class="wage-stat">
+        <span class="wage-label">应发工资</span>
+        <span class="wage-value" id="monthWage">¥0</span>
+      </div>
+    </div>
+    <button class="btn-secondary btn-large" id="btnRecordWork">📝 记录今天的工作</button>
+  </section>
+
+  <!-- 权益知识卡片 -->
+  <section class="card rights-card">
+    <div class="card-header">
+      <span class="card-icon">📖</span>
+      <h2>你的权益</h2>
+    </div>
+    <div class="rights-grid" id="rightsGrid"></div>
+  </section>
+
+  <!-- 底部 -->
+  <footer class="app-footer">
+    <p>🚪 门槛 · 进了门之后，你不是一个人</p>
+  </footer>
+</div>
+
+<!-- 合同审查结果弹窗 -->
+<div class="modal-overlay hidden" id="contractModal">
+  <div class="modal-card">
+    <h2>📄 合同分析结果</h2>
+    <div id="contractAnalysis"></div>
+    <button class="btn-secondary" id="btnContractClose">关闭</button>
+  </div>
+</div>
+
+<!-- 工资记录弹窗 -->
+<div class="modal-overlay hidden" id="wageModal">
+  <div class="modal-card">
+    <h2>📝 记录今天的工作</h2>
+    <div class="form-group">
+      <label>工作小时数</label>
+      <input type="number" id="workHours" min="0" max="24" step="0.5" value="8">
+    </div>
+    <div class="form-group">
+      <label>日工资（元）</label>
+      <input type="number" id="workWage" min="0" step="1" value="0">
+    </div>
+    <div class="form-group">
+      <label>备注</label>
+      <input type="text" id="workNote" placeholder="如：加班2小时、被扣了钱…">
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="btnWageCancel">取消</button>
+      <button class="btn-primary" id="btnWageSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/rights-db.js"></script>
+<script src="js/contract-analyzer.js"></script>
+<script src="js/wage-tracker.js"></script>
+<script src="js/checkin-logger.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

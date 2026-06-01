@@ -1,0 +1,235 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="800" height="1100">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e0ddd8" stroke-width="0.3"/>
+    </pattern>
+    <pattern id="gridBold" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#d0ccc5" stroke-width="0.6"/>
+    </pattern>
+    <marker id="arrowEnd" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#d97706"/>
+    </marker>
+    <marker id="arrowEndRed" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrowStart" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+      <path d="M8,0 L0,3 L8,6 Z" fill="#d97706"/>
+    </marker>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="1100" fill="#fafaf8"/>
+  <rect width="800" height="1100" fill="url(#grid)"/>
+  <rect width="800" height="1100" fill="url(#gridBold)"/>
+
+  <!-- 安全边距框 -->
+  <rect x="40" y="100" width="720" height="940" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="8,4"/>
+
+  <!-- 标题栏 -->
+  <rect x="40" y="40" width="720" height="50" rx="4" fill="#2c2c2c"/>
+  <text x="400" y="72" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="bold" fill="#fff">铁脊柱 · 背撑模块 — 1:1 印刷模板</text>
+
+  <!-- ===== 人体轮廓参考 (背景) ===== -->
+  <g opacity="0.25">
+    <!-- 头部 -->
+    <circle cx="400" cy="170" r="45" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <!-- 脊柱中线 -->
+    <line x1="400" y1="215" x2="400" y2="720" stroke="#94a3b8" stroke-width="1" stroke-dasharray="6,3"/>
+    <!-- 肩线 -->
+    <line x1="240" y1="270" x2="560" y2="270" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>
+    <!-- 骨盆线 -->
+    <line x1="260" y1="700" x2="540" y2="700" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>
+    <!-- 人体文字 -->
+    <text x="420" y="195" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">人体参考</text>
+  </g>
+
+  <!-- ===== 主支撑杆 (玻纤板) ===== -->
+  <g id="main-bar">
+    <!-- 杆体阴影 -->
+    <rect x="336" y="290" width="128" height="420" rx="8" fill="rgba(0,0,0,0.08)"/>
+    <!-- 杆体主体 -->
+    <rect x="330" y="285" width="140" height="420" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+    <!-- 纹理线 -->
+    <line x1="340" y1="300" x2="340" y2="690" stroke="#fcd34d" stroke-width="0.5"/>
+    <line x1="350" y1="295" x2="350" y2="695" stroke="#fcd34d" stroke-width="0.5"/>
+    <line x1="360" y1="290" x2="360" y2="700" stroke="#fcd34d" stroke-width="0.5"/>
+    <line x1="440" y1="290" x2="440" y2="700" stroke="#fcd34d" stroke-width="0.5"/>
+    <line x1="450" y1="295" x2="450" y2="695" stroke="#fcd34d" stroke-width="0.5"/>
+    <line x1="460" y1="300" x2="460" y2="690" stroke="#fcd34d" stroke-width="0.5"/>
+    <!-- 标签 -->
+    <text x="400" y="508" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#92400e">玻纤板 FR4</text>
+    <text x="400" y="526" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#92400e">50×10cm × 3mm</text>
+  </g>
+
+  <!-- ===== 钻孔位置 ===== -->
+  <g id="drill-holes">
+    <!-- 钻孔十字标记 -->
+    <!-- 顶端孔 -->
+    <g transform="translate(400, 310)">
+      <line x1="-12" y1="0" x2="12" y2="0" stroke="#dc2626" stroke-width="2"/>
+      <line x1="0" y1="-12" x2="0" y2="12" stroke="#dc2626" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+      <circle cx="0" cy="0" r="2" fill="#dc2626"/>
+    </g>
+    <!-- 上1/3 孔 -->
+    <g transform="translate(400, 420)">
+      <line x1="-12" y1="0" x2="12" y2="0" stroke="#dc2626" stroke-width="2"/>
+      <line x1="0" y1="-12" x2="0" y2="12" stroke="#dc2626" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+      <circle cx="0" cy="0" r="2" fill="#dc2626"/>
+    </g>
+    <!-- 中点孔 -->
+    <g transform="translate(400, 500)">
+      <line x1="-12" y1="0" x2="12" y2="0" stroke="#dc2626" stroke-width="2"/>
+      <line x1="0" y1="-12" x2="0" y2="12" stroke="#dc2626" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+      <circle cx="0" cy="0" r="2" fill="#dc2626"/>
+    </g>
+    <!-- 下1/3 孔 -->
+    <g transform="translate(400, 580)">
+      <line x1="-12" y1="0" x2="12" y2="0" stroke="#dc2626" stroke-width="2"/>
+      <line x1="0" y1="-12" x2="0" y2="12" stroke="#dc2626" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+      <circle cx="0" cy="0" r="2" fill="#dc2626"/>
+    </g>
+    <!-- 底部孔 -->
+    <g transform="translate(400, 680)">
+      <line x1="-12" y1="0" x2="12" y2="0" stroke="#dc2626" stroke-width="2"/>
+      <line x1="0" y1="-12" x2="0" y2="12" stroke="#dc2626" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+      <circle cx="0" cy="0" r="2" fill="#dc2626"/>
+    </g>
+  </g>
+
+  <!-- 钻孔标注 -->
+  <text x="490" y="315" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#dc2626">⌀6mm 通孔</text>
+  <text x="490" y="505" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#dc2626">⌀6mm 通孔</text>
+  <text x="490" y="685" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#dc2626">⌀6mm 通孔</text>
+
+  <!-- 孔间距标注 -->
+  <line x1="480" y1="310" x2="480" y2="420" stroke="#dc2626" stroke-width="0.8"/>
+  <line x1="475" y1="310" x2="485" y2="310" stroke="#dc2626" stroke-width="0.8"/>
+  <line x1="475" y1="420" x2="485" y2="420" stroke="#dc2626" stroke-width="0.8"/>
+  <text x="490" y="370" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">110mm</text>
+
+  <line x1="480" y1="420" x2="480" y2="500" stroke="#dc2626" stroke-width="0.8"/>
+  <text x="490" y="465" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">80mm</text>
+
+  <line x1="480" y1="500" x2="480" y2="580" stroke="#dc2626" stroke-width="0.8"/>
+  <text x="490" y="545" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">80mm</text>
+
+  <line x1="480" y1="580" x2="480" y2="680" stroke="#dc2626" stroke-width="0.8"/>
+  <text x="490" y="635" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">100mm</text>
+
+  <!-- ===== 弹力绳路径 ===== -->
+  <g id="bungee-routes">
+    <!-- 左侧弹力绳 -->
+    <path d="M 330,320 Q 250,420 330,510" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="8,3"/>
+    <!-- 右侧弹力绳 -->
+    <path d="M 470,320 Q 550,420 470,510" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="8,3"/>
+    <!-- 弹力绳标签 -->
+    <text x="220" y="420" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#ef4444">弹力绳 L</text>
+    <text x="570" y="420" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#ef4444">弹力绳 R</text>
+
+    <!-- 锚点标记 -->
+    <circle cx="330" cy="320" r="5" fill="#ef4444"/>
+    <circle cx="330" cy="510" r="5" fill="#ef4444"/>
+    <circle cx="470" cy="320" r="5" fill="#ef4444"/>
+    <circle cx="470" cy="510" r="5" fill="#ef4444"/>
+  </g>
+
+  <!-- ===== 腰带位置 ===== -->
+  <g id="belt">
+    <!-- 上腰带 -->
+    <rect x="240" y="650" width="320" height="40" rx="6" fill="#e7e5e4" stroke="#78716c" stroke-width="2.5"/>
+    <!-- 下腰带 -->
+    <rect x="240" y="700" width="320" height="40" rx="6" fill="#e7e5e4" stroke="#78716c" stroke-width="2.5"/>
+    <!-- 魔术贴 -->
+    <line x1="240" y1="670" x2="560" y2="670" stroke="#a8a29e" stroke-width="0.8" stroke-dasharray="3,3"/>
+    <line x1="240" y1="720" x2="560" y2="720" stroke="#a8a29e" stroke-width="0.8" stroke-dasharray="3,3"/>
+    <!-- 标签 -->
+    <text x="400" y="668" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#57534e">尼龙织带 5cm — 上腰带</text>
+    <text x="400" y="738" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#57534e">尼龙织带 5cm — 下腰带</text>
+  </g>
+
+  <!-- ===== 尺寸标注 ===== -->
+  <g id="dimensions" stroke="#2c2c2c" stroke-width="1" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#2c2c2c">
+    <!-- 杆长 -->
+    <line x1="305" y1="285" x2="295" y2="285"/>
+    <line x1="305" y1="705" x2="295" y2="705"/>
+    <line x1="295" y1="285" x2="295" y2="705"/>
+    <line x1="292" y1="285" x2="298" y2="285"/>
+    <line x1="292" y1="705" x2="298" y2="705"/>
+    <text x="280" y="500" text-anchor="middle" font-size="12" font-weight="bold" fill="#2c2c2c" transform="rotate(-90, 280, 500)">420mm (身高170cm参考值)</text>
+
+    <!-- 杆宽 -->
+    <line x1="330" y1="740" x2="330" y2="750"/>
+    <line x1="470" y1="740" x2="470" y2="750"/>
+    <line x1="330" y1="750" x2="470" y2="750"/>
+    <text x="400" y="763" text-anchor="middle" font-size="11" fill="#2c2c2c">140mm</text>
+
+    <!-- 弹力绳锚点间距 -->
+    <line x1="330" y1="280" x2="330" y2="275"/>
+    <line x1="470" y1="280" x2="470" y2="275"/>
+    <line x1="330" y1="275" x2="470" y2="275" marker-start="url(#arrowStart)" marker-end="url(#arrowEnd)"/>
+    <text x="400" y="272" text-anchor="middle" font-size="10" fill="#ef4444">弹力绳锚点间距 140mm</text>
+  </g>
+
+  <!-- ===== 3D打印件示意 ===== -->
+  <g id="pla-parts">
+    <!-- 腰带扣座 ×2 -->
+    <g transform="translate(120, 820)">
+      <rect x="0" y="0" width="60" height="40" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+      <circle cx="15" cy="20" r="5" fill="none" stroke="#3b82f6" stroke-width="1"/>
+      <circle cx="45" cy="20" r="5" fill="none" stroke="#3b82f6" stroke-width="1"/>
+      <text x="30" y="55" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#3b82f6">腰带扣座 ×2</text>
+      <text x="30" y="67" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#64748b">PLA+ 填充40%</text>
+    </g>
+
+    <!-- 弹力绳锚点 ×4 -->
+    <g transform="translate(240, 820)">
+      <rect x="0" y="0" width="40" height="40" rx="20" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
+      <circle cx="20" cy="20" r="4" fill="none" stroke="#ec4899" stroke-width="1"/>
+      <text x="20" y="55" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#ec4899">锚点 ×4</text>
+      <text x="20" y="67" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#64748b">PLA+ 填充60%</text>
+    </g>
+
+    <!-- 杆端连接件 ×2 -->
+    <g transform="translate(360, 820)">
+      <rect x="0" y="0" width="50" height="30" rx="3" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+      <circle cx="10" cy="15" r="4" fill="none" stroke="#10b981" stroke-width="1"/>
+      <circle cx="40" cy="15" r="4" fill="none" stroke="#10b981" stroke-width="1"/>
+      <text x="25" y="45" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#10b981">连接件 ×2</text>
+      <text x="25" y="57" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#64748b">PLA 填充30%</text>
+    </g>
+
+    <!-- 紧固件清单 -->
+    <g transform="translate(460, 820)">
+      <text x="0" y="15" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" font-weight="bold" fill="#2c2c2c">紧固件清单</text>
+      <text x="0" y="35" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#57534e">M5螺栓+螺母 ×8</text>
+      <text x="0" y="50" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#57534e">M3螺栓+螺母 ×4</text>
+      <text x="0" y="65" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#57534e">M5尼龙垫圈 ×16</text>
+      <text x="0" y="80" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#57534e">尼龙扎带5×300 ×10</text>
+    </g>
+  </g>
+
+  <!-- ===== 使用说明 ===== -->
+  <g id="instructions">
+    <rect x="40" y="920" width="720" height="120" rx="4" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+    <text x="60" y="942" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" font-weight="bold" fill="#92400e">📌 制作说明</text>
+    <text x="60" y="962" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#78350f">1. 将本图按 A3 纸 1:1 打印。若用 A4，请使用"海报模式"拼接打印。</text>
+    <text x="60" y="978" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#78350f">2. 将打印模板贴到玻纤板上，用钢锥在十字标记处冲定位点，再用电钻（⌀6mm）打孔。</text>
+    <text x="60" y="994" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#78350f">3. 裁切玻纤板：沿外轮廓线用钢锯切割，边缘用锉刀打磨光滑。⚠ 全程戴口罩+护目镜！</text>
+    <text x="60" y="1010" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#78350f">4. 弹力绳穿过侧边锚点，预张力调节：挂 5kg 重物时弹力绳伸长量应为原长 50-80%。</text>
+    <text x="60" y="1026" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#78350f">5. 3D 打印件 → M5螺栓连接腰带扣座 → 尼龙织带穿过扣座 → 魔术贴固定腰部。</text>
+  </g>
+
+  <!-- Scale line -->
+  <g id="scale" transform="translate(600, 1060)">
+    <line x1="0" y1="0" x2="100" y2="0" stroke="#2c2c2c" stroke-width="2"/>
+    <line x1="0" y1="-5" x2="0" y2="5" stroke="#2c2c2c" stroke-width="1.5"/>
+    <line x1="50" y1="-3" x2="50" y2="3" stroke="#2c2c2c" stroke-width="1"/>
+    <line x1="100" y1="-5" x2="100" y2="5" stroke="#2c2c2c" stroke-width="1.5"/>
+    <text x="50" y="15" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2c2c2c">100mm 比例参考</text>
+  </g>
+</svg>

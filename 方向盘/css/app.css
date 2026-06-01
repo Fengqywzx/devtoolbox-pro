@@ -1,0 +1,108 @@
+/* === 方向盘 — 网约车司机守护 === */
+/* 设计原则：深蓝暗色主题（夜间驾驶友好）、超大触控目标、语音优先 */
+
+:root {
+  --primary: #1e40af; --primary-light: #bfdbfe; --primary-bg: #eff6ff;
+  --danger: #dc2626; --danger-bg: #fef2f2;
+  --warning: #f59e0b; --warning-bg: #fffbeb;
+  --success: #16a34a; --success-bg: #f0fdf4;
+  --text: #e2e8f0; --text-secondary: #94a3b8;
+  --border: #334155; --card: #1e293b; --bg: #0f172a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, "PingFang SC", sans-serif;
+  font-size: 20px; line-height: 1.6;
+  background: var(--bg); color: var(--text);
+  -webkit-text-size-adjust: 100%;
+}
+#app { max-width: 480px; margin: 0 auto; padding: 12px 12px 40px; }
+
+.app-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px 12px;
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  color: #fff; border-radius: 16px; margin-bottom: 16px;
+}
+.app-header h1 { font-size: 28px; flex: 1; }
+.header-sub { font-size: 14px; opacity: 0.8; }
+
+.card {
+  background: var(--card); border-radius: 16px; padding: 20px;
+  margin-bottom: 16px; border: 1px solid var(--border);
+}
+.card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.card-header h2 { font-size: 20px; flex: 1; }
+.card-icon { font-size: 24px; }
+
+/* 驾驶面板 */
+.btn-toggle {
+  padding: 10px 20px; border-radius: 999px;
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  border: 2px solid var(--success); background: var(--bg); color: var(--text);
+  font-family: inherit;
+}
+.btn-toggle.active { background: var(--success); color: #fff; border-color: var(--success); }
+
+.drive-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+.drive-stat { text-align: center; padding: 12px; background: var(--bg); border-radius: 10px; }
+.drive-value { display: block; font-size: 32px; font-weight: 900; }
+.drive-label { display: block; font-size: 13px; color: var(--text-secondary); }
+
+.fatigue-bar { height: 8px; background: #334155; border-radius: 4px; margin-top: 8px; overflow: hidden; }
+.fatigue-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+.fatigue-fill.low { background: var(--success); }
+.fatigue-fill.medium { background: var(--warning); }
+.fatigue-fill.high { background: var(--danger); animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: 0.6; } }
+
+/* 收入 */
+.income-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.income-stat { text-align: center; padding: 14px; background: var(--bg); border-radius: 10px; }
+.income-value { display: block; font-size: 28px; font-weight: 900; color: #60a5fa; }
+.income-label { display: block; font-size: 13px; color: var(--text-secondary); }
+
+.income-log { margin-top: 10px; }
+.income-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 16px;
+}
+.income-platform { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--primary-bg); color: #60a5fa; }
+
+/* 平台对比 */
+.platform-grid { display: grid; gap: 8px; }
+.platform-item { display: flex; justify-content: space-between; padding: 12px; background: var(--bg); border-radius: 8px; font-size: 16px; }
+.platform-bar {
+  height: 6px; background: #334155; border-radius: 3px; margin-top: 4px; overflow: hidden;
+}
+.platform-fill { height: 100%; border-radius: 3px; background: #60a5fa; }
+
+/* 按钮 */
+.btn-primary, .btn-secondary {
+  display: block; width: 100%; padding: 16px; border-radius: 12px;
+  font-size: 20px; font-weight: 700; cursor: pointer; text-align: center;
+  border: none; margin-top: 12px; font-family: inherit; min-height: 56px;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:active { opacity: 0.8; }
+.btn-secondary { background: var(--bg); color: var(--text); border: 2px solid var(--border); }
+
+/* 弹窗 */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: flex-end; padding: 20px; }
+.modal-overlay.hidden { display: none; }
+.modal-card { background: var(--card); border-radius: 20px 20px 0 0; padding: 24px; width: 100%; max-width: 480px; margin: 0 auto; max-height: 80vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-card h2 { font-size: 24px; margin-bottom: 16px; }
+
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 18px; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary); }
+.form-group input, .form-group select { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 20px; font-family: inherit; background: var(--bg); color: var(--text); }
+.form-group input:focus, .form-group select:focus { outline: none; border-color: #60a5fa; }
+.btn-row { display: flex; gap: 10px; margin-top: 12px; }
+.btn-row .btn-primary, .btn-row .btn-secondary { flex: 1; margin-top: 0; }
+
+.app-footer { text-align: center; padding: 24px; color: var(--text-secondary); font-size: 15px; }
+
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); padding: 14px 24px; border-radius: 12px; font-size: 18px; font-weight: 600; z-index: 200; animation: toastIn 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.toast.success { background: var(--success); color: #fff; }
+.toast.error { background: var(--danger); color: #fff; }

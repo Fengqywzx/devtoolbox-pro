@@ -1,0 +1,106 @@
+/* === 脚手架 — 建筑工人安全守护 === */
+/* 设计原则：黄色安全主题、大号数据、离线可用 */
+
+:root {
+  --primary: #ca8a04; --primary-dark: #a16207; --primary-light: #fef08a;
+  --primary-bg: #fefce8; --danger: #dc2626; --danger-bg: #fef2f2;
+  --warning: #f59e0b; --warning-bg: #fffbeb;
+  --success: #16a34a; --success-bg: #f0fdf4;
+  --text: #1c1917; --text-secondary: #57534e;
+  --border: #e7e5e4; --card: #ffffff; --bg: #fafaf9;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 18px; line-height: 1.6; background: var(--bg); color: var(--text);
+  -webkit-text-size-adjust: 100%;
+}
+#app { max-width: 480px; margin: 0 auto; padding: 12px; padding-bottom: 40px; }
+
+.app-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px; background: linear-gradient(135deg, #ca8a04, #a16207);
+  color: #fff; border-radius: 16px; margin-bottom: 16px;
+}
+.app-header h1 { font-size: 28px; flex: 1; }
+.header-sub { font-size: 14px; opacity: 0.85; }
+
+.card {
+  background: var(--card); border-radius: 16px; padding: 20px;
+  margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid var(--border); border-left: 5px solid var(--primary);
+}
+.card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.card-header h2 { font-size: 20px; flex: 1; }
+.card-icon { font-size: 24px; }
+.card-hint { font-size: 16px; color: var(--text-secondary); margin-bottom: 12px; }
+.badge { font-size: 13px; padding: 3px 10px; border-radius: 999px; font-weight: 600; background: var(--warning-bg); color: #92400e; }
+
+/* 安全评分 */
+.safety-score { text-align: center; margin-bottom: 12px; }
+.score-circle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 100px; height: 100px; border-radius: 50%;
+  font-size: 40px; font-weight: 900;
+  border: 6px solid var(--border);
+}
+.score-circle.good { border-color: var(--success); color: var(--success); }
+.score-circle.caution { border-color: var(--warning); color: #92400e; }
+.score-circle.danger { border-color: var(--danger); color: var(--danger); }
+.score-detail { font-size: 16px; color: var(--text-secondary); margin-top: 8px; }
+
+.weather-factors { display: grid; gap: 8px; }
+.factor-item { display: flex; justify-content: space-between; padding: 8px 12px; background: var(--bg); border-radius: 8px; font-size: 16px; }
+.factor-status.safe { color: var(--success); }
+.factor-status.risk { color: var(--danger); }
+
+/* 工资 */
+.wage-summary { display: flex; justify-content: space-around; margin: 12px 0; padding: 12px; background: var(--bg); border-radius: 8px; font-size: 18px; }
+.wage-log { margin-top: 10px; }
+.wage-entry { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 16px; }
+
+/* 答题 */
+.quiz-progress { font-size: 16px; color: var(--text-secondary); margin-bottom: 16px; text-align: center; }
+.quiz-question { font-size: 22px; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  padding: 16px 20px; border: 3px solid var(--border); border-radius: 12px;
+  font-size: 20px; font-weight: 600; cursor: pointer; text-align: center; background: #fff;
+}
+.quiz-option:active { border-color: var(--primary); background: var(--primary-bg); }
+.quiz-option.correct { border-color: var(--success) !important; background: var(--success-bg) !important; }
+.quiz-option.wrong { border-color: var(--danger) !important; background: var(--danger-bg) !important; }
+
+.quiz-result { margin-top: 12px; padding: 16px; border-radius: 12px; text-align: center; }
+.quiz-result.pass { background: var(--success-bg); border: 2px solid #bbf7d0; }
+.quiz-result.fail { background: var(--warning-bg); border: 2px solid #fde68a; }
+
+/* 按钮 */
+.btn-primary, .btn-secondary {
+  display: block; width: 100%; padding: 16px; border-radius: 12px;
+  font-size: 20px; font-weight: 700; cursor: pointer; text-align: center;
+  border: none; margin-top: 12px; font-family: inherit; min-height: 56px;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:active { background: var(--primary-dark); }
+.btn-secondary { background: var(--bg); color: var(--text); border: 2px solid var(--border); }
+
+/* 弹窗 */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 100; display: flex; align-items: flex-end; padding: 20px; }
+.modal-overlay.hidden { display: none; }
+.modal-card { background: #fff; border-radius: 20px 20px 0 0; padding: 24px; width: 100%; max-width: 480px; margin: 0 auto; max-height: 80vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-card h2 { font-size: 22px; margin-bottom: 16px; }
+
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 17px; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary); }
+.form-group input { width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 18px; font-family: inherit; background: var(--bg); }
+.form-group input:focus { outline: none; border-color: var(--primary); }
+.btn-row { display: flex; gap: 10px; margin-top: 12px; }
+.btn-row .btn-primary, .btn-row .btn-secondary { flex: 1; margin-top: 0; }
+
+.app-footer { text-align: center; padding: 24px; color: var(--text-secondary); font-size: 16px; }
+
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); padding: 14px 24px; border-radius: 12px; font-size: 17px; font-weight: 600; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+.toast.success { background: var(--success); color: #fff; }
+.toast.error { background: var(--danger); color: #fff; }

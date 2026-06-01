@@ -1,0 +1,22 @@
+{
+  "name": "橘子衣 — 环卫工人健康守护",
+  "short_name": "橘子衣",
+  "description": "极端天气预警、健康自检、工伤记录 — 为环卫工人而生",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fafaf9",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

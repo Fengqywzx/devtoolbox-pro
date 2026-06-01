@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>节拍器 — 流水线工人健康守护</title>
+<link rel="stylesheet" href="css/app.css">
+<meta name="theme-color" content="#0891b2">
+</head>
+<body>
+
+<div id="app">
+  <header class="app-header">
+    <h1>🎵 节拍器</h1>
+    <span class="header-sub">你不是机器的零件</span>
+  </header>
+
+  <!-- RSI 风险评估 -->
+  <section class="card rsi-card">
+    <div class="card-header">
+      <span class="card-icon">🤚</span>
+      <h2>重复性劳损评估</h2>
+    </div>
+    <p class="card-hint">回答几个问题，评估你的手部/腕部/肩部劳损风险</p>
+    <div class="rsi-form" id="rsiForm"></div>
+    <button class="btn-primary btn-large" id="btnRSIAssess">开始评估 →</button>
+    <div class="rsi-result" id="rsiResult" hidden></div>
+  </section>
+
+  <!-- 预防训练 -->
+  <section class="card exercise-card">
+    <div class="card-header">
+      <span class="card-icon">💪</span>
+      <h2>预防性训练</h2>
+      <span class="badge-timer">⏱ 每2小时做一次</span>
+    </div>
+    <div class="exercise-list" id="exerciseList"></div>
+  </section>
+
+  <!-- 加班费计算器 -->
+  <section class="card overtime-card">
+    <div class="card-header">
+      <span class="card-icon">🧮</span>
+      <h2>加班费权益计算器</h2>
+    </div>
+    <div class="overtime-form">
+      <div class="form-group">
+        <label>你的月基本工资（元）</label>
+        <input type="number" id="baseSalary" placeholder="如：5000" value="5000">
+      </div>
+      <div class="form-group">
+        <label>本月工作日加班小时数</label>
+        <input type="number" id="weekdayOT" placeholder="工作日加班总小时" value="0" step="0.5">
+      </div>
+      <div class="form-group">
+        <label>本月休息日加班小时数</label>
+        <input type="number" id="weekendOT" placeholder="周末加班总小时" value="0" step="0.5">
+      </div>
+      <div class="form-group">
+        <label>本月法定节假日加班小时数</label>
+        <input type="number" id="holidayOT" placeholder="节假日加班总小时" value="0" step="0.5">
+      </div>
+      <button class="btn-primary btn-large" id="btnCalcOvertime">计算应得加班费 →</button>
+    </div>
+    <div class="overtime-result" id="overtimeResult" hidden></div>
+  </section>
+
+  <!-- 化学暴露记录 -->
+  <section class="card chemical-card">
+    <div class="card-header">
+      <span class="card-icon">🧪</span>
+      <h2>化学暴露记录</h2>
+      <span class="badge-count" id="chemCount">0条</span>
+    </div>
+    <button class="btn-secondary btn-large" id="btnRecordChemical">📝 记录接触的化学品</button>
+    <div class="chemical-log" id="chemicalLog"></div>
+  </section>
+
+  <footer class="app-footer">
+    <p>🎵 节拍器 · 你的身体有自己的节奏</p>
+  </footer>
+</div>
+
+<!-- RSI 评估弹窗 -->
+<div class="modal-overlay hidden" id="rsiModal">
+  <div class="modal-card">
+    <h2>🤚 重复性劳损评估</h2>
+    <div class="rsi-question" id="rsiQuestion"></div>
+    <div class="rsi-options" id="rsiOptions"></div>
+  </div>
+</div>
+
+<!-- 化学品记录弹窗 -->
+<div class="modal-overlay hidden" id="chemModal">
+  <div class="modal-card">
+    <h2>🧪 记录化学品接触</h2>
+    <div class="form-group">
+      <label>化学品名称</label>
+      <input type="text" id="chemName" placeholder="如：焊接烟雾、油漆稀释剂…">
+    </div>
+    <div class="form-group">
+      <label>接触时长（小时）</label>
+      <input type="number" id="chemDuration" value="8" step="0.5">
+    </div>
+    <div class="form-group">
+      <label>防护措施</label>
+      <select id="chemProtection">
+        <option value="none">无防护</option>
+        <option value="mask">戴口罩</option>
+        <option value="gloves">戴手套</option>
+        <option value="full">全套防护</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="btnChemCancel">取消</button>
+      <button class="btn-primary" id="btnChemSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/rsi-assessor.js"></script>
+<script src="js/overtime-calc.js"></script>
+<script src="js/chemical-log.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方向盘 — 网约车司机守护</title>
+<link rel="stylesheet" href="css/app.css">
+<meta name="theme-color" content="#1e40af">
+</head>
+<body>
+
+<div id="app">
+  <header class="app-header">
+    <h1>🚗 方向盘</h1>
+    <span class="header-sub">命运也在你手里</span>
+  </header>
+
+  <!-- 驾驶状态面板 -->
+  <section class="card drive-card">
+    <div class="card-header">
+      <span class="card-icon">⏱</span>
+      <h2>今日驾驶</h2>
+      <button class="btn-toggle" id="btnToggleDriving">
+        <span id="drivingStatus">开始记录</span>
+      </button>
+    </div>
+    <div class="drive-stats">
+      <div class="drive-stat">
+        <span class="drive-value" id="todayHours">0h</span>
+        <span class="drive-label">今日驾驶</span>
+      </div>
+      <div class="drive-stat">
+        <span class="drive-value" id="fatigueScore">-</span>
+        <span class="drive-label">疲劳指数</span>
+      </div>
+      <div class="drive-stat">
+        <span class="drive-value" id="restReminder">-</span>
+        <span class="drive-label">休息提醒</span>
+      </div>
+    </div>
+    <div class="fatigue-bar" id="fatigueBar"></div>
+  </section>
+
+  <!-- 收入记录 -->
+  <section class="card income-card">
+    <div class="card-header">
+      <span class="card-icon">💰</span>
+      <h2>收入记录</h2>
+    </div>
+    <div class="income-summary">
+      <div class="income-stat">
+        <span class="income-value" id="todayIncome">¥0</span>
+        <span class="income-label">今日收入</span>
+      </div>
+      <div class="income-stat">
+        <span class="income-value" id="todayHourlyRate">¥0/h</span>
+        <span class="income-label">时薪</span>
+      </div>
+    </div>
+    <button class="btn-primary btn-large" id="btnAddIncome">+ 记录一笔收入</button>
+    <div class="income-log" id="incomeLog"></div>
+  </section>
+
+  <!-- 平台对比 -->
+  <section class="card platform-card">
+    <div class="card-header">
+      <span class="card-icon">📊</span>
+      <h2>平台对比（本月）</h2>
+    </div>
+    <div class="platform-grid" id="platformGrid"></div>
+  </section>
+
+  <footer class="app-footer">
+    <p>🚗 方向盘 · 疲劳不开车，安全第一</p>
+  </footer>
+</div>
+
+<!-- 收入记录弹窗 -->
+<div class="modal-overlay hidden" id="incomeModal">
+  <div class="modal-card">
+    <h2>💰 记录收入</h2>
+    <div class="form-group">
+      <label>平台</label>
+      <select id="incomePlatform">
+        <option value="滴滴">滴滴</option>
+        <option value="美团打车">美团打车</option>
+        <option value="T3出行">T3出行</option>
+        <option value="曹操出行">曹操出行</option>
+        <option value="高德">高德</option>
+        <option value="其他">其他</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>收入金额（元）</label>
+      <input type="number" id="incomeAmount" placeholder="0" step="0.01">
+    </div>
+    <div class="form-group">
+      <label>驾驶小时数</label>
+      <input type="number" id="incomeHours" placeholder="0" step="0.5">
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="btnIncomeCancel">取消</button>
+      <button class="btn-primary" id="btnIncomeSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

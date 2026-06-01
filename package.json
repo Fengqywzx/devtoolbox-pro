@@ -2,9 +2,9 @@
   "name": "devtoolbox-pro",
   "version": "1.0.0",
   "description": "Developer Toolbox Pro - JSON/Base64/Regex/Timestamp/UUID tools in one HTML file",
-  "main": "devtoolbox-pro.html",
+  "main": "开发工具箱.html",
   "files": [
-    "devtoolbox-pro.html",
+    "开发工具箱.html",
     "README.md"
   ],
   "keywords": [

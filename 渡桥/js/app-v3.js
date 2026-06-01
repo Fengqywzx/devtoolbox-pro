@@ -1,0 +1,10 @@
+// 渡桥 v3+v4 — AI工作匹配+无障碍需求预测+政策福利优化+跨联动+离线PWA+无障碍增强
+class FerryBridgeV3{constructor(){this.ai=AIInsights.forProject('ferry-bridge');this.crosslink=new CrossLinker('ferry-bridge');this.reminder=new SmartReminder({projectId:'ferry-bridge',quietHours:[22,7]});this.offline=new OfflineBundle({appName:'渡桥',version:'3.0'});this.ability=this._ls('fb_ability',null);this.init()}
+async init(){await this.offline.init();const matches=this._matchJobs();if(matches?.length)console.log('[FB v3] 匹配到',matches.length,'个岗位');this.reminder.schedule(()=>this._policyReminder(),{id:'policy',intervalMinutes:10080,priority:'low'})}
+_ls(k,d){try{return JSON.parse(localStorage.getItem(k))}catch{return d}}
+// AI工作匹配（基于能力档案+无障碍需求+远程偏好）
+_matchJobs(){if(!this.ability?.skills)return null;const skills=this.ability.skills.split(/[,，、\n]/).filter(Boolean).map(s=>s.trim().toLowerCase());const jobs=[{title:'远程客服',reqSkills:['沟通','电脑','打字','普通话'],salary:'¥4000-6000',remote:true,accessibility:'屏幕阅读器友好'},{title:'数据标注员',reqSkills:['电脑','细心','耐心'],salary:'¥3000-5000',remote:true,accessibility:'灵活工时'},{title:'无障碍测试员',reqSkills:['测试','反馈','手机','无障碍'],salary:'¥5000-8000',remote:true,accessibility:'需要无障碍体验'},{title:'文案编辑/翻译',reqSkills:['写作','翻译','英语','中文'],salary:'¥4000-7000',remote:true,accessibility:'安静环境'}];return jobs.map(j=>({...j,matchScore:Math.round(j.reqSkills.filter(r=>skills.some(s=>s.includes(r))).length/j.reqSkills.length*100)})).filter(j=>j.matchScore>=30).sort((a,b)=>b.matchScore-a.matchScore)}
+// 政策福利优化建议
+optimizeBenefits(disabilityLevel,income,region){const benefits=[];if(disabilityLevel>=2)benefits.push({name:'重度残疾人护理补贴',amount:'¥100-300/月',source:'当地残联'});if(income<2000)benefits.push({name:'困难残疾人生活补贴',amount:'¥80-200/月',source:'当地民政'});benefits.push({name:'残疾人自主创业补贴',amount:'一次性¥3000-10000',source:'当地残联+人社局'});benefits.push({name:'残疾人就业保障金减免',amount:'企业可享税收优惠',source:'税务部门'});const total=benefits.filter(b=>b.amount.includes('/月')).reduce((s,b)=>s+parseInt(b.amount.match(/[0-9]+/)?.[0]||0),0);return{benefits,estimatedMonthly:total>0?`约¥${total}/月补贴`:'无月度补贴',advice:'建议联系当地残联获取最新政策和申请流程。'}}
+_policyReminder(){return'📢 政策提醒：残疾人就业保障金年度申报即将截止，请提醒用人单位及时申报。'}
+}
