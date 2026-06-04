@@ -1,11 +1,8 @@
-name: Deploy Chronicle to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [master]
-    paths:
-      - 'novel/publish/**'
-      - 'notes/chronicles/**'
   workflow_dispatch:
 
 permissions:
@@ -18,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -26,13 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Run publish
-        run: node scripts/miracle-engine.mjs publish
+      - name: Build static site
+        run: |
+          mkdir -p _site
+          cp -v *.html _site/ 2>/dev/null || true
+          cp -v portfolio-data.json _site/ 2>/dev/null || true
+          touch _site/.nojekyll
+          echo "=== _site contents ==="
+          ls -la _site/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -40,7 +38,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'novel/publish'
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         id: deployment

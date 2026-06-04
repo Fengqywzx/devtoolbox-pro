@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多智能体协作中心 · 本地模型指挥塔</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #111116;
+    --border: #1e1e2a;
+    --accent: #6c5ce7;
+    --accent2: #00cec9;
+    --green: #00b894;
+    --gold: #fdcb6e;
+    --red: #d63031;
+    --text: #dfe6e9;
+    --dim: #636e72;
+    --pink: #fd79a8;
+    --blue: #74b9ff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier New', 'SimSun', monospace;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container { max-width: 1000px; margin: 0 auto; }
+
+  /* === ASCII 边框 === */
+  .ascii-top, .ascii-bottom {
+    text-align: center;
+    color: var(--accent);
+    font-size: 10px;
+    line-height: 1.1;
+    letter-spacing: 1px;
+    white-space: pre;
+    user-select: none;
+  }
+
+  /* === 主卡 === */
+  .main-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    padding: 30px 24px;
+    box-shadow: 0 0 40px rgba(108,92,231,0.05);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    font-weight: normal;
+  }
+  .header .sub {
+    color: var(--dim);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+  }
+  .header .stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 12px;
+    font-size: 0.75rem;
+  }
+  .header .stats span { color: var(--accent2); }
+
+  .divider {
+    text-align: center;
+    color: var(--border);
+    font-size: 8px;
+    letter-spacing: 2px;
+    margin: 16px 0;
+    user-select: none;
+  }
+
+  /* === 模型网格 === */
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .model-card {
+    background: #0d0d15;
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .model-card:hover { border-color: var(--accent); background: #111122; }
+  .model-card .m-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .model-card .m-name {
+    color: var(--text);
+    font-size: 0.85rem;
+  }
+  .model-card .m-status {
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    border: 1px solid;
+    border-radius: 0;
+  }
+  .status-online { color: var(--green); border-color: #004d40; }
+  .status-offline { color: var(--dim); border-color: #333; }
+  .status-busy { color: var(--gold); border-color: #5a4e00; animation: blink 1s infinite; }
+
+  .model-card .m-role {
+    color: var(--dim);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+  }
+  .model-card .m-specs {
+    color: var(--dim);
+    font-size: 0.6rem;
+    margin-top: 4px;
+    display: flex;
+    gap: 10px;
+  }
+  .model-card .m-specs span { color: var(--blue); }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* === 编排控制台 === */
+  .console-section {
+    margin: 16px 0;
+  }
+  .console-section textarea {
+    width: 100%;
+    background: #050508;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .console-section textarea:focus { outline: none; border-color: var(--accent); }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.1em;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { border-color: var(--accent); color: var(--accent); }
+  .btn-primary:hover { background: var(--accent); color: #fff; }
+  .btn-exec { border-color: var(--green); color: var(--green); }
+  .btn-exec:hover { background: var(--green); color: #000; }
+  .btn-danger { border-color: var(--red); color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+
+  /* === 输出 === */
+  .output-area {
+    background: #050508;
+    border: 1px solid var(--border);
+    padding: 14px;
+    min-height: 120px;
+    max-height: 400px;
+    overflow-y: auto;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+  }
+  .output-area .step-label { color: var(--accent); font-weight: bold; }
+  .output-area .step-content { color: var(--text); }
+  .output-area .step-divider { color: var(--dim); }
+  .output-area .model-tag {
+    display: inline-block;
+    background: #1a1a2e;
+    color: var(--accent2);
+    padding: 1px 8px;
+    font-size: 0.6rem;
+    margin-right: 4px;
+  }
+
+  /* === 推荐面板 === */
+  .recommend-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .rec-card {
+    background: #0d0d15;
+    border: 1px solid var(--border);
+    padding: 12px;
+    text-align: center;
+  }
+  .rec-card .rec-title {
+    color: var(--gold);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .rec-card .rec-value {
+    color: var(--accent2);
+    font-size: 0.85rem;
+  }
+
+  /* === 快速命令 === */
+  .quick-cmds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .quick-cmd {
+    background: transparent;
+    border: 1px solid #333;
+    color: var(--dim);
+    padding: 4px 12px;
+    font-size: 0.65rem;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .quick-cmd:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .footer {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--dim);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+  }
+
+  @media (max-width: 600px) {
+    .model-grid { grid-template-columns: 1fr; }
+    .recommend-panel { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="ascii-top">
+  ╔══════════════════════════════════════════════════════════╗
+  ║  ──  ▄▄█  █▄▄  ──  ▄▄▄  ▄▄█  ──  █▄▄  ▄▄▄  ──  ║
+  ╚══════════════════════════════════════════════════════════╝
+</div>
+
+<div class="main-card">
+
+  <div class="header">
+    <h1>✦ 多智能体协作中心 ✦</h1>
+    <div class="sub">Multi-Agent Orchestration Command Tower</div>
+    <div class="stats">
+      <span id="modelCount">-</span> 模型在线
+      <span id="totalSize">-</span> 总容量
+      <span id="proxyStatus">○</span> 代理状态
+    </div>
+  </div>
+
+  <div class="divider">━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━</div>
+
+  <!-- 模型网格 -->
+  <div class="model-grid" id="modelGrid">
+    <div style="grid-column:1/-1;text-align:center;color:var(--dim);padding:20px;">
+      ⟳ 正在加载模型列表...
+    </div>
+  </div>
+
+  <!-- 推荐策略 -->
+  <div class="section-title" style="display:none;" id="recSection">
+    <div class="rec-title" style="display:none;"></div>
+  </div>
+  <div class="recommend-panel" id="recPanel"></div>
+
+  <div class="divider">━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━─━</div>
+
+  <!-- 控制台 -->
+  <div class="console-section">
+    <textarea id="taskInput" placeholder="输入任务，让多个AI模型协作完成...&#10;例如: 用中文写一首关于夏天的诗，每个模型负责一段"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-exec" onclick="runOrchestrator()">▶ 多模型协作</button>
+      <button class="btn btn-primary" onclick="runSingle('assistant')">单模型 (qwen2.5)</button>
+      <button class="btn btn-primary" onclick="runSingle('coder')">单模型 (deepseek)</button>
+      <button class="btn btn-primary" onclick="runSingle('creative')">单模型 (gemma3)</button>
+      <button class="btn" onclick="clearOutput()">⌧ 清空</button>
+      <button class="btn btn-danger" onclick="refreshModels()">⟳ 刷新</button>
+    </div>
+    <div class="quick-cmds">
+      <span style="color:var(--dim);font-size:0.65rem;padding-right:4px;">快速:</span>
+      <span class="quick-cmd" onclick="quickTask('用中文写一首4句诗，描述AI与人类协作的未来')">写诗</span>
+      <span class="quick-cmd" onclick="quickTask('分析这个项目的架构并给出改进建议')">分析</span>
+      <span class="quick-cmd" onclick="quickTask('用中文解释什么是多智能体协作系统')">解释</span>
+      <span class="quick-cmd" onclick="quickTask('写一个简短的HTML页面，展示一个动态时钟')">编码</span>
+      <span class="quick-cmd" onclick="quickTask('比较Ollama和DeepSeek API的优缺点')">对比</span>
+    </div>
+  </div>
+
+  <!-- 输出 -->
+  <div class="output-area" id="outputArea">
+    <span style="color:var(--dim)">⟳ 准备就绪。输入任务或点击快速命令开始。</span>
+  </div>
+
+  <!-- 底部状态 -->
+  <div class="footer">
+    万子轩 · 本地多智能体系统 · Ollama v0.24.0<br>
+    ──  ▄▄█ 自由协作 · 零成本 · 隐私优先  █▄▄  ──
+  </div>
+
+</div>
+
+<div class="ascii-bottom">
+  ╔══════════════════════════════════════════════════════════╗
+  ║  ──  ▄▄█  █▄▄  ──  ▄▄▄  ▄▄█  ──  █▄▄  ▄▄▄  ──  ║
+  ╚══════════════════════════════════════════════════════════╝
+</div>
+
+</div>
+
+<script>
+// ===== 模型配置 =====
+const MODELS = [
+  { key: 'deepseek-coder-v2:16b',  role: '🧠 代码专家',   tier: '旗舰',  size: '15.7B', ctx: '64K', best: '复杂编程/深度推理' },
+  { key: 'qwen2.5-coder:7b',       role: '⚡ 主力助手',   tier: '主力',  size: '7.6B',  ctx: '32K', best: '日常编码/中文处理' },
+  { key: 'gemma3:4b',              role: '🎨 创意写手',   tier: '均衡',  size: '4.3B',  ctx: '8K',  best: '创意写作/指令遵循' },
+  { key: 'llama3.2:3b',            role: '🏃 快答手',     tier: '轻量',  size: '3.2B',  ctx: '8K',  best: '快速问答/摘要' },
+  { key: 'llama3.2:1b',            role: '⚙️ 速记员',     tier: '微型',  size: '1.2B',  ctx: '8K',  best: '分类/简单任务' },
+  { key: 'qwen2.5-coder:1.5b',     role: '🔧 编码快手',   tier: '微型',  size: '1.5B',  ctx: '8K',  best: '简单编码/分类' },
+];
+
+// ===== 状态 =====
+let modelStatus = {};
+
+// ===== 刷新模型状态 =====
+async function refreshModels() {
+  const grid = document.getElementById('modelGrid');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--dim);padding:20px;">⟳ 刷新中...</div>';
+
+  let online = 0;
+  let totalSize = 0;
+
+  for (const m of MODELS) {
+    try {
+      const resp = await fetch(`http://localhost:11434/api/show`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({model: m.key})
+      });
+      const data = await resp.json();
+      modelStatus[m.key] = data.modified_at ? 'online' : 'offline';
+      if (data.modified_at) {
+        online++;
+        totalSize += parseFloat(m.size) || 0;
+      }
+    } catch(e) {
+      modelStatus[m.key] = 'offline';
+    }
+  }
+
+  renderModels();
+  document.getElementById('modelCount').textContent = `${online}/${MODELS.length}`;
+  document.getElementById('totalSize').textContent = `${totalSize.toFixed(1)}GB`;
+
+  // 代理状态
+  try {
+    const proxyResp = await fetch('http://localhost:9877/health');
+    const proxyData = await proxyResp.json();
+    document.getElementById('proxyStatus').textContent = proxyData.status === 'ok' ? '●' : '○';
+    document.getElementById('proxyStatus').style.color = proxyData.status === 'ok' ? '#00b894' : '#636e72';
+  } catch {
+    document.getElementById('proxyStatus').textContent = '○';
+    document.getElementById('proxyStatus').style.color = '#636e72';
+  }
+}
+
+// ===== 渲染模型卡片 =====
+function renderModels() {
+  const grid = document.getElementById('modelGrid');
+  grid.innerHTML = '';
+
+  for (const m of MODELS) {
+    const status = modelStatus[m.key] || 'unknown';
+    const statusClass = status === 'online' ? 'status-online' : 'status-offline';
+    const statusText = status === 'online' ? '● 在线' : '○ 离线';
+
+    const card = document.createElement('div');
+    card.className = 'model-card';
+    card.innerHTML = `
+      <div class="m-header">
+        <span class="m-name">${m.key}</span>
+        <span class="m-status ${statusClass}">${statusText}</span>
+      </div>
+      <div class="m-role">${m.role} · ${m.tier}</div>
+      <div class="m-specs">
+        <span>${m.size}</span> · <span>${m.ctx}</span> · ${m.best}
+      </div>
+    `;
+    card.onclick = () => runSingle(m.key);
+    card.title = `点击用 ${m.role} 执行任务`;
+    grid.appendChild(card);
+  }
+}
+
+// ===== 执行单模型 =====
+async function runSingle(modelKey) {
+  const task = document.getElementById('taskInput').value.trim();
+  if (!task) { appendOutput('请先输入任务', 'error'); return; }
+
+  // 如果传的是角色名，转成模型key
+  const modelMap = { 'assistant': 'qwen2.5-coder:7b', 'coder': 'deepseek-coder-v2:16b', 'creative': 'gemma3:4b' };
+  const actualModel = modelMap[modelKey] || modelKey;
+
+  appendOutput(`\n▶ 单模型执行: ${actualModel}\n`, 'step-label');
+
+  try {
+    const resp = await fetch('http://localhost:11434/api/generate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ model: actualModel, prompt: task, stream: false, options: { temperature: 0.7 } })
+    });
+    const data = await resp.json();
+    appendOutput(data.response || '(无响应)', 'step-content');
+    appendOutput(`\n── ${actualModel} 完成 ──\n`, 'step-divider');
+  } catch(e) {
+    appendOutput(`错误: ${e.message}`, 'error');
+  }
+}
+
+// ===== 多模型编排 =====
+async function runOrchestrator() {
+  const task = document.getElementById('taskInput').value.trim();
+  if (!task) { appendOutput('请先输入任务', 'error'); return; }
+
+  appendOutput(`\n═══ 多智能体协作开始 ═══\n任务: ${task}\n`, 'step-label');
+
+  // 步骤分解
+  const steps = [
+    { name: '分析任务', model: 'qwen2.5-coder:7b', system: '你是一个任务分析师。分析用户任务的要点、需求和背景。' },
+    { name: '深度思考', model: 'deepseek-coder-v2:16b', system: '你是一个深度思考者。从多角度深入探讨问题。' },
+    { name: '创意表达', model: 'gemma3:4b', system: '你是一个创意表达者。用优美的语言总结和表达。' },
+  ];
+
+  let context = '';
+
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i];
+    const systemPrompt = `${step.system}\n\n这是第${i+1}/${steps.length}步。${context ? '已有上下文:\n' + context.slice(0, 500) : ''}`;
+
+    appendOutput(`\n◆ 第 ${i+1} 步: ${step.name} [${step.model}]\n`, 'step-label');
+
+    try {
+      const resp = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          model: step.model,
+          system: systemPrompt,
+          prompt: task,
+          stream: false,
+          options: { temperature: 0.7 }
+        })
+      });
+      const data = await resp.json();
+      const response = data.response || '';
+      context += `\n【${step.name}】\n${response}\n`;
+      appendOutput(response, 'step-content');
+      appendOutput(`\n`, '');
+    } catch(e) {
+      appendOutput(`错误: ${e.message}`, 'error');
+    }
+  }
+
+  // 最后汇总
+  appendOutput(`\n═══ 协作完成 ═══\n`, 'step-label');
+}
+
+// ===== 输出 =====
+function appendOutput(text, type) {
+  const area = document.getElementById('outputArea');
+  const div = document.createElement('div');
+  if (type === 'step-label') div.style.color = '#6c5ce7';
+  else if (type === 'step-content') div.style.color = '#dfe6e9';
+  else if (type === 'step-divider') div.style.color = '#636e72';
+  else if (type === 'error') div.style.color = '#d63031';
+  div.textContent = text;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function clearOutput() {
+  const area = document.getElementById('outputArea');
+  area.innerHTML = '';
+  appendOutput('已清空。输入任务开始。', '');
+}
+
+function quickTask(text) {
+  document.getElementById('taskInput').value = text;
+  runOrchestrator();
+}
+
+// ===== 启动 =====
+refreshModels();
+</script>
+</body>
+</html>

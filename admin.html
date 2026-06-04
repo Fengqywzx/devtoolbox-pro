@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧬 自进化文案系统 · 控制面板 v2</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system,'Segoe UI',Helvetica,Arial,sans-serif; background: #0a0e14; color: #e6edf3; min-height:100vh; }
+  .header { background: linear-gradient(135deg,#0d1117 0%,#161b22 100%); border-bottom:1px solid #30363d; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .header h1 { font-size:1.3rem; display:flex; align-items:center; gap:10px; }
+  .header h1 .version { font-size:0.7rem; color:#8b949e; background:#21262d; padding:2px 8px; border-radius:4px; }
+  .header-right { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .status-badge { padding:6px 16px; border-radius:20px; font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:6px; }
+  .badge-green { background:#0f2d1a; color:#3fb950; border:1px solid #3fb950; }
+  .badge-yellow { background:#2d1f0f; color:#d29922; border:1px solid #d29922; }
+  .badge-red { background:#2d0f0f; color:#f85149; border:1px solid #f85149; }
+  .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .dot-green { background:#3fb950; box-shadow:0 0 8px #3fb95066; }
+  .dot-red { background:#f85149; box-shadow:0 0 8px #f8514966; }
+  .dot-yellow { background:#d29922; box-shadow:0 0 8px #d2992266; }
+  .container { max-width:1400px; margin:0 auto; padding:20px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:16px; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .card { background:#161b22; border:1px solid #30363d; border-radius:12px; padding:20px; }
+  .card h2 { font-size:0.95rem; font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px; color:#e6edf3; }
+  .card h2 .sub { font-size:0.7rem; color:#8b949e; font-weight:400; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; }
+  .stat { text-align:center; padding:14px 8px; background:rgba(255,255,255,0.02); border-radius:8px; position:relative; overflow:hidden; }
+  .stat::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+  .stat.blue::before { background:linear-gradient(90deg,#58a6ff,#79c0ff); }
+  .stat.green::before { background:linear-gradient(90deg,#3fb950,#56d364); }
+  .stat.yellow::before { background:linear-gradient(90deg,#d29922,#e3b341); }
+  .stat.purple::before { background:linear-gradient(90deg,#bc8cff,#d2a8ff); }
+  .stat-value { font-size:1.6rem; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.2; }
+  .stat-label { font-size:0.7rem; color:#8b949e; margin-top:4px; letter-spacing:0.5px; }
+  .stat-blue { color:#58a6ff; } .stat-green { color:#3fb950; } .stat-yellow { color:#d29922; } .stat-purple { color:#bc8cff; }
+  .activity-feed { height:280px; overflow-y:auto; font-family:'SF Mono','Fira Code','Consolas',monospace; font-size:0.78rem; line-height:1.6; background:#0d1117; border-radius:8px; padding:12px; margin-bottom:12px; }
+  .activity-feed::-webkit-scrollbar { width:4px; }
+  .activity-feed::-webkit-scrollbar-track { background:#0d1117; }
+  .activity-feed::-webkit-scrollbar-thumb { background:#30363d; border-radius:2px; }
+  .log-line { padding:2px 0; display:flex; gap:8px; opacity:0; animation: fadeIn .3s forwards; }
+  .log-time { color:#8b949e; flex-shrink:0; min-width:70px; font-size:0.7rem; }
+  .log-icon { flex-shrink:0; min-width:20px; }
+  .log-msg { word-break:break-all; }
+  .log-green { color:#3fb950; } .log-yellow { color:#d29922; } .log-red { color:#f85149; } .log-blue { color:#58a6ff; } .log-dim { color:#8b949e; }
+  @keyframes fadeIn { to { opacity:1; } }
+  .live-indicator { display:flex; align-items:center; gap:6px; font-size:0.75rem; color:#3fb950; }
+  .live-dot { width:6px; height:6px; border-radius:50%; background:#3fb950; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+  .form-row { display:flex; gap:16px; align-items:end; flex-wrap:wrap; }
+  .form-group { display:flex; flex-direction:column; gap:4px; }
+  .form-group label { font-size:0.75rem; color:#8b949e; }
+  .form-group input { background:#0d1117; border:1px solid #30363d; border-radius:6px; padding:8px 12px; color:#e6edf3; font-size:0.95rem; width:130px; }
+  .form-group input:focus { outline:none; border-color:#58a6ff; }
+  .btn { padding:8px 20px; border-radius:6px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn:hover { transform:translateY(-1px); filter:brightness(1.1); }
+  .btn-primary { background:#238636; color:#fff; }
+  .btn-primary:hover { background:#2ea043; }
+  .btn-danger { background:#da3633; color:#fff; }
+  .btn-accent { background:#1f6feb; color:#fff; }
+  .btn-accent:hover { background:#388bfd; }
+  .save-feedback { font-size:0.75rem; margin-top:8px; color:#3fb950; }
+  .save-feedback.hide { opacity:0; }
+  .style-bar-wrap { margin-bottom:8px; }
+  .style-bar-header { display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px; }
+  .style-bar-header .name { font-weight:500; }
+  .style-bar-header .score { color:#3fb950; font-weight:600; }
+  .style-bar { height:8px; background:#21262d; border-radius:4px; overflow:hidden; }
+  .style-bar-fill { height:100%; border-radius:4px; transition:width .6s ease; }
+  .fill-green { background:linear-gradient(90deg,#3fb950,#56d364); }
+  .fill-blue { background:linear-gradient(90deg,#58a6ff,#79c0ff); }
+  .fill-yellow { background:linear-gradient(90deg,#d29922,#e3b341); }
+  .fill-purple { background:linear-gradient(90deg,#bc8cff,#d2a8ff); }
+  .heal-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .heal-item { display:flex; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.02); border-radius:6px; font-size:0.8rem; }
+  .heal-item .label { color:#8b949e; }
+  .heal-item .value { font-weight:600; }
+  .queue { display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto; }
+  .queue::-webkit-scrollbar { width:4px; }
+  .queue::-webkit-scrollbar-thumb { background:#30363d; border-radius:2px; }
+  .q-item { display:flex; align-items:center; gap:10px; padding:8px 12px; background:rgba(255,255,255,0.015); border-radius:6px; font-size:0.8rem; border-left:3px solid #30363d; }
+  .q-item.done { border-left-color:#3fb950; }
+  .q-item.processing { border-left-color:#58a6ff; }
+  .q-item.failed { border-left-color:#f85149; }
+  .q-icon { font-size:1rem; flex-shrink:0; }
+  .q-title { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .q-score { font-weight:600; font-size:0.75rem; }
+  .q-score.A { color:#3fb950; } .q-score.B { color:#d29922; } .q-score.C { color:#f85149; }
+  .toast-container { position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:8px; z-index:999; }
+  .toast { padding:12px 24px; border-radius:8px; font-size:0.85rem; opacity:0; transform:translateX(100px); transition:all .4s; pointer-events:none; }
+  .toast.show { opacity:1; transform:translateX(0); }
+  .toast-success { background:#0f2d1a; border:1px solid #3fb950; color:#3fb950; }
+  .toast-error { background:#2d0f0f; border:1px solid #f85149; color:#f85149; }
+  .toast-info { background:#0f1a2d; border:1px solid #58a6ff; color:#58a6ff; }
+  .lesson-box { background:#0d1117; border-radius:8px; padding:12px; font-size:0.78rem; line-height:1.6; max-height:200px; overflow-y:auto; margin-top:8px; }
+  .lesson-box::-webkit-scrollbar { width:4px; }
+  .lesson-box::-webkit-scrollbar-thumb { background:#30363d; border-radius:2px; }
+  @media (max-width:900px) {
+    .grid, .grid-2 { grid-template-columns:1fr; }
+    .header { flex-direction:column; align-items:start; }
+    .stats { grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>🧬 自进化文案系统 <span class="version">v10.0</span></h1>
+  <div class="header-right">
+    <span class="status-badge" id="statusBadge"><span class="status-dot dot-yellow"></span>加载中...</span>
+    <button class="btn btn-accent" onclick="triggerScan()">🔍 立即扫描</button>
+    <button class="btn btn-primary" onclick="refreshAll()">🔄 刷新</button>
+  </div>
+</header>
+<div class="container">
+  <div class="card" style="margin-bottom:16px;">
+    <div class="stats" id="statGrid">
+      <div class="stat blue"><div class="stat-value stat-blue" id="statCycle">-</div><div class="stat-label">已完成循环</div></div>
+      <div class="stat green"><div class="stat-value stat-green" id="statLevel">-</div><div class="stat-label">语言等级</div></div>
+      <div class="stat green"><div class="stat-value stat-green" id="statBest">-</div><div class="stat-label">最佳产出</div></div>
+      <div class="stat yellow"><div class="stat-value stat-yellow" id="statCorrections">-</div><div class="stat-label">自我修正</div></div>
+      <div class="stat purple"><div class="stat-value stat-purple" id="statUpgrades">-</div><div class="stat-label">语言升级</div></div>
+      <div class="stat blue"><div class="stat-value stat-blue" id="statOrders">-</div><div class="stat-label">每轮接单</div></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h2>📡 实时活动流 <span class="live-indicator"><span class="live-dot"></span>LIVE</span></h2>
+      <div class="activity-feed" id="activityFeed">
+        <div class="log-line"><span class="log-time">-</span><span class="log-icon">🚀</span><span class="log-dim">等待连接...</span></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#8b949e;">
+        <span id="cycleInfo">等待数据</span>
+        <span>🔄 自动刷新每5秒</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>⚙️ 系统设置</h2>
+      <div class="form-row">
+        <div class="form-group"><label>🕐 更新周期（分钟）</label><input type="number" id="inputInterval" min="10" max="1440" value="70"></div>
+        <div class="form-group"><label>📋 每轮接单数</label><input type="number" id="inputOrders" min="1" max="50" value="10"></div>
+        <button class="btn btn-primary" onclick="saveSettings()">💾 保存</button>
+        <button class="btn btn-danger" onclick="resetHeal()">🛡️ 重置自愈</button>
+      </div>
+      <div class="save-feedback hide" id="saveFeedback"></div>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid #21262d;">
+        <h2 style="font-size:0.85rem;margin-bottom:8px;">📊 最新写作法则</h2>
+        <div class="lesson-box" id="lessonBox">
+          <div style="color:#8b949e;text-align:center;padding:20px;">等待首次循环...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h2>📋 项目处理队列 <span class="sub" id="queueCount"></span></h2>
+      <div class="queue" id="projectQueue">
+        <div style="color:#8b949e;font-size:0.8rem;text-align:center;padding:20px;">等待项目数据...</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>🏆 最优写作风格 <span class="sub" id="totalRunsLabel"></span></h2>
+      <div id="styleRanking">
+        <div style="color:#8b949e;font-size:0.8rem;text-align:center;padding:20px;">等待数据积累...</div>
+      </div>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h2>🛡️ 自愈引擎</h2>
+      <div class="heal-grid" id="healGrid">
+        <div class="heal-item"><span class="label">⏱ 运行时间</span><span class="value" id="healUptime">-</span></div>
+        <div class="heal-item"><span class="label">❌ 故障记录</span><span class="value" id="healFailures">-</span></div>
+        <div class="heal-item"><span class="label">✅ 自愈成功</span><span class="value" id="healHealed">-</span></div>
+        <div class="heal-item"><span class="label">📊 故障模式</span><span class="value" id="healPatterns">-</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>🔥 故障模式分析</h2>
+      <div id="patternList"><div style="color:#8b949e;text-align:center;padding:20px;">暂无故障 — 系统健康</div></div>
+    </div>
+    <div class="card">
+      <h2>📈 工作流成熟度</h2>
+      <div id="maturityInfo"><div style="color:#8b949e;text-align:center;padding:20px;">等待数据...</div></div>
+    </div>
+  </div>
+</div>
+<div class="toast-container" id="toastContainer"></div>
+<script>
+var API = '';
+var lastActivity = '';
+
+function showToast(msg, type) {
+  type = type || 'success';
+  var c = document.getElementById('toastContainer');
+  var t = document.createElement('div');
+  t.className = 'toast toast-'+type+' show';
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(function(){ t.className = t.className.replace(' show',''); setTimeout(function(){ t.remove(); },400); }, 3500);
+}
+
+function addLog(icon, msg, cls) {
+  cls = cls || '';
+  var feed = document.getElementById('activityFeed');
+  var time = new Date().toLocaleTimeString('zh-CN',{hour12:false});
+  var line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = '<span class="log-time">'+time+'</span><span class="log-icon">'+icon+'</span><span class="log-msg '+cls+'">'+msg+'</span>';
+  feed.appendChild(line);
+  feed.scrollTop = feed.scrollHeight;
+  while (feed.children.length > 50) feed.removeChild(feed.firstChild);
+}
+
+function fmtUptime(s) {
+  if (!s) return '-';
+  var m = Math.floor(s/60), h = Math.floor(m/60);
+  return h > 0 ? h+'h'+m%60+'m' : m+'分钟';
+}
+
+function refreshAll() {
+  fetch(API+'/api/evolve/status').then(function(r){ return r.json(); }).then(function(evolve){
+    return Promise.all([
+      Promise.resolve(evolve),
+      fetch(API+'/api/heal/status').then(function(r){ return r.json(); }),
+      fetch(API+'/api/config/evolve').then(function(r){ return r.json(); })
+    ]);
+  }).then(function(arr){
+    var evolve = arr[0], heal = arr[1], config = arr[2];
+    var badge = document.getElementById('statusBadge');
+    if (evolve.running) {
+      badge.innerHTML = '<span class="status-dot dot-green"></span>● 运行中';
+      badge.className = 'status-badge badge-green';
+    } else {
+      badge.innerHTML = '<span class="status-dot dot-yellow"></span>● 已暂停';
+      badge.className = 'status-badge badge-yellow';
+    }
+    document.getElementById('statCycle').textContent = evolve.totalCycles || '-';
+    document.getElementById('statLevel').textContent = 'Lv.'+(evolve.languageLevel || '-');
+    document.getElementById('statBest').textContent = evolve.bestOutputs || '-';
+    document.getElementById('statCorrections').textContent = evolve.corrections || '-';
+    document.getElementById('statUpgrades').textContent = evolve.upgrades || '-';
+    document.getElementById('statOrders').textContent = (evolve.ordersPerCycle || '-')+'单/轮';
+    document.getElementById('inputInterval').value = config.intervalMinutes || 70;
+    document.getElementById('inputOrders').value = config.ordersPerCycle || 10;
+    document.getElementById('cycleInfo').textContent = '🔄 周期'+config.intervalMinutes+'min · 已运行'+(evolve.totalCycles||0)+'次循环 · Lv.'+(evolve.languageLevel||0);
+
+    var results = evolve.lastResults || [];
+    if (results.length > 0 && lastActivity !== JSON.stringify(results.map(function(r){ return r.project; }))) {
+      results.forEach(function(r){
+        var tag = r.training ? '🏋️' : '💰';
+        var corr = r.corrected ? ' 🔧修正' : '';
+        var cls = r.score >= 85 ? 'log-green' : r.score >= 70 ? 'log-yellow' : 'log-red';
+        addLog(tag, (r.project||'?')+' → '+(r.quality||'?')+'('+(r.score||'?')+'分)'+corr, cls);
+      });
+      lastActivity = JSON.stringify(results.map(function(r){ return r.project; }));
+    }
+    if (lastActivity === '') {
+      addLog('🚀', '系统已连接，面板就绪', 'log-blue');
+      addLog('📡', '扫描到项目 · 周期'+config.intervalMinutes+'min · 每轮'+config.ordersPerCycle+'单', 'log-dim');
+      lastActivity = 'started';
+    }
+
+    var queueEl = document.getElementById('projectQueue');
+    var queueCount = document.getElementById('queueCount');
+    if (results.length === 0) {
+      queueEl.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">暂无项目记录</div>';
+      queueCount.textContent = '';
+    } else {
+      queueCount.textContent = '('+results.length+'个最新)';
+      var items = [];
+      for (var i = results.length-1; i >= 0; i--) {
+        var r = results[i];
+        var icon = r.training ? '🏋️' : '💰';
+        var cls = r.score >= 85 ? 'done' : 'processing';
+        var gradeCls = r.score >= 85 ? 'A' : r.score >= 70 ? 'B' : 'C';
+        var corrBadge = r.corrected ? '<span style="background:#2d2d1a;color:#d29922;padding:1px 6px;border-radius:3px;font-size:0.65rem;margin-left:4px;">修正</span>' : '';
+        items.push('<div class="q-item '+cls+'"><span class="q-icon">'+icon+'</span><span class="q-title">'+(r.project||'?')+'</span>'+corrBadge+'<span class="q-score '+gradeCls+'">'+(r.quality||'?')+' '+(r.score||'?')+'</span></div>');
+      }
+      queueEl.innerHTML = items.join('');
+    }
+
+    var wm = evolve.workflowMaturity || {};
+    var styles = wm.topStyles || [];
+    document.getElementById('totalRunsLabel').textContent = '共'+(wm.totalRuns||0)+'次运行';
+    var rankEl = document.getElementById('styleRanking');
+    if (styles.length === 0) {
+      rankEl.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">等待数据积累...</div>';
+    } else {
+      var maxScore = Math.max.apply(null, styles.map(function(s){ return parseInt(s.avgScore)||1; }));
+      var html = '';
+      styles.forEach(function(s,i){
+        var fill = i === 0 ? 'fill-green' : i === 1 ? 'fill-blue' : i === 2 ? 'fill-yellow' : 'fill-purple';
+        var pct = (parseInt(s.avgScore)/maxScore*100).toFixed(0);
+        html += '<div class="style-bar-wrap"><div class="style-bar-header"><span class="name">'+(i+1)+'. '+s.style.split('_')[0]+'</span><span class="score">'+s.avgScore+'分 · '+s.wins+'胜/'+s.runs+'次</span></div><div class="style-bar"><div class="style-bar-fill '+fill+'" style="width:'+pct+'%"></div></div></div>';
+      });
+      rankEl.innerHTML = html;
+    }
+
+    document.getElementById('healUptime').textContent = fmtUptime(heal.uptime);
+    document.getElementById('healFailures').textContent = heal.failures || '-';
+    document.getElementById('healHealed').textContent = heal.healed || '-';
+    document.getElementById('healPatterns').textContent = heal.patterns || '-';
+
+    var patterns = heal.topPatterns || [];
+    var patEl = document.getElementById('patternList');
+    if (patterns.length === 0) {
+      patEl.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">✅ 系统健康</div>';
+    } else {
+      var patHtml = '';
+      patterns.forEach(function(p){
+        patHtml += '<div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(248,81,73,0.06);border-radius:4px;margin-bottom:4px;font-size:0.78rem;"><span style="color:#f85149;font-weight:600;">'+p.pattern+'</span><span style="color:#8b949e;">×'+p.count+'</span></div>';
+      });
+      patEl.innerHTML = patHtml;
+    }
+
+    var bc = wm.bestCombos || [];
+    var mEl = document.getElementById('maturityInfo');
+    if (bc.length === 0) {
+      mEl.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">等待更多数据...</div>';
+    } else {
+      var bcCopy = bc.slice(-5).reverse();
+      var bcHtml = '';
+      bcCopy.forEach(function(b){
+        bcHtml += '<div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:4px;margin-bottom:4px;font-size:0.78rem;"><span>'+(b.style||'?')+' · '+(b.type||'?')+'</span><span style="color:#3fb950;font-weight:600;">'+(b.score||'?')+'分</span></div>';
+      });
+      mEl.innerHTML = bcHtml;
+    }
+
+    var lessons = evolve.latestLessons || [];
+    var lb = document.getElementById('lessonBox');
+    if (lessons.length === 0) {
+      lb.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">等待首次循环提取法则...</div>';
+    } else {
+      var lHtml = '';
+      for (var li = 0; li < Math.min(2, lessons.length); li++) {
+        var lesson = lessons[lessons.length-1-li];
+        var brief = lesson.lesson.replace(/\n/g, '<br>');
+        lHtml += '<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #21262d;"><div style="color:#8b949e;font-size:0.7rem;">Cycle '+lesson.cycle+' | Lv.'+lesson.level+'</div><div style="margin-top:4px;">'+brief+'</div></div>';
+      }
+      lb.innerHTML = lHtml;
+    }
+  }).catch(function(e){
+    document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-red"></span>❌ 连接失败';
+    document.getElementById('statusBadge').className = 'status-badge badge-red';
+    addLog('❌', '连接失败: '+e.message, 'log-red');
+  });
+}
+
+function saveSettings() {
+  var interval = parseInt(document.getElementById('inputInterval').value);
+  var orders = parseInt(document.getElementById('inputOrders').value);
+  if (interval < 10) { showToast('周期不能少于10分钟', 'error'); return; }
+  if (orders < 1 || orders > 50) { showToast('接单数应在1-50之间', 'error'); return; }
+  fetch(API+'/api/config/evolve', {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ intervalMinutes: interval, ordersPerCycle: orders })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.success) {
+      showToast('✅ 已保存 · 周期'+d.intervalMinutes+'min · 每轮'+d.ordersPerCycle+'单');
+      document.getElementById('saveFeedback').textContent = '✅ '+new Date().toLocaleTimeString()+' 保存成功';
+      document.getElementById('saveFeedback').className = 'save-feedback';
+      addLog('⚙️', '设置已更新: 周期'+d.intervalMinutes+'min · 每轮'+d.ordersPerCycle+'单', 'log-blue');
+      setTimeout(function(){ document.getElementById('saveFeedback').className = 'save-feedback hide'; }, 3000);
+    }
+  }).catch(function(e){ showToast('保存失败: '+e.message, 'error'); });
+}
+
+function triggerScan() {
+  addLog('🔍', '正在执行全平台扫描...', 'log-blue');
+  showToast('🔍 扫描中...', 'info');
+  fetch(API+'/api/projects/scan', { method: 'POST' }).then(function(r){ return r.json(); }).then(function(d){
+    var count = d.scanned || (d.projects && d.projects.length) || 0;
+    addLog('✅', '扫描完成 · 发现 '+count+' 个项目', 'log-green');
+    showToast('✅ 扫描完成 · '+count+'个项目');
+    setTimeout(refreshAll, 2000);
+  }).catch(function(e){
+    addLog('❌', '扫描失败: '+e.message, 'log-red');
+    showToast('扫描失败: '+e.message, 'error');
+  });
+}
+
+function resetHeal() {
+  if (!confirm('确定重置自愈引擎的故障记录？')) return;
+  fetch(API+'/api/heal/reset', { method: 'POST' }).then(function(){
+    showToast('✅ 自愈记录已重置');
+    addLog('🛡️', '自愈引擎故障记录已重置', 'log-green');
+    refreshAll();
+  }).catch(function(){ showToast('重置失败', 'error'); });
+}
+
+refreshAll();
+setInterval(refreshAll, 5000);
+</script>
+</body>
+</html>
