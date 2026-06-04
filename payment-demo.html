@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>支付演示 · 镜观文案</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Noto Serif SC','KaiTi','STKaiti','楷体','华文楷体','Songti SC',serif;
+  background:#faf7f5;color:#2c2c2c;font-size:17px;line-height:1.8
+}
+
+/* ── Header ── */
+.header{
+  background:linear-gradient(135deg,#fff,#faf7f5);
+  border-bottom:2px solid #e8e0d8;
+  padding:36px 44px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px
+}
+.header-left h1{font-size:32px;font-weight:900;letter-spacing:4px;color:#1a1a1a}
+.header-left h1 span{color:#b8860b}
+.header-left .sub{font-size:15px;color:#8c7a6b;margin-top:4px;letter-spacing:6px}
+.header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.header-nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nav-link{
+  padding:7px 18px;border-radius:22px;font-size:14px;font-family:inherit;
+  color:#5a4a3a;text-decoration:none;transition:all .2s;border:1px solid transparent
+}
+.nav-link:hover{background:rgba(184,134,11,0.08);border-color:#d4c8b8}
+.nav-link.active{background:#b8860b;color:#fff;border-color:#b8860b}
+
+/* ── Container ── */
+.container{max-width:720px;margin:0 auto;padding:48px 24px 80px}
+
+/* ── Page Title ── */
+.page-title{text-align:center;margin-bottom:40px}
+.page-title h2{font-size:32px;font-weight:900;letter-spacing:4px;color:#1a1a1a}
+.page-title h2 span{color:#b8860b}
+.page-title p{font-size:15px;color:#7a6a5a;margin-top:8px}
+
+/* ── Payment Card ── */
+.payment-card{
+  background:#fff;border:1px solid #e8e0d8;border-radius:18px;
+  padding:44px 40px;box-shadow:0 2px 12px rgba(0,0,0,0.03);
+  text-align:center
+}
+@media(max-width:600px){.payment-card{padding:28px 18px}}
+
+.payment-card .order-info{
+  text-align:left;margin-bottom:28px;
+  padding:18px 22px;background:#faf7f5;border-radius:12px;
+  border:1px solid #e8e0d8
+}
+.payment-card .order-info .row{
+  display:flex;justify-content:space-between;padding:6px 0;font-size:15px
+}
+.payment-card .order-info .row .lbl{color:#8c7a6b}
+.payment-card .order-info .row .val{color:#2c2c2c;font-weight:600}
+.payment-card .order-info .row .val.amount{color:#b8860b;font-size:22px;font-weight:900}
+
+/* ── QR Code ── */
+.qr-wrapper{
+  margin:0 auto 24px;width:260px;height:260px;
+  background:#fff;border:2px solid #e8e0d8;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  padding:12px;position:relative
+}
+.qr-wrapper img{width:100%;height:100%;image-rendering:pixelated}
+.qr-wrapper .qr-placeholder{
+  width:100%;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;color:#a09080
+}
+.qr-wrapper .qr-placeholder .icon{font-size:48px;margin-bottom:8px}
+.qr-wrapper .qr-placeholder .text{font-size:13px;letter-spacing:1px}
+.qr-wrapper .status-badge{
+  position:absolute;top:-10px;right:-10px;
+  padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700
+}
+.status-badge.mock{background:#fef8e7;color:#b8860b;border:1px solid #eedcc0}
+.status-badge.real{background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
+.status-badge.paid{background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
+
+.payment-card .hint-text{
+  font-size:14px;color:#8c7a6b;margin-bottom:20px
+}
+.payment-card .hint-text strong{color:#b8860b}
+
+/* ── Status Bar ── */
+.status-bar{
+  display:flex;gap:0;margin:24px 0;border-radius:12px;overflow:hidden;
+  border:1px solid #e8e0d8
+}
+.status-bar .step{
+  flex:1;padding:14px 8px;text-align:center;font-size:13px;
+  background:#faf7f5;color:#a09080;position:relative;transition:all .4s
+}
+.status-bar .step + .step{border-left:1px solid #e8e0d8}
+.status-bar .step .dot{
+  display:block;width:10px;height:10px;border-radius:50%;
+  background:#ddd5cc;margin:0 auto 6px;transition:all .4s
+}
+.status-bar .step.active{background:#fff;color:#2c2c2c;font-weight:600}
+.status-bar .step.active .dot{background:#b8860b;box-shadow:0 0 0 3px rgba(184,134,11,0.2)}
+.status-bar .step.done{background:#fef8e7;color:#b8860b}
+.status-bar .step.done .dot{background:#b8860b}
+
+/* ── Buttons ── */
+.btn-group{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.btn{
+  padding:11px 28px;border-radius:30px;border:none;font-size:15px;
+  font-family:inherit;cursor:pointer;transition:all .25s;font-weight:700
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+.btn-gold{background:#b8860b;color:#fff}
+.btn-outline{background:transparent;border:2px solid #c8b8a8;color:#5a4a3a;text-decoration:none;display:inline-block}
+.btn-outline:hover{border-color:#b8860b;color:#b8860b}
+.btn-sm{padding:7px 18px;font-size:13px}
+.btn-success{background:#2e7d32;color:#fff}
+.btn-success:hover{background:#1b5e20}
+
+/* ── Payment Result ── */
+.payment-result{
+  display:none;margin-top:24px;
+  padding:24px;border-radius:14px;text-align:center
+}
+.payment-result.show{display:block;animation:modalIn .4s ease}
+.payment-result.success{
+  background:#e8f5e9;border:1px solid #c8e6c9
+}
+.payment-result .icon{font-size:40px;margin-bottom:8px}
+.payment-result .msg{font-size:17px;font-weight:700}
+.payment-result.success .msg{color:#2e7d32}
+.payment-result .detail{font-size:14px;color:#5a4a3a;margin-top:6px}
+
+/* ── Payment Flow Explanation ── */
+.flow-explanation{
+  margin-top:40px;background:#fff;border:1px solid #e8e0d8;
+  border-radius:16px;padding:32px 36px
+}
+.flow-explanation h3{
+  font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:18px;
+  letter-spacing:2px;text-align:center
+}
+.flow-explanation h3 span{color:#b8860b}
+.flow-explanation .steps{list-style:none;counter-reset:step}
+.flow-explanation .steps li{
+  counter-increment:step;padding:10px 0 10px 44px;
+  position:relative;font-size:15px;color:#5a4a3a;line-height:1.7
+}
+.flow-explanation .steps li::before{
+  content:counter(step);position:absolute;left:0;top:10px;
+  width:28px;height:28px;border-radius:50%;background:#b8860b;
+  color:#fff;font-size:13px;font-weight:700;display:flex;
+  align-items:center;justify-content:center
+}
+
+/* ── Animations ── */
+@keyframes modalIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.polling-active .qr-wrapper{animation:pulse 2s infinite}
+
+/* ── Footer ── */
+.footer{
+  text-align:center;padding:32px 24px;color:#a09080;font-size:13px;
+  border-top:1px solid #eee8e0;letter-spacing:2px
+}
+.footer a{color:#b8860b;text-decoration:none}
+
+/* ── Responsive ── */
+@media(max-width:700px){
+  .header{padding:20px}
+  .header-left h1{font-size:24px}
+  .page-title h2{font-size:24px}
+  .status-bar .step{font-size:11px;padding:10px 4px}
+  .flow-explanation{padding:24px 18px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Header ═══ -->
+<header class="header">
+  <div class="header-left">
+    <h1>文案 · <span>镜观</span></h1>
+    <div class="sub">自进化文案系统 · 安全支付</div>
+  </div>
+  <div class="header-right">
+    <nav class="header-nav">
+      <a class="nav-link" href="/portfolio.html">作品集</a>
+      <a class="nav-link" href="/order.html">合作</a>
+      <a class="nav-link active" href="/payment-demo.html">支付</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══ Page Content ═══ -->
+<div class="container">
+
+  <div class="page-title">
+    <h2>安全<span>支付</span></h2>
+    <p>微信支付 · 担保交易 · 满意为止</p>
+  </div>
+
+  <!-- ── Payment Card ── -->
+  <div class="payment-card" id="paymentCard">
+
+    <!-- Order Info -->
+    <div class="order-info" id="orderInfo">
+      <div class="row">
+        <span class="lbl">订单编号</span>
+        <span class="val" id="displayOrderId">-</span>
+      </div>
+      <div class="row">
+        <span class="lbl">项目类型</span>
+        <span class="val" id="displayType">文案服务</span>
+      </div>
+      <div class="row">
+        <span class="lbl">支付金额</span>
+        <span class="val amount" id="displayAmount">-</span>
+      </div>
+    </div>
+
+    <!-- QR Code -->
+    <h3 style="font-size:16px;color:#5a4a3a;margin-bottom:16px;letter-spacing:2px">
+      &#128179; 微信扫码支付
+    </h3>
+
+    <div class="qr-wrapper" id="qrWrapper">
+      <div class="qr-placeholder" id="qrPlaceholder">
+        <div class="icon">&#9201;</div>
+        <div class="text">加载支付二维码…</div>
+      </div>
+      <img id="qrImage" style="display:none" alt="支付二维码">
+      <span class="status-badge mock" id="modeBadge">模拟</span>
+    </div>
+
+    <div class="hint-text" id="hintText">
+      <strong>模拟模式</strong> — 点击下方"模拟支付成功"按钮测试支付流程
+    </div>
+
+    <!-- Status Steps -->
+    <div class="status-bar" id="statusBar">
+      <div class="step active" id="stepCreate">
+        <span class="dot"></span>
+        订单创建
+      </div>
+      <div class="step" id="stepScan">
+        <span class="dot"></span>
+        扫码支付
+      </div>
+      <div class="step" id="stepConfirm">
+        <span class="dot"></span>
+        支付确认
+      </div>
+      <div class="step" id="stepDone">
+        <span class="dot"></span>
+        完成
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-group" id="btnGroup">
+      <button class="btn btn-outline btn-sm" onclick="goBack()">&#8592; 返回</button>
+      <button class="btn btn-gold" id="mockPayBtn" onclick="mockPay()">
+        &#10004; 模拟支付成功
+      </button>
+      <button class="btn btn-outline btn-sm" onclick="refreshQR()">&#8635; 刷新二维码</button>
+    </div>
+
+    <!-- Payment Result -->
+    <div class="payment-result success" id="paymentResult">
+      <div class="icon">&#10004;</div>
+      <div class="msg">支付成功！</div>
+      <div class="detail" id="resultDetail">感谢您的信任，镜观将立即开始为您服务。</div>
+    </div>
+  </div>
+
+  <!-- ── Flow Explanation ── -->
+  <div class="flow-explanation">
+    <h3>支付流程 <span>说明</span></h3>
+    <ol class="steps">
+      <li><strong>提交需求</strong> — 在合作页面填写项目信息并提交</li>
+      <li><strong>沟通确认</strong> — 镜观在 24 小时内与您沟通方案，确认报价</li>
+      <li><strong>支付定金</strong> — 通过微信扫码支付项目总费用的 50% 作为定金</li>
+      <li><strong>创作交付</strong> — 按约定时间完成文案创作并交付初稿</li>
+      <li><strong>修订满意</strong> — 提供最多 3 次免费修订，直至您满意</li>
+      <li><strong>尾款结清</strong> — 确认定稿后支付剩余 50% 尾款</li>
+    </ol>
+  </div>
+
+</div>
+
+<!-- ═══ Footer ═══ -->
+<footer class="footer">
+  镜观文案 &middot; 每一个字都值得被认真对待<br>
+  <a href="mailto:jingguan@example.com">jingguan@example.com</a>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════
+//  PAYMENT DEMO LOGIC
+// ═══════════════════════════════════════════
+
+(function(){
+  'use strict';
+
+  // ── State ──
+  var STATE = {
+    orderId: null,
+    amount: null,
+    type: null,
+    mode: 'mock',
+    status: 'pending',
+    paid: false
+  };
+
+  var POLL_INTERVAL = null;
+
+  // ── DOM ──
+  var els = {};
+
+  function cacheEls(){
+    els.orderId = document.getElementById('displayOrderId');
+    els.type = document.getElementById('displayType');
+    els.amount = document.getElementById('displayAmount');
+    els.qrPlaceholder = document.getElementById('qrPlaceholder');
+    els.qrImage = document.getElementById('qrImage');
+    els.modeBadge = document.getElementById('modeBadge');
+    els.hintText = document.getElementById('hintText');
+    els.mockPayBtn = document.getElementById('mockPayBtn');
+    els.paymentResult = document.getElementById('paymentResult');
+    els.resultDetail = document.getElementById('resultDetail');
+    els.qrWrapper = document.getElementById('qrWrapper');
+    els.stepCreate = document.getElementById('stepCreate');
+    els.stepScan = document.getElementById('stepScan');
+    els.stepConfirm = document.getElementById('stepConfirm');
+    els.stepDone = document.getElementById('stepDone');
+  }
+
+  // ── URL Params ──
+  function getParams(){
+    var q = window.location.search.substring(1);
+    if(!q) return {};
+    var p = {};
+    q.split('&').forEach(function(kv){
+      var parts = kv.split('=');
+      if(parts.length === 2) p[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+    });
+    return p;
+  }
+
+  // ── Init ──
+  function init(){
+    cacheEls();
+    var params = getParams();
+    STATE.orderId = params.orderId || null;
+    STATE.amount = params.amount ? parseFloat(params.amount) : null;
+    STATE.type = params.type || '文案服务';
+
+    if(STATE.orderId && STATE.amount){
+      // Has params — load existing order
+      loadOrder(STATE.orderId);
+    } else {
+      // No params — create a demo order
+      createDemoOrder();
+    }
+  }
+
+  // ── Load Order ──
+  function loadOrder(orderId){
+    fetch('/api/wechat/pay/status/' + encodeURIComponent(orderId))
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.success){
+          STATE.orderId = data.orderId;
+          STATE.amount = data.amount;
+          STATE.mode = data.mode;
+          STATE.status = data.status;
+          updateUI(data);
+
+          if(data.status === 'pending'){
+            startPolling(orderId);
+          }
+        } else {
+          showError('订单不存在或已过期');
+        }
+      })
+      .catch(function(err){
+        // Offline — use URL params
+        if(STATE.amount){
+          STATE.mode = 'mock';
+          STATE.status = 'pending';
+          updateUI({
+            orderId: STATE.orderId,
+            amount: STATE.amount,
+            mode: 'mock',
+            status: 'pending'
+          });
+        }
+      });
+  }
+
+  // ── Create Demo Order ──
+  function createDemoOrder(){
+    var demoAmount = STATE.amount || 1000;
+
+    fetch('/api/wechat/pay/order', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        amount: demoAmount,
+        description: STATE.type,
+        clientName: '演示用户'
+      })
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.success){
+          STATE.orderId = data.orderId;
+          STATE.amount = data.amount;
+          STATE.mode = data.mode;
+          STATE.status = 'pending';
+          updateUI(data);
+
+          // Update URL
+          var url = new URL(window.location);
+          url.searchParams.set('orderId', data.orderId);
+          url.searchParams.set('amount', data.amount);
+          window.history.replaceState({}, '', url);
+
+          startPolling(data.orderId);
+        } else {
+          // Fallback: show manual demo
+          showManualDemo(demoAmount);
+        }
+      })
+      .catch(function(){
+        // Completely offline — show manual demo
+        showManualDemo(demoAmount);
+      });
+  }
+
+  // ── Manual Demo (when server unreachable) ──
+  function showManualDemo(amount){
+    STATE.orderId = 'DEMO-' + Date.now().toString(36).toUpperCase();
+    STATE.amount = amount;
+    STATE.mode = 'mock';
+    STATE.status = 'pending';
+
+    updateUI({
+      orderId: STATE.orderId,
+      amount: amount,
+      mode: 'mock',
+      status: 'pending',
+      code_url: null
+    });
+
+    document.getElementById('hintText').innerHTML =
+      '&#128736; 服务器暂不可用，以<strong>离线演示模式</strong>运行';
+  }
+
+  // ── Update UI ──
+  function updateUI(data){
+    // Order info
+    els.orderId.textContent = data.orderId || STATE.orderId;
+    els.type.textContent = STATE.type;
+    var amt = data.amount || STATE.amount;
+    els.amount.textContent = '¥' + (typeof amt === 'number' ? amt.toFixed(2) : amt);
+
+    // Mode badge
+    var mode = data.mode || STATE.mode;
+    if(mode === 'mock'){
+      els.modeBadge.textContent = '模拟';
+      els.modeBadge.className = 'status-badge mock';
+      els.hintText.innerHTML = '<strong>模拟模式</strong> — 点击下方"模拟支付成功"按钮测试支付流程';
+      els.mockPayBtn.style.display = 'inline-block';
+    } else {
+      els.modeBadge.textContent = '微信支付';
+      els.modeBadge.className = 'status-badge real';
+      els.hintText.innerHTML = '请使用微信扫描二维码完成支付';
+      els.mockPayBtn.style.display = 'none';
+    }
+
+    // QR Code
+    if(data.code_url){
+      els.qrPlaceholder.style.display = 'none';
+      els.qrImage.style.display = 'block';
+      els.qrImage.src = data.code_url;
+      els.qrImage.onload = function(){ els.qrPlaceholder.style.display = 'none'; };
+      els.qrImage.onerror = function(){
+        els.qrPlaceholder.style.display = 'flex';
+        els.qrPlaceholder.innerHTML = '<div class="icon">&#128247;</div><div class="text">二维码加载失败，请刷新</div>';
+      };
+    } else {
+      // Show demo QR placeholder
+      els.qrPlaceholder.style.display = 'flex';
+      els.qrPlaceholder.innerHTML =
+        '<div class="icon">&#128179;</div>' +
+        '<div class="text">模拟二维码</div>' +
+        '<div style="font-size:11px;color:#c8b8a8;margin-top:4px">' + (STATE.orderId || '') + '</div>';
+    }
+
+    // Status steps
+    updateSteps(data.status || STATE.status);
+
+    // If already paid
+    if(data.status === 'paid' || STATE.paid){
+      showPaid();
+    }
+  }
+
+  // ── Status Steps ──
+  function updateSteps(status){
+    // Reset
+    [els.stepCreate, els.stepScan, els.stepConfirm, els.stepDone].forEach(function(el){
+      el.className = 'step';
+    });
+
+    // Step 1: always done after creation
+    els.stepCreate.className = 'step done';
+
+    if(status === 'pending'){
+      els.stepScan.className = 'step active';
+      els.qrWrapper.classList.add('polling-active');
+    } else if(status === 'paid'){
+      els.stepScan.className = 'step done';
+      els.stepConfirm.className = 'step done';
+      els.stepDone.className = 'step done';
+      els.qrWrapper.classList.remove('polling-active');
+    }
+  }
+
+  // ── Start Polling ──
+  function startPolling(orderId){
+    if(POLL_INTERVAL) clearInterval(POLL_INTERVAL);
+
+    POLL_INTERVAL = setInterval(function(){
+      fetch('/api/wechat/pay/status/' + encodeURIComponent(orderId))
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if(data.success && data.status === 'paid'){
+            STATE.paid = true;
+            STATE.status = 'paid';
+            updateUI(data);
+            clearInterval(POLL_INTERVAL);
+            POLL_INTERVAL = null;
+          }
+        })
+        .catch(function(){});
+    }, 3000); // Poll every 3s
+  }
+
+  // ── Mock Pay ──
+  window.mockPay = function(){
+    if(!STATE.orderId || STATE.paid) return;
+
+    var endpoint = '/api/wechat/pay/mock-pay/' + encodeURIComponent(STATE.orderId);
+
+    fetch(endpoint, { method: 'POST' })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.success){
+          STATE.paid = true;
+          STATE.status = 'paid';
+          updateUI(data);
+          if(POLL_INTERVAL){
+            clearInterval(POLL_INTERVAL);
+            POLL_INTERVAL = null;
+          }
+        } else {
+          // Fallback: local mock
+          localMockPay();
+        }
+      })
+      .catch(function(){
+        localMockPay();
+      });
+  };
+
+  function localMockPay(){
+    STATE.paid = true;
+    STATE.status = 'paid';
+    updateSteps('paid');
+    showPaid();
+    if(POLL_INTERVAL){
+      clearInterval(POLL_INTERVAL);
+      POLL_INTERVAL = null;
+    }
+  }
+
+  // ── Show Paid ──
+  function showPaid(){
+    els.paymentResult.classList.add('show');
+    els.qrWrapper.classList.remove('polling-active');
+    els.mockPayBtn.disabled = true;
+    els.mockPayBtn.textContent = '✔ 已支付';
+    els.mockPayBtn.className = 'btn btn-success btn-sm';
+
+    var steps = [els.stepScan, els.stepConfirm, els.stepDone];
+    steps.forEach(function(el){ el.className = 'step done'; });
+  }
+
+  // ── Refresh QR ──
+  window.refreshQR = function(){
+    if(STATE.paid) return;
+    if(STATE.orderId && STATE.mode === 'mock'){
+      // Re-generate mock QR
+      var qrData = 'https://mock.wechat.pay/order?orderId=' + STATE.orderId + '&t=' + Date.now();
+      var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(qrData);
+
+      els.qrPlaceholder.style.display = 'none';
+      els.qrImage.style.display = 'block';
+      els.qrImage.src = qrUrl;
+    }
+  };
+
+  // ── Go Back ──
+  window.goBack = function(){
+    window.history.back();
+  };
+
+  // ── Error ──
+  function showError(msg){
+    els.qrPlaceholder.innerHTML = '<div class="icon">&#9888;</div><div class="text">' + msg + '</div>';
+  }
+
+  // ── Start ──
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+</body>
+</html>

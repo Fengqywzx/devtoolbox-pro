@@ -7,3 +7,17 @@ notes/
 orders.log
 scripts/think-daemon.mjsserver/node_modules
 build-pages.py
+
+# 系统杂项
+nul
+NUL
+.pi/
+.opencode/
+.hermes/
+docs/
+server/data/
+_admin_stats.json
+gen-admin.py
+generate-admin.py
+build-portfolio.py
+l.includes*

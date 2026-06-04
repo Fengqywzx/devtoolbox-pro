@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开始合作 · 镜观文案</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Noto Serif SC','KaiTi','STKaiti','楷体','华文楷体','Songti SC',serif;
+  background:#faf7f5;color:#2c2c2c;font-size:17px;line-height:1.8
+}
+
+/* ── Header ── */
+.header{
+  background:linear-gradient(135deg,#fff,#faf7f5);
+  border-bottom:2px solid #e8e0d8;
+  padding:36px 44px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px
+}
+.header-left h1{font-size:32px;font-weight:900;letter-spacing:4px;color:#1a1a1a}
+.header-left h1 span{color:#b8860b}
+.header-left .sub{font-size:15px;color:#8c7a6b;margin-top:4px;letter-spacing:6px}
+.header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.header-nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nav-link{
+  padding:7px 18px;border-radius:22px;font-size:14px;font-family:inherit;
+  color:#5a4a3a;text-decoration:none;transition:all .2s;border:1px solid transparent
+}
+.nav-link:hover{background:rgba(184,134,11,0.08);border-color:#d4c8b8}
+.nav-link.active{background:#b8860b;color:#fff;border-color:#b8860b}
+.stat-pill{
+  background:#fff;border:1px solid #e0d8d0;border-radius:30px;
+  padding:7px 20px;font-size:14px;color:#5a4a3a;
+  display:flex;align-items:center;gap:6px;box-shadow:0 1px 4px rgba(0,0,0,0.04)
+}
+.stat-pill .num{font-weight:700;color:#b8860b;font-size:16px}
+.btn{
+  padding:9px 24px;border-radius:30px;border:none;font-size:15px;
+  font-family:inherit;cursor:pointer;transition:all .25s;font-weight:700
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+.btn-gold{background:#b8860b;color:#fff}
+.btn-gold:disabled{background:#c8b8a8;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-outline{background:transparent;border:2px solid #c8b8a8;color:#5a4a3a;text-decoration:none;display:inline-block}
+
+/* ── Hero ── */
+.hero{
+  text-align:center;padding:64px 24px 48px;
+  background:linear-gradient(180deg,#faf7f5,#fff);
+  border-bottom:1px solid #eee8e0
+}
+.hero h2{font-size:40px;font-weight:900;letter-spacing:6px;color:#1a1a1a;margin-bottom:16px}
+.hero h2 span{color:#b8860b}
+.hero p{font-size:17px;color:#7a6a5a;max-width:500px;margin:0 auto;line-height:1.9}
+.hero .stats-row{
+  display:flex;justify-content:center;gap:32px;margin-top:28px;flex-wrap:wrap
+}
+.hero .stats-row .item{text-align:center}
+.hero .stats-row .val{font-size:28px;font-weight:900;color:#b8860b}
+.hero .stats-row .lbl{font-size:13px;color:#8c7a6b;letter-spacing:2px;margin-top:2px}
+
+/* ── Container ── */
+.container{max-width:820px;margin:0 auto;padding:48px 24px 80px}
+
+/* ── Form ── */
+.form-card{
+  background:#fff;border:1px solid #e8e0d8;border-radius:16px;
+  padding:44px 48px;box-shadow:0 2px 12px rgba(0,0,0,0.03)
+}
+@media(max-width:600px){.form-card{padding:28px 20px}}
+
+.form-group{margin-bottom:28px}
+.form-group:last-of-type{margin-bottom:32px}
+.form-group label{
+  display:block;font-size:15px;font-weight:700;color:#3a3a3a;
+  margin-bottom:8px;letter-spacing:1px
+}
+.form-group label .required{color:#c0392b;margin-left:4px}
+.form-group .hint{font-size:13px;color:#a09080;margin-bottom:8px}
+
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:12px 18px;border:2px solid #e0d8d0;border-radius:12px;
+  font-size:16px;font-family:inherit;background:#fcfcfa;
+  outline:none;transition:border-color .25s,box-shadow .25s;color:#2c2c2c
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:#b8860b;box-shadow:0 0 0 3px rgba(184,134,11,0.1)
+}
+.form-input.error,.form-select.error,.form-textarea.error{
+  border-color:#c0392b;box-shadow:0 0 0 3px rgba(192,57,43,0.1)
+}
+.form-input::placeholder,.form-textarea::placeholder{color:#b8a898}
+.form-textarea{min-height:160px;resize:vertical;line-height:1.8}
+.form-select{
+  appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a09080' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;padding-right:44px;cursor:pointer
+}
+
+.form-submit{text-align:center;margin-top:8px}
+.form-submit .btn{min-width:240px;padding:14px 32px;font-size:17px;letter-spacing:4px}
+
+/* ── Error message ── */
+.field-error{
+  font-size:13px;color:#c0392b;margin-top:6px;display:none
+}
+.field-error.show{display:block}
+.form-error-banner{
+  background:#fef0ef;border:1px solid #e8c0b8;border-radius:10px;
+  padding:14px 18px;font-size:14px;color:#c0392b;margin-bottom:24px;display:none
+}
+.form-error-banner.show{display:block}
+
+/* ── Loading spinner ── */
+.btn-loading{position:relative;color:transparent!important}
+.btn-loading::after{
+  content:'';position:absolute;inset:0;margin:auto;
+  width:22px;height:22px;border:3px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Success Modal ── */
+.modal-overlay{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.4);z-index:1000;justify-content:center;align-items:center;padding:24px
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:#fff;border-radius:18px;max-width:500px;width:100%;
+  padding:48px 40px 40px;box-shadow:0 24px 80px rgba(0,0,0,0.15);
+  text-align:center;animation:modalIn .35s ease
+}
+@keyframes modalIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.modal .icon{font-size:56px;margin-bottom:12px}
+.modal h3{font-size:24px;font-weight:700;color:#1a1a1a;margin-bottom:12px;letter-spacing:2px}
+.modal p{font-size:15px;color:#7a6a5a;line-height:1.9;margin-bottom:8px}
+.modal .fallback-info{
+  background:#faf7f5;border:1px solid #e8e0d8;border-radius:12px;
+  padding:18px 22px;margin:20px 0 24px;text-align:left;font-size:14px
+}
+.modal .fallback-info strong{color:#b8860b;display:block;margin-bottom:6px}
+.modal .fallback-info span{color:#5a4a3a;font-size:13px}
+
+/* ── Footer ── */
+.footer{
+  text-align:center;padding:32px 24px;color:#a09080;font-size:13px;
+  border-top:1px solid #eee8e0;letter-spacing:2px
+}
+.footer a{color:#b8860b;text-decoration:none}
+
+/* ── Responsive ── */
+@media(max-width:700px){
+  .header{padding:20px}
+  .header-left h1{font-size:24px}
+  .hero h2{font-size:28px}
+  .hero{padding:40px 20px 32px}
+  .form-card{padding:24px 18px}
+  .form-submit .btn{width:100%;min-width:unset}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Header ═══ -->
+<header class="header">
+  <div class="header-left">
+    <h1>文案 · <span>镜观</span></h1>
+    <div class="sub">自进化文案系统 · 品质创作</div>
+  </div>
+  <div class="header-right">
+    <nav class="header-nav">
+      <a class="nav-link" href="/portfolio.html">作品集</a>
+      <a class="nav-link" href="/novel.html">连载</a>
+      <a class="nav-link active" href="/order.html">合作</a>
+    </nav>
+    <span class="stat-pill">作品 <span class="num" id="workCount">-</span></span>
+  </div>
+</header>
+
+<!-- ═══ Hero ═══ -->
+<section class="hero">
+  <h2>开始<span>合作</span></h2>
+  <p>每一个字都值得被认真对待。提交需求后，镜观将在 24 小时内与你沟通方案。</p>
+  <div class="stats-row">
+    <div class="item"><div class="val" id="heroWorks">-</div><div class="lbl">已完成作品</div></div>
+    <div class="item"><div class="val" id="heroTypes">-</div><div class="lbl">擅长领域</div></div>
+    <div class="item"><div class="val">24h</div><div class="lbl">响应时间</div></div>
+  </div>
+</section>
+
+<!-- ═══ Form ═══ -->
+<div class="container">
+  <div class="form-card">
+    <div class="form-error-banner" id="formBanner"></div>
+
+    <form id="orderForm" novalidate>
+      <!-- 1. 姓名 -->
+      <div class="form-group">
+        <label>您的姓名 <span class="required">*</span></label>
+        <input class="form-input" id="fieldName" name="name" type="text" required placeholder="如何称呼您？">
+        <div class="field-error" id="errName">请输入您的姓名</div>
+      </div>
+
+      <!-- 2. 联系方式 -->
+      <div class="form-group">
+        <label>联系方式 <span class="required">*</span></label>
+        <input class="form-input" id="fieldContact" name="contact" type="text" required placeholder="微信 / 手机 / 邮箱">
+        <div class="field-error" id="errContact">请留下您的联系方式</div>
+      </div>
+
+      <!-- 3. 项目类型 -->
+      <div class="form-group">
+        <label>项目类型 <span class="required">*</span></label>
+        <select class="form-select" id="fieldType" name="type" required>
+          <option value="">请选择项目类型</option>
+          <option value="B2B文案">B2B 文案</option>
+          <option value="电商文案">电商文案</option>
+          <option value="品牌故事">品牌故事</option>
+          <option value="餐饮文案">餐饮文案</option>
+          <option value="科技文案">科技文案</option>
+          <option value="教育文案">教育文案</option>
+          <option value="其他">其他</option>
+        </select>
+        <div class="field-error" id="errType">请选择项目类型</div>
+      </div>
+
+      <!-- 4. 预算范围 -->
+      <div class="form-group">
+        <label>预算范围</label>
+        <select class="form-select" id="fieldBudget" name="budget">
+          <option value="">请选择预算范围</option>
+          <option value="500-1000">500 — 1,000 元</option>
+          <option value="1000-2000">1,000 — 2,000 元</option>
+          <option value="2000-5000">2,000 — 5,000 元</option>
+          <option value="5000以上">5,000 元以上</option>
+          <option value="面议">面议</option>
+        </select>
+      </div>
+
+      <!-- 5. 截止时间 -->
+      <div class="form-group">
+        <label>期望截止时间</label>
+        <select class="form-select" id="fieldDeadline" name="deadline">
+          <option value="">请选择截止时间</option>
+          <option value="3天内">3 天内</option>
+          <option value="一周内">一周内</option>
+          <option value="两周内">两周内</option>
+          <option value="一个月">一个月内</option>
+          <option value="不限">时间不限</option>
+        </select>
+      </div>
+
+      <!-- 6. 项目描述 -->
+      <div class="form-group">
+        <label>项目描述 <span class="required">*</span></label>
+        <div class="hint">请详细描述您的项目背景、目标受众、品牌调性以及任何特殊要求。</div>
+        <textarea class="form-textarea" id="fieldDesc" name="description" required placeholder="请详细描述你的需求，越详细越能准确报价…"></textarea>
+        <div class="field-error" id="errDesc">请描述您的项目需求</div>
+      </div>
+
+      <!-- 7. 参考案例 -->
+      <div class="form-group">
+        <label>参考案例 <span style="color:#a09080;font-weight:400;font-size:13px">（选填）</span></label>
+        <div class="hint">如有参考风格或竞品案例，可提供链接或说明。</div>
+        <textarea class="form-textarea" id="fieldRef" name="reference" placeholder="请粘贴参考链接或描述您喜欢的风格…" style="min-height:100px"></textarea>
+      </div>
+
+      <!-- Submit -->
+      <div class="form-submit">
+        <button class="btn btn-gold" id="submitBtn" type="submit">提交需求</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ Success Modal ═══ -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="icon">&#10024;</div>
+    <h3>已收到您的需求！</h3>
+    <p>镜观将在 <strong>24 小时</strong> 内通过您留下的联系方式与您沟通方案和报价。</p>
+    <div class="fallback-info" id="fallbackInfo" style="display:none">
+      <strong>&#9888; 服务器暂不可用，已本地保存</strong>
+      <p style="margin:6px 0 4px;font-size:14px;color:#5a4a3a">您也可以直接通过以下方式联系：</p>
+      <span>微信：<strong>jingguan_writer</strong></span><br>
+      <span>邮箱：<strong>jingguan@example.com</strong></span>
+    </div>
+    <button class="btn btn-outline" onclick="closeSuccessModal()" style="margin-top:8px">我知道了</button>
+  </div>
+</div>
+
+<!-- ═══ Footer ═══ -->
+<footer class="footer">
+  镜观文案 &middot; 每一个字都值得被认真对待<br>
+  <a href="mailto:jingguan@example.com">jingguan@example.com</a>
+</footer>
+
+<!-- ═══════════════════════════════════════════ -->
+<!--  EMBEDDED DATA                               -->
+<!-- ═════════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════════════
+//  PORTFOLIO_DATA — embedded for offline use
+// ═══════════════════════════════════════════
+var PORTFOLIO_DATA = [];
+</script>
+
+<script>
+// ═══════════════════════════════════════════
+//  ORDER FORM LOGIC
+// ═══════════════════════════════════════════
+
+(function(){
+  'use strict';
+
+  var WORKS = [];
+
+  // ── Load embedded data for stats ──
+  function loadStats(){
+    if(typeof PORTFOLIO_DATA !== 'undefined' && PORTFOLIO_DATA && PORTFOLIO_DATA.length){
+      WORKS = PORTFOLIO_DATA;
+    }
+    // Try API for live data
+    fetch('/api/works?limit=1').then(function(r){return r.json()}).then(function(d){
+      if(d && d.works && d.works.length){
+        // Need full count — hit stats endpoint
+        fetch('/api/stats').then(function(r){return r.json()}).then(function(s){
+          if(s && s.total) updateUI(s.total, Object.keys(s.types||{}).length);
+        }).catch(function(){});
+      }
+    }).catch(function(){
+      // Offline — use embedded data
+      if(WORKS.length) updateUI(WORKS.length, new Set(WORKS.map(function(w){return w.type})).size);
+    });
+
+    if(WORKS.length) updateUI(WORKS.length, new Set(WORKS.map(function(w){return w.type})).size);
+  }
+
+  function updateUI(total, types){
+    var el = document.getElementById('workCount');
+    if(el) el.textContent = total;
+    var hw = document.getElementById('heroWorks');
+    if(hw) hw.textContent = total;
+    var ht = document.getElementById('heroTypes');
+    if(ht) ht.textContent = types || '-';
+  }
+
+  // ── Form elements ──
+  var form = document.getElementById('orderForm');
+  var submitBtn = document.getElementById('submitBtn');
+  var banner = document.getElementById('formBanner');
+  var modal = document.getElementById('successModal');
+  var fallbackInfo = document.getElementById('fallbackInfo');
+
+  var fields = {
+    name: document.getElementById('fieldName'),
+    contact: document.getElementById('fieldContact'),
+    type: document.getElementById('fieldType'),
+    budget: document.getElementById('fieldBudget'),
+    deadline: document.getElementById('fieldDeadline'),
+    description: document.getElementById('fieldDesc'),
+    reference: document.getElementById('fieldRef')
+  };
+
+  var errors = {
+    name: document.getElementById('errName'),
+    contact: document.getElementById('errContact'),
+    type: document.getElementById('errType'),
+    description: document.getElementById('errDesc')
+  };
+
+  // ── Validation ──
+  function validate(){
+    var valid = true;
+    var firstError = null;
+
+    // Clear all errors
+    Object.keys(errors).forEach(function(k){
+      errors[k].classList.remove('show');
+      if(fields[k]) fields[k].classList.remove('error');
+    });
+    banner.classList.remove('show');
+
+    // Name
+    if(!fields.name.value.trim()){
+      errors.name.classList.add('show');
+      fields.name.classList.add('error');
+      if(!firstError) firstError = fields.name;
+      valid = false;
+    }
+
+    // Contact
+    if(!fields.contact.value.trim()){
+      errors.contact.classList.add('show');
+      fields.contact.classList.add('error');
+      if(!firstError) firstError = fields.contact;
+      valid = false;
+    }
+
+    // Type
+    if(!fields.type.value){
+      errors.type.classList.add('show');
+      fields.type.classList.add('error');
+      if(!firstError) firstError = fields.type;
+      valid = false;
+    }
+
+    // Description
+    if(!fields.description.value.trim()){
+      errors.description.classList.add('show');
+      fields.description.classList.add('error');
+      if(!firstError) firstError = fields.description;
+      valid = false;
+    }
+
+    if(!valid && firstError) firstError.focus();
+    return valid;
+  }
+
+  // ── Submit ──
+  function handleSubmit(e){
+    e.preventDefault();
+
+    if(!validate()) return;
+
+    // Build payload
+    var payload = {
+      name: fields.name.value.trim(),
+      contact: fields.contact.value.trim(),
+      type: fields.type.value,
+      budget: fields.budget.value || '未指定',
+      deadline: fields.deadline.value || '不限',
+      description: fields.description.value.trim(),
+      reference: fields.reference.value.trim() || '',
+      createdAt: new Date().toISOString(),
+      status: 'pending'
+    };
+
+    // Loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = '提交中…';
+    submitBtn.classList.add('btn-loading');
+
+    // Try API
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    }).then(function(r){
+      if(!r.ok) throw new Error('Server error');
+      return r.json();
+    }).then(function(data){
+      submitBtn.disabled = false;
+      submitBtn.textContent = '提交需求';
+      submitBtn.classList.remove('btn-loading');
+      showSuccess(false);
+    }).catch(function(err){
+      // ── Fallback: save to localStorage ──
+      submitBtn.disabled = false;
+      submitBtn.textContent = '提交需求';
+      submitBtn.classList.remove('btn-loading');
+
+      // Save locally
+      var orders = [];
+      try {
+        var stored = localStorage.getItem('jingguan_orders');
+        if(stored) orders = JSON.parse(stored);
+      } catch(e){}
+      orders.push(payload);
+      try {
+        localStorage.setItem('jingguan_orders', JSON.stringify(orders));
+      } catch(e){}
+
+      showSuccess(true);
+    });
+  }
+
+  function showSuccess(isFallback){
+    if(isFallback){
+      fallbackInfo.style.display = 'block';
+    } else {
+      fallbackInfo.style.display = 'none';
+    }
+    form.reset();
+    modal.classList.add('show');
+  }
+
+  window.closeSuccessModal = function(){
+    modal.classList.remove('show');
+  };
+
+  // ── Real-time error clearing ──
+  Object.keys(fields).forEach(function(k){
+    var el = fields[k];
+    if(!el) return;
+    el.addEventListener('input', function(){
+      el.classList.remove('error');
+      if(errors[k]) errors[k].classList.remove('show');
+      banner.classList.remove('show');
+    });
+    if(el.tagName === 'SELECT'){
+      el.addEventListener('change', function(){
+        el.classList.remove('error');
+        if(errors[k]) errors[k].classList.remove('show');
+        banner.classList.remove('show');
+      });
+    }
+  });
+
+  // ── Close modal on Escape ──
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && modal.classList.contains('show')){
+      closeSuccessModal();
+    }
+  });
+
+  // ── Close modal on overlay click ──
+  modal.addEventListener('click', function(e){
+    if(e.target === modal) closeSuccessModal();
+  });
+
+  // ── Bind submit ──
+  form.addEventListener('submit', handleSubmit);
+
+  // ── Init — try to load from API, fallback to embedded ──
+  loadStats();
+
+  // Also show count from API if possible
+  fetch('/api/works?limit=1').then(function(r){return r.json()}).then(function(d){
+    if(d && d.pagination && d.pagination.total){
+      updateUI(d.pagination.total, 0);
+      // Get types too
+      fetch('/api/types').then(function(r2){return r2.json()}).then(function(types){
+        if(types && types.length) document.getElementById('heroTypes').textContent = types.length;
+      }).catch(function(){});
+    }
+  }).catch(function(){});
+
+})();
+</script>
+</body>
+</html>

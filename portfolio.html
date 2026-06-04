@@ -297,7 +297,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()
 load();
 // Auto-refresh when server available (fast fail on static)
 setInterval(function(){
-  fetch('/api/portfolio/list', {signal: AbortSignal.timeout(3000)}).then(function(r){return r.json();}).then(function(d){
+  fetch('/api/works?limit=1000', {signal: AbortSignal.timeout(3000)}).then(function(r){return r.json();}).then(function(d){
     if(d.works&&d.works.length>WORKS.length){WORKS=d.works;updateStats();render();}
   }).catch(function(){});
 },120000);

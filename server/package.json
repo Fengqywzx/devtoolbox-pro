@@ -1,17 +1,25 @@
 {
   "name": "jingguan-portfolio-api",
-  "version": "1.0.0",
-  "description": "镜观作品集 API — 全栈后端服务",
+  "version": "2.0.0",
+  "description": "镜观作品集 API — 全栈生产级后端服务 (Express + WebSocket + DB)",
   "type": "module",
   "main": "index.mjs",
   "scripts": {
     "start": "node index.mjs",
     "dev": "node --watch index.mjs",
-    "seed": "node seed.mjs"
+    "seed": "node seed.mjs",
+    "prod": "NODE_ENV=production node index.mjs"
   },
   "dependencies": {
-    "express": "^4.21.0",
-    "cors": "^2.8.5",
-    "better-sqlite3": "^11.0.0"
-  }
+    "better-sqlite3": "^11.10.0",
+    "cors": "^2.8.6",
+    "express": "^4.22.2",
+    "pg": "^8.21.0",
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["portfolio", "api", "express", "websocket", "novel", "gallery"],
+  "license": "MIT"
 }
