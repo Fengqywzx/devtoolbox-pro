@@ -1,0 +1,31 @@
+# 部署到 Fly.io（免费额度）
+# 需要: flyctl 登录后在仓库设置添加 FLY_API_TOKEN
+# 首次: flyctl auth login && flyctl launch
+name: Deploy to Fly.io
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'server/**'
+      - 'portfolio-data.json'
+      - 'novel-content.json'
+      - 'Dockerfile'
+      - 'fly.toml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build HTML pages
+        run: python3 build-pages.py
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

@@ -1,0 +1,16 @@
+# Fly.io 部署配置
+# 免费额度: 3x 256MB VM + 3GB 存储 + 160GB 流量/月
+app = "jingguan-portfolio"
+primary_region = "hkg"  # 香港节点，中国大陆访问快
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false  # 保持运行
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1
