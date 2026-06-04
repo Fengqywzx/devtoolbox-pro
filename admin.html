@@ -194,7 +194,18 @@ function renderStatic(works) {
 
 // Try server API first, fall back to static JSON
 function tryServerFirst() {
-  fetch('/api/evolve/status').then(function(r){return r.json();}).then(function(evolve){
+  // Try cloud portfolio API first
+  fetch('/api/works?limit=1').then(function(r){return r.json();}).then(function(d){
+    if (d && d.works) {
+      document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-green"></span>● API在线';
+      document.getElementById('statusBadge').className = 'status-badge badge-green';
+      loadStaticData();
+      return;
+    }
+    throw new Error('no works');
+  }).catch(function(){
+    // Fallback: local evolve server
+    fetch('/api/evolve/status').then(function(r){return r.json();}).then(function(evolve){
     // Server mode — use full admin panel
     document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-green"></span>● 服务器在线';
     document.getElementById('statusBadge').className = 'status-badge badge-green';

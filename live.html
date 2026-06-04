@@ -92,8 +92,8 @@ h1 .dot{animation:pulse 1.5s ease-in-out infinite}
 
 var MODE = 'static';
 
-function loadStatic() {
-  if (typeof PORTFOLIO_DATA !== 'undefined' && PORTFOLIO_DATA && PORTFOLIO_DATA.length) {
+function renderFromData(works) {
+  // works already passed in !== 'undefined' && PORTFOLIO_DATA && PORTFOLIO_DATA.length) {
     var works = PORTFOLIO_DATA;
     if (!works || !works.length) { document.getElementById('wsTotal').textContent = '0'; return; }
 
@@ -139,24 +139,27 @@ function loadStatic() {
 
 // Try live server first
 function tryServer() {
-  fetch('http://localhost:3457/api/status', {signal: AbortSignal.timeout(2000)}).then(function(r){return r.json();}).then(function(s){
-    MODE = 'live';
-    document.getElementById('modeBadge').textContent = '实时模式';
-    document.getElementById('modeBadge').className = 'status-badge on';
-    document.getElementById('statusDot').style.color = 'var(--green)';
-    document.getElementById('wsTotal').textContent = s.projectsFound || '-';
-    document.getElementById('wsTop').textContent = '服务器在线';
-    document.getElementById('wsWords').textContent = '端口3457';
-    document.getElementById('wsMaxScore').textContent = (s.uptime ? Math.floor(s.uptime/60)+'分运行' : '-');
-    document.getElementById('wsTypes').textContent = 'v'+(s.version||'10');
-    document.getElementById('typeDistrib').innerHTML = '<div style="color:var(--green);text-align:center;padding:20px;">✅ 服务器在线<br><span style="font-size:.65rem;color:var(--muted);">完整看板请访问 http://localhost:3457</span></div>';
-    document.getElementById('topWorks').innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;">实时数据请在本地访问: http://localhost:3457</div>';
+  // Try API first
+  fetch('/api/works?limit=1000').then(function(r){return r.json();}).then(function(d){
+    if (d && d.works && d.works.length) {
+      document.getElementById('modeBadge').textContent = 'API在线';
+      document.getElementById('modeBadge').className = 'status-badge on';
+      renderFromData(d.works);
+      return;
+    }
+    throw new Error('no data');
   }).catch(function(){
-    MODE = 'static';
-    document.getElementById('modeBadge').textContent = '静态模式';
-    document.getElementById('statusDot').style.color = 'var(--orange)';
-    loadStatic();
+    // Fallback: embedded data
+    if (typeof PORTFOLIO_DATA !== 'undefined' && PORTFOLIO_DATA && PORTFOLIO_DATA.length) {
+      document.getElementById('modeBadge').textContent = '静态数据';
+      document.getElementById('modeBadge').className = 'status-badge on';
+      renderFromData(PORTFOLIO_DATA);
+    } else {
+      document.getElementById('wsTotal').textContent = '❌';
+      document.getElementById('typeDistrib').innerHTML = '<div style="color:var(--red);text-align:center;padding:10px;">无法连接</div>';
+    }
   });
+}
 }
 
 tryServer();

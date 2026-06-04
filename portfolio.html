@@ -198,16 +198,25 @@ var DATA_LOADED = false;
 
 function load(){
   var g=document.getElementById('grid');
-  // Data embedded directly in page (works everywhere: file://, https://, http://)
-  if (typeof PORTFOLIO_DATA !== 'undefined' && PORTFOLIO_DATA && PORTFOLIO_DATA.length) {
-    WORKS = PORTFOLIO_DATA;
-    g.innerHTML = '';
-    updateStats();
-    render();
-    DATA_LOADED = true;
-  } else {
-    g.innerHTML = '<div class="empty">⚠ 数据加载失败</div>';
-  }
+
+  // 1. Try API (works when deployed with server)
+  fetch('/api/works?limit=1000').then(function(r){return r.json();}).then(function(d){
+    if(d && d.works && d.works.length) {
+      WORKS = d.works;
+      g.innerHTML = ''; updateStats(); render(); DATA_LOADED = true;
+      return;
+    }
+    throw new Error('no data');
+  }).catch(function(){
+    // 2. Embedded data (works on file:// and GitHub Pages)
+    if (typeof PORTFOLIO_DATA !== 'undefined' && PORTFOLIO_DATA && PORTFOLIO_DATA.length) {
+      WORKS = PORTFOLIO_DATA;
+      g.innerHTML = ''; updateStats(); render(); DATA_LOADED = true;
+    } else {
+      g.innerHTML = '<div class="empty">⚠ 无法连接服务器</div>';
+    }
+  });
+}
 }
 
 function updateStats(){

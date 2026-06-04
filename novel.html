@@ -293,25 +293,20 @@ function viewChapter(idx){
   document.getElementById('modalChapterBody').textContent = '(正在加载完整内容...)';
   document.getElementById('modalOverlay').classList.add('show');
 
-  var fname = ch.date + '.md';
-
-  // 1. Try API (local server)
-  fetch('/api/portfolio/chapter?file=' + fname).then(function(r){return r.json();}).then(function(d){
+  // 1. Try cloud API
+  fetch('/api/novel/chapter/' + ch.date).then(function(r){return r.json();}).then(function(d){
     if (d && d.content) {
       document.getElementById('modalChapterBody').textContent = d.content;
       return;
     }
     throw new Error('no content');
   }).catch(function(){
-    // 2. Fallback: embedded content JSON
+    // 2. Fallback: embedded content
     if (NOVEL_CONTENT && NOVEL_CONTENT[ch.date]) {
       document.getElementById('modalChapterBody').textContent = NOVEL_CONTENT[ch.date];
     } else {
-      // 3. Final fallback: show file reference
       document.getElementById('modalChapterBody').textContent =
-        '📄 完整章节内容可在以下位置查看：\n\n' +
-        '文件: 笔记/chronicles/' + fname + '\n' +
-        '(约 ' + ch.wc + ' 字)';
+        '第' + ch.num + '章 · ' + ch.title + ' (' + ch.wc + '字)\n\n(需连接服务器查看完整内容)';
     }
   });
 }

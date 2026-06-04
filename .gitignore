@@ -5,4 +5,5 @@ backups/
 .buddy/
 notes/
 orders.log
-scripts/think-daemon.mjs
+scripts/think-daemon.mjsserver/node_modules
+build-pages.py

@@ -1,0 +1,17 @@
+{
+  "name": "jingguan-portfolio-api",
+  "version": "1.0.0",
+  "description": "镜观作品集 API — 全栈后端服务",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs",
+    "dev": "node --watch index.mjs",
+    "seed": "node seed.mjs"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "better-sqlite3": "^11.0.0"
+  }
+}
