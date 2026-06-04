@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>万象 · 每日连载 · 镜观</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Noto Serif SC','KaiTi','STKaiti','楷体','华文楷体','Songti SC',serif;
+  background:#faf7f5;color:#2c2c2c;font-size:17px;line-height:1.9
+}
+
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(135deg,#fff,#faf5ee);
+  border-bottom:2px solid #e8ddd0;
+  padding:36px 44px;text-align:center
+}
+.header h1{
+  font-size:36px;font-weight:900;letter-spacing:8px;color:#1a1a1a
+}
+.header h1 span{color:#b8860b}
+.header .sub{
+  font-size:15px;color:#8c7a6b;margin-top:6px;
+  letter-spacing:6px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap
+}
+.header .pen{color:#b8860b;font-weight:700}
+
+/* ── CONTAINER ── */
+.container{max-width:860px;margin:0 auto;padding:36px 24px}
+
+/* ── TODAY CARD ── */
+.today-card{
+  background:#fff;border:2px solid #e8ddd0;border-radius:16px;
+  padding:28px 32px;margin-bottom:28px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.04);
+  position:relative;overflow:hidden
+}
+.today-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,#b8860b,#daa520,#b8860b)
+}
+.today-card .label{
+  font-size:13px;color:#b8860b;letter-spacing:4px;font-weight:700
+}
+.today-card h2{
+  font-size:26px;font-weight:700;margin:10px 0 6px;color:#1a1a1a
+}
+.today-card .meta{
+  font-size:14px;color:#8c7a6b
+}
+.today-card .status{
+  display:inline-block;padding:6px 20px;border-radius:20px;
+  font-size:14px;font-weight:700;margin-top:12px
+}
+.status-done{background:#e8f5e0;color:#2a7a2a}
+.status-pending{background:#fff8e0;color:#b8860b;border:1px solid #e8d5a0}
+
+/* ── CHAPTERS ── */
+.section-title{
+  font-size:18px;font-weight:700;color:#1a1a1a;
+  margin:28px 0 14px;padding-bottom:10px;
+  border-bottom:2px solid #e8ddd0;display:flex;align-items:center;gap:8px
+}
+.ch-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.ch-item{
+  background:#fff;border:1px solid #e8e0d8;border-radius:12px;
+  padding:16px 20px;display:flex;justify-content:space-between;
+  align-items:center;transition:all .2s;cursor:pointer
+}
+.ch-item:hover{border-color:#d4c8b8;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.ch-item .info .num{font-size:12px;color:#b8860b;font-weight:700;letter-spacing:2px}
+.ch-item .info .title{font-size:16px;font-weight:600;color:#1a1a1a;margin:2px 0}
+.ch-item .info .wc{font-size:12px;color:#8c7a6b}
+.ch-item .tag{
+  padding:4px 14px;border-radius:14px;font-size:12px;font-weight:700;
+  background:#e8f5e0;color:#2a7a2a
+}
+.ch-item .tag.pending{background:#fff8e0;color:#b8860b}
+
+/* ── PLATFORMS ── */
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}
+.p-item{
+  background:#fff;border:1px solid #e8e0d8;border-radius:10px;
+  padding:14px 16px;display:flex;align-items:center;gap:12px;font-size:15px
+}
+.p-item .icon{font-size:20px;width:28px;text-align:center}
+.p-item .name{flex:1;color:#2c2c2c;font-weight:600}
+.p-item .action{font-size:12px;font-weight:700}
+.action-done{color:#2a7a2a}
+.action-todo{color:#c08020}
+.action-new{color:#b8860b}
+
+/* ── TASKS ── */
+.task-list{display:flex;flex-direction:column;gap:8px;margin-bottom:32px}
+.task-item{
+  background:#fff;border:1px solid #e8e0d8;border-radius:12px;
+  padding:16px 20px;display:flex;align-items:center;gap:16px
+}
+.task-item .pri{font-size:13px;font-weight:700;padding:3px 10px;border-radius:10px}
+.pri-high{background:#fef0e0;color:#c07020}
+.pri-mid{background:#fef8e7;color:#b8860b}
+.pri-low{background:#f5f0eb;color:#7a6a5a}
+.task-item .desc{flex:1}
+.task-item .desc .t-title{font-size:16px;font-weight:600}
+.task-item .desc .t-meta{font-size:13px;color:#8c7a6b;margin-top:2px}
+.task-item .t-status{font-size:13px;font-weight:700}
+.t-done{color:#2a7a2a}
+.t-pending{color:#b8860b}
+
+/* ── FULL CHAPTER MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.4);z-index:1000;justify-content:center;align-items:center;padding:24px
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:#fff;border-radius:18px;max-width:720px;width:100%;
+  max-height:85vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.12);
+  padding:36px 40px;position:relative;animation:modalIn .3s ease
+}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal::-webkit-scrollbar{width:5px}
+.modal::-webkit-scrollbar-thumb{background:#d0c8c0;border-radius:3px}
+.modal-close{
+  position:absolute;top:16px;right:20px;font-size:28px;cursor:pointer;
+  color:#a09080;background:none;border:none;font-family:inherit;line-height:1
+}
+.modal-close:hover{color:#2c2c2c}
+.modal h2{font-size:24px;font-weight:700;margin-bottom:16px;color:#1a1a1a}
+.modal .ch-body{
+  font-size:16px;line-height:2;color:#2c2c2c;white-space:pre-wrap
+}
+
+@media(max-width:700px){
+  .header{padding:24px 16px}
+  .header h1{font-size:26px}
+  .p-grid{grid-template-columns:1fr}
+  .today-card{padding:20px}
+  .modal{padding:24px 18px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1>万<span>象</span></h1>
+  <div class="sub">
+    <span>世界奇迹日誌</span>
+    <span class="pen">镜观</span>
+    <span>每日连载</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Today's Status -->
+  <div class="today-card" id="todayCard">
+    <div class="label" id="todayLabel">📖 今日 · 2026年6月4日</div>
+    <h2 id="todayTitle">六月四日——黄金之重与硅基之价</h2>
+    <div class="meta" id="todayMeta">第四章 · 5,200字 · 定价权与文明尺度</div>
+    <div class="status status-done" id="todayStatus">✅ 已创作完成</div>
+  </div>
+
+  <!-- Chapters -->
+  <div class="section-title">📚 全部章回</div>
+  <div class="ch-list" id="chList"></div>
+
+  <!-- Platforms -->
+  <div class="section-title">🌐 全平台状态</div>
+  <div class="p-grid" id="pGrid"></div>
+
+  <!-- Tasks -->
+  <div class="section-title">⚡ 今日操作清单</div>
+  <div class="task-list" id="taskList"></div>
+
+  <div style="text-align:center;color:#a09080;font-size:13px;margin:24px 0;letter-spacing:2px">
+    "以绝对理性与极致诗意，记录每一天地球上的奇迹"<br>
+    每日 12:00 发布提醒 · 引擎 v4
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2 id="modalChapterTitle"></h2>
+    <div class="ch-body" id="modalChapterBody"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  DATA — embed directly for shareability
+// ═══════════════════════════════════════════
+
+var NOVEL = {
+  title: '万象——世界奇迹日誌',
+  penName: '镜观',
+  totalChapters: 4,
+  wordCount: 22525,
+  chapters: [
+    {num: 4, date: '2026-06-04', title: '六月四日——黄金之重与硅基之价', wc: 5200, done: true, topics: 'SpaceX IPO · 黄金超美债 · T1000碳纤维 · 高考 · 微短剧'},
+    {num: 3, date: '2026-06-03', title: '六月三日——掌上海与镜中人', wc: 5100, done: true, topics: '魏宗万 · 蓝色章鱼新物种 · Copilot计费 · 美联储'},
+    {num: 2, date: '2026-06-02', title: '六月二日——烈焰中的发射台与迁徙的国都', wc: 4800, done: true, topics: 'Blue Origin爆炸 · 赤道几内亚迁都 · 育儿补贴'},
+    {num: 1, date: '2026-06-01', title: '六月朔——灰烬中的数字城邦与学会沉默的机器', wc: 5200, done: true, topics: '天涯回归 · Claude认错 · 南京大学博士'}
+  ],
+  platforms: [
+    {name: '起点中文网', icon: '🏆', status: 'done', action: '已注册'},
+    {name: '番茄小说', icon: '🍅', status: 'todo', action: '待注册'},
+    {name: '豆瓣阅读', icon: '📚', status: 'todo', action: '待注册'},
+    {name: '知乎专栏', icon: '📝', status: 'todo', action: '待注册'},
+    {name: '微信公众号', icon: '💬', status: 'todo', action: '待注册'},
+    {name: 'B站专栏', icon: '📺', status: 'todo', action: '待注册'},
+    {name: '小红书', icon: '📕', status: 'todo', action: '待注册'},
+    {name: '抖音', icon: '🎵', status: 'todo', action: '待注册'}
+  ],
+  tasks: [
+    {pri: 'high', title: '在起点中文网发布第1-3章', meta: '作家专区 → 新建作品《万象》→ 粘贴三章发布', status: 'pending'},
+    {pri: 'high', title: '注册番茄小说作家号', meta: '下载番茄作家APP → 手机号注册 → 创建作品', status: 'pending'},
+    {pri: 'high', title: '注册豆瓣阅读 + 知乎专栏', meta: 'read.douban.com + 知乎创作中心 → 同步内容', status: 'pending'},
+    {pri: 'mid', title: '注册微信公众号', meta: 'mp.weixin.qq.com → 申请订阅号', status: 'pending'},
+    {pri: 'low', title: '注册B站/小红书/抖音', meta: '可选平台，扩展读者群', status: 'pending'}
+  ],
+  chapterContents: {}
+};
+
+// ═══════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════
+
+function render(){
+  // Today
+  var today = NOVEL.chapters[0];
+  document.getElementById('todayLabel').textContent = '📖 今日 · ' + today.date;
+  document.getElementById('todayTitle').textContent = today.title;
+  document.getElementById('todayMeta').textContent = '第' + today.num + '章 · ' + today.wc + '字 · ' + today.topics;
+  document.getElementById('todayStatus').textContent = today.done ? '✅ 已创作完成' : '⏳ 待创作';
+  document.getElementById('todayStatus').className = 'status ' + (today.done ? 'status-done' : 'status-pending');
+
+  // Chapters
+  var chHtml = '';
+  NOVEL.chapters.forEach(function(ch){
+    chHtml += '<div class="ch-item" onclick="viewChapter(' + (ch.num-1) + ')">' +
+      '<div class="info"><div class="num">第' + ch.num + '章 · ' + ch.date + '</div>' +
+      '<div class="title">' + ch.title + '</div><div class="wc">' + ch.wc + '字 · ' + ch.topics + '</div></div>' +
+      '<div class="tag' + (ch.done ? '' : ' pending') + '">' + (ch.done ? '✅ 已就绪' : '⏳ 待定') + '</div></div>';
+  });
+  document.getElementById('chList').innerHTML = chHtml;
+
+  // Platforms
+  var pHtml = '';
+  NOVEL.platforms.forEach(function(p){
+    var cls = p.status === 'done' ? 'action-done' : 'action-todo';
+    pHtml += '<div class="p-item"><span class="icon">' + p.icon + '</span><span class="name">' + p.name + '</span>' +
+      '<span class="action ' + cls + '">' + p.action + '</span></div>';
+  });
+  document.getElementById('pGrid').innerHTML = pHtml;
+
+  // Tasks
+  var tHtml = '';
+  NOVEL.tasks.forEach(function(t){
+    var priCls = t.pri === 'high' ? 'pri-high' : t.pri === 'mid' ? 'pri-mid' : 'pri-low';
+    var priLabel = t.pri === 'high' ? '🔥高' : t.pri === 'mid' ? '⚡中' : '💡低';
+    tHtml += '<div class="task-item"><span class="pri ' + priCls + '">' + priLabel + '</span>' +
+      '<div class="desc"><div class="t-title">' + t.title + '</div><div class="t-meta">' + t.meta + '</div></div>' +
+      '<span class="t-status ' + (t.status === 'done' ? 't-done' : 't-pending') + '">' + (t.status === 'done' ? '✅' : '⏳') + '</span></div>';
+  });
+  document.getElementById('taskList').innerHTML = tHtml;
+}
+
+// ═══════════════════════════════════════════
+//  VIEW CHAPTER (try API, fallback to embedded)
+// ═══════════════════════════════════════════
+
+function viewChapter(idx){
+  var ch = NOVEL.chapters[idx];
+  document.getElementById('modalChapterTitle').textContent = '第' + ch.num + '章 · ' + ch.title;
+  document.getElementById('modalChapterBody').textContent = '(正在加载完整内容...)';
+  document.getElementById('modalOverlay').classList.add('show');
+
+  // Try API
+  var fname = ch.date + '.md';
+  fetch('/api/portfolio/chapter?file=' + fname).then(function(r){return r.json();}).then(function(d){
+    document.getElementById('modalChapterBody').textContent = d.content || '(暂无)';
+  }).catch(function(){
+    document.getElementById('modalChapterBody').textContent = '完整章节内容在本地文件中。\n\n文件: 笔记/chronicles/' + fname;
+  });
+}
+
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+
+// ═══════════════════════════════════════════
+//  AUTO-REFRESH from server (live update)
+// ═══════════════════════════════════════════
+
+function refreshFromServer(){
+  fetch('/api/novel/status').then(function(r){return r.json();}).then(function(d){
+    if(d.totalChapters > NOVEL.totalChapters){
+      location.reload();
+    }
+  }).catch(function(){});
+}
+
+render();
+setInterval(refreshFromServer, 30000);
+</script>
+</body>
+</html>
