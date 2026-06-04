@@ -53,6 +53,7 @@
   .grade-A { color:#3fb950; } .grade-B { color:#d29922; }
   @media (max-width:900px) { .grid, .grid-2 { grid-template-columns:1fr; } .header { flex-direction:column; align-items:start; } .stats { grid-template-columns:repeat(2,1fr); } }
 </style>
+<script src="portfolio-data.js"></script>
 </head>
 <body>
 <header class="header">
@@ -130,6 +131,15 @@
 var STATIC_MODE = false;
 
 function loadStaticData() {
+  // Try script-loaded data first (works on file://)
+  if (typeof PORTFOLIO_DATA !== 'undefined' && PORTFOLIO_DATA && PORTFOLIO_DATA.length) {
+    STATIC_MODE = true;
+    document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-blue"></span>📁 静态模式';
+    document.getElementById('statusBadge').className = 'status-badge badge-blue';
+    renderStatic(PORTFOLIO_DATA);
+    return;
+  }
+  // Fallback: fetch (works on GitHub Pages)
   fetch('./portfolio-data.json').then(function(r){return r.json();}).then(function(works){
     STATIC_MODE = true;
     document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-blue"></span>📁 静态模式';
@@ -139,7 +149,7 @@ function loadStaticData() {
     document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-yellow"></span>⚠ 无法加载数据';
     document.getElementById('statusBadge').className = 'status-badge badge-yellow';
     document.getElementById('statWorks').textContent = '-';
-    document.getElementById('recentWorks').innerHTML = '<div style="color:#8b949e;text-align:center;padding:30px;">⚠ portfolio-data.json 文件缺失</div>';
+    document.getElementById('recentWorks').innerHTML = '<div style="color:#8b949e;text-align:center;padding:30px;">⚠ 数据文件缺失，请确保 portfolio-data.js 或 portfolio-data.json 存在</div>';
   });
 }
 

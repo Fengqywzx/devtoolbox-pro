@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir -p _site
           cp -v *.html _site/ 2>/dev/null || true
-          cp -v *.json _site/ 2>/dev/null || true
+          cp -v *.json *.js _site/ 2>/dev/null || true
           touch _site/.nojekyll
           echo "=== _site contents ==="
           ls -la _site/

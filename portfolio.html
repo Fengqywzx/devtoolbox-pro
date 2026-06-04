@@ -137,6 +137,7 @@ body{
   .card h3{font-size:18px}
 }
 </style>
+<script src="portfolio-data.js"></script>
 </head>
 <body>
 
@@ -185,19 +186,35 @@ body{
 </div>
 
 <script>
+// ═══════════════════════════════════════════
+//  DATA LOADING — <script> tag (file:// OK) → fetch (server)
+// ═══════════════════════════════════════════
+
 var WORKS=[],page=1,perPage=30,curFilter='all';
+var DATA_LOADED = false;
 
 function load(){
   var g=document.getElementById('grid');
-  // Try data file first (for static sharing)
+
+  // 1. If loaded via <script src="portfolio-data.js"> (works on file:// and server)
+  if (typeof PORTFOLIO_DATA !== 'undefined' && PORTFOLIO_DATA && PORTFOLIO_DATA.length) {
+    WORKS = PORTFOLIO_DATA;
+    g.innerHTML = '';
+    updateStats();
+    render();
+    DATA_LOADED = true;
+    return;
+  }
+
+  // 2. Try fetch portfolio-data.json (works on GitHub Pages)
   fetch('./portfolio-data.json').then(function(r){return r.json();}).then(function(d){
-    WORKS=d; g.innerHTML=''; updateStats(); render();
+    WORKS=d; g.innerHTML=''; updateStats(); render(); DATA_LOADED = true;
   }).catch(function(){
-    // Fallback: API (when server is running)
+    // 3. Fallback: API (local server)
     fetch('/api/portfolio/list').then(function(r){return r.json();}).then(function(d){
-      WORKS=d.works||[]; g.innerHTML=''; updateStats(); render();
+      WORKS=d.works||[]; g.innerHTML=''; updateStats(); render(); DATA_LOADED = true;
     }).catch(function(){
-      g.innerHTML='<div class="empty">⚠ 无法加载数据。<br>请确保 <b>portfolio-data.json</b> 文件与此页面在同一目录。</div>';
+      g.innerHTML='<div class="empty">⚠ 无法加载数据。<br>请将网页部署到服务器或确保 <b>portfolio-data.js</b> 文件在同一目录。</div>';
     });
   });
 }

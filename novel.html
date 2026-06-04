@@ -143,6 +143,8 @@ body{
   .modal{padding:24px 18px}
 }
 </style>
+<script src="portfolio-data.js"></script>
+<script src="novel-content.js"></script>
 </head>
 <body>
 
@@ -279,6 +281,11 @@ function render(){
 var NOVEL_CONTENT = null;
 
 function loadNovelContent() {
+  // Try script-loaded data first (works on file://)
+  if (typeof NOVEL_CONTENT_DATA !== 'undefined' && NOVEL_CONTENT_DATA && NOVEL_CONTENT_DATA.chapters) {
+    NOVEL_CONTENT = NOVEL_CONTENT_DATA.chapters;
+    return;
+  }
   fetch('./novel-content.json').then(function(r){return r.json();}).then(function(d){
     NOVEL_CONTENT = d.chapters || {};
   }).catch(function(){});

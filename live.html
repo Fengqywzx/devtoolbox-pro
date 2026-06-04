@@ -39,6 +39,7 @@ h1 .dot{animation:pulse 1.5s ease-in-out infinite}
 .type-chips{display:flex;flex-wrap:wrap;gap:6px}
 .type-chip{padding:4px 12px;border-radius:12px;font-size:.7rem;font-weight:600}
 </style>
+<script src="portfolio-data.js"></script>
 </head>
 <body>
 
@@ -90,7 +91,14 @@ h1 .dot{animation:pulse 1.5s ease-in-out infinite}
 var MODE = 'static';
 
 function loadStatic() {
-  fetch('./portfolio-data.json').then(function(r){return r.json();}).then(function(works){
+  var dataPromise;
+  // Try script-loaded data first (works on file://)
+  if (typeof PORTFOLIO_DATA !== 'undefined' && PORTFOLIO_DATA && PORTFOLIO_DATA.length) {
+    dataPromise = Promise.resolve(PORTFOLIO_DATA);
+  } else {
+    dataPromise = fetch('./portfolio-data.json').then(function(r){return r.json();});
+  }
+  dataPromise.then(function(works){
     if (!works || !works.length) { document.getElementById('wsTotal').textContent = '0'; return; }
 
     document.getElementById('wsTotal').textContent = works.length;
