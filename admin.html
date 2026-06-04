@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🧬 自进化文案系统 · 控制面板 v2</title>
+<title>🧬 镜观文案系统 · 管理面板</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family: -apple-system,'Segoe UI',Helvetica,Arial,sans-serif; background: #0a0e14; color: #e6edf3; min-height:100vh; }
@@ -14,11 +14,11 @@
   .status-badge { padding:6px 16px; border-radius:20px; font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:6px; }
   .badge-green { background:#0f2d1a; color:#3fb950; border:1px solid #3fb950; }
   .badge-yellow { background:#2d1f0f; color:#d29922; border:1px solid #d29922; }
-  .badge-red { background:#2d0f0f; color:#f85149; border:1px solid #f85149; }
+  .badge-blue { background:#0f1a2d; color:#58a6ff; border:1px solid #58a6ff; }
   .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
   .dot-green { background:#3fb950; box-shadow:0 0 8px #3fb95066; }
-  .dot-red { background:#f85149; box-shadow:0 0 8px #f8514966; }
   .dot-yellow { background:#d29922; box-shadow:0 0 8px #d2992266; }
+  .dot-blue { background:#58a6ff; box-shadow:0 0 8px #58a6ff66; }
   .container { max-width:1400px; margin:0 auto; padding:20px; }
   .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:16px; }
   .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
@@ -35,363 +35,209 @@
   .stat-value { font-size:1.6rem; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.2; }
   .stat-label { font-size:0.7rem; color:#8b949e; margin-top:4px; letter-spacing:0.5px; }
   .stat-blue { color:#58a6ff; } .stat-green { color:#3fb950; } .stat-yellow { color:#d29922; } .stat-purple { color:#bc8cff; }
-  .activity-feed { height:280px; overflow-y:auto; font-family:'SF Mono','Fira Code','Consolas',monospace; font-size:0.78rem; line-height:1.6; background:#0d1117; border-radius:8px; padding:12px; margin-bottom:12px; }
-  .activity-feed::-webkit-scrollbar { width:4px; }
-  .activity-feed::-webkit-scrollbar-track { background:#0d1117; }
-  .activity-feed::-webkit-scrollbar-thumb { background:#30363d; border-radius:2px; }
-  .log-line { padding:2px 0; display:flex; gap:8px; opacity:0; animation: fadeIn .3s forwards; }
-  .log-time { color:#8b949e; flex-shrink:0; min-width:70px; font-size:0.7rem; }
-  .log-icon { flex-shrink:0; min-width:20px; }
-  .log-msg { word-break:break-all; }
-  .log-green { color:#3fb950; } .log-yellow { color:#d29922; } .log-red { color:#f85149; } .log-blue { color:#58a6ff; } .log-dim { color:#8b949e; }
-  @keyframes fadeIn { to { opacity:1; } }
-  .live-indicator { display:flex; align-items:center; gap:6px; font-size:0.75rem; color:#3fb950; }
-  .live-dot { width:6px; height:6px; border-radius:50%; background:#3fb950; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-  .form-row { display:flex; gap:16px; align-items:end; flex-wrap:wrap; }
-  .form-group { display:flex; flex-direction:column; gap:4px; }
-  .form-group label { font-size:0.75rem; color:#8b949e; }
-  .form-group input { background:#0d1117; border:1px solid #30363d; border-radius:6px; padding:8px 12px; color:#e6edf3; font-size:0.95rem; width:130px; }
-  .form-group input:focus { outline:none; border-color:#58a6ff; }
-  .btn { padding:8px 20px; border-radius:6px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn { padding:8px 20px; border-radius:6px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all .2s; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
   .btn:hover { transform:translateY(-1px); filter:brightness(1.1); }
   .btn-primary { background:#238636; color:#fff; }
-  .btn-primary:hover { background:#2ea043; }
-  .btn-danger { background:#da3633; color:#fff; }
   .btn-accent { background:#1f6feb; color:#fff; }
-  .btn-accent:hover { background:#388bfd; }
-  .save-feedback { font-size:0.75rem; margin-top:8px; color:#3fb950; }
-  .save-feedback.hide { opacity:0; }
-  .style-bar-wrap { margin-bottom:8px; }
-  .style-bar-header { display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px; }
-  .style-bar-header .name { font-weight:500; }
-  .style-bar-header .score { color:#3fb950; font-weight:600; }
-  .style-bar { height:8px; background:#21262d; border-radius:4px; overflow:hidden; }
-  .style-bar-fill { height:100%; border-radius:4px; transition:width .6s ease; }
-  .fill-green { background:linear-gradient(90deg,#3fb950,#56d364); }
-  .fill-blue { background:linear-gradient(90deg,#58a6ff,#79c0ff); }
-  .fill-yellow { background:linear-gradient(90deg,#d29922,#e3b341); }
-  .fill-purple { background:linear-gradient(90deg,#bc8cff,#d2a8ff); }
-  .heal-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .heal-item { display:flex; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.02); border-radius:6px; font-size:0.8rem; }
-  .heal-item .label { color:#8b949e; }
-  .heal-item .value { font-weight:600; }
-  .queue { display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto; }
-  .queue::-webkit-scrollbar { width:4px; }
-  .queue::-webkit-scrollbar-thumb { background:#30363d; border-radius:2px; }
-  .q-item { display:flex; align-items:center; gap:10px; padding:8px 12px; background:rgba(255,255,255,0.015); border-radius:6px; font-size:0.8rem; border-left:3px solid #30363d; }
-  .q-item.done { border-left-color:#3fb950; }
-  .q-item.processing { border-left-color:#58a6ff; }
-  .q-item.failed { border-left-color:#f85149; }
-  .q-icon { font-size:1rem; flex-shrink:0; }
-  .q-title { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .q-score { font-weight:600; font-size:0.75rem; }
-  .q-score.A { color:#3fb950; } .q-score.B { color:#d29922; } .q-score.C { color:#f85149; }
-  .toast-container { position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:8px; z-index:999; }
-  .toast { padding:12px 24px; border-radius:8px; font-size:0.85rem; opacity:0; transform:translateX(100px); transition:all .4s; pointer-events:none; }
-  .toast.show { opacity:1; transform:translateX(0); }
-  .toast-success { background:#0f2d1a; border:1px solid #3fb950; color:#3fb950; }
-  .toast-error { background:#2d0f0f; border:1px solid #f85149; color:#f85149; }
-  .toast-info { background:#0f1a2d; border:1px solid #58a6ff; color:#58a6ff; }
-  .lesson-box { background:#0d1117; border-radius:8px; padding:12px; font-size:0.78rem; line-height:1.6; max-height:200px; overflow-y:auto; margin-top:8px; }
-  .lesson-box::-webkit-scrollbar { width:4px; }
-  .lesson-box::-webkit-scrollbar-thumb { background:#30363d; border-radius:2px; }
-  @media (max-width:900px) {
-    .grid, .grid-2 { grid-template-columns:1fr; }
-    .header { flex-direction:column; align-items:start; }
-    .stats { grid-template-columns:repeat(2,1fr); }
-  }
+  .link-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; }
+  .link-card { display:block; padding:16px; background:#0d1117; border:1px solid #21262d; border-radius:10px; text-decoration:none; color:#e6edf3; transition:all .2s; }
+  .link-card:hover { border-color:#58a6ff; background:#111827; transform:translateY(-2px); }
+  .link-card .icon { font-size:1.5rem; margin-bottom:6px; display:block; }
+  .link-card .title { font-weight:600; font-size:0.95rem; }
+  .link-card .desc { font-size:0.75rem; color:#8b949e; margin-top:4px; }
+  .works-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+  .works-table th { text-align:left; padding:8px 10px; color:#8b949e; font-weight:600; border-bottom:1px solid #21262d; }
+  .works-table td { padding:8px 10px; border-bottom:1px solid #161b22; }
+  .works-table tr:hover td { background:rgba(255,255,255,0.02); }
+  .works-table .score { font-weight:700; }
+  .grade-A { color:#3fb950; } .grade-B { color:#d29922; }
+  @media (max-width:900px) { .grid, .grid-2 { grid-template-columns:1fr; } .header { flex-direction:column; align-items:start; } .stats { grid-template-columns:repeat(2,1fr); } }
 </style>
 </head>
 <body>
 <header class="header">
-  <h1>🧬 自进化文案系统 <span class="version">v10.0</span></h1>
+  <h1>🧬 镜观文案系统 <span class="version">v10.0</span></h1>
   <div class="header-right">
-    <span class="status-badge" id="statusBadge"><span class="status-dot dot-yellow"></span>加载中...</span>
-    <button class="btn btn-accent" onclick="triggerScan()">🔍 立即扫描</button>
-    <button class="btn btn-primary" onclick="refreshAll()">🔄 刷新</button>
+    <span class="status-badge" id="statusBadge"><span class="status-dot dot-blue"></span>检测中...</span>
+    <a class="btn btn-accent" href="portfolio.html">🎨 作品集</a>
+    <a class="btn btn-primary" href="novel.html">📖 小说</a>
   </div>
 </header>
-<div class="container">
+<div class="container" id="app">
   <div class="card" style="margin-bottom:16px;">
     <div class="stats" id="statGrid">
-      <div class="stat blue"><div class="stat-value stat-blue" id="statCycle">-</div><div class="stat-label">已完成循环</div></div>
-      <div class="stat green"><div class="stat-value stat-green" id="statLevel">-</div><div class="stat-label">语言等级</div></div>
-      <div class="stat green"><div class="stat-value stat-green" id="statBest">-</div><div class="stat-label">最佳产出</div></div>
-      <div class="stat yellow"><div class="stat-value stat-yellow" id="statCorrections">-</div><div class="stat-label">自我修正</div></div>
-      <div class="stat purple"><div class="stat-value stat-purple" id="statUpgrades">-</div><div class="stat-label">语言升级</div></div>
-      <div class="stat blue"><div class="stat-value stat-blue" id="statOrders">-</div><div class="stat-label">每轮接单</div></div>
+      <div class="stat blue"><div class="stat-value stat-blue" id="statWorks">-</div><div class="stat-label">作品总数</div></div>
+      <div class="stat green"><div class="stat-value stat-green" id="statTop">-</div><div class="stat-label">推荐作品</div></div>
+      <div class="stat yellow"><div class="stat-value stat-yellow" id="statWords">-</div><div class="stat-label">总字数</div></div>
+      <div class="stat purple"><div class="stat-value stat-purple" id="statTypes">-</div><div class="stat-label">文案类型</div></div>
+      <div class="stat blue"><div class="stat-value stat-blue" id="statAvg">-</div><div class="stat-label">平均字数</div></div>
+      <div class="stat green"><div class="stat-value stat-green" id="statTopScore">-</div><div class="stat-label">最高评分</div></div>
     </div>
   </div>
   <div class="grid-2">
     <div class="card">
-      <h2>📡 实时活动流 <span class="live-indicator"><span class="live-dot"></span>LIVE</span></h2>
-      <div class="activity-feed" id="activityFeed">
-        <div class="log-line"><span class="log-time">-</span><span class="log-icon">🚀</span><span class="log-dim">等待连接...</span></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#8b949e;">
-        <span id="cycleInfo">等待数据</span>
-        <span>🔄 自动刷新每5秒</span>
+      <h2>📋 最新作品 <span class="sub" id="recentCount"></span></h2>
+      <div style="max-height:320px;overflow-y:auto;" id="recentWorks">
+        <div style="color:#8b949e;text-align:center;padding:30px;">加载中...</div>
       </div>
     </div>
     <div class="card">
-      <h2>⚙️ 系统设置</h2>
-      <div class="form-row">
-        <div class="form-group"><label>🕐 更新周期（分钟）</label><input type="number" id="inputInterval" min="10" max="1440" value="70"></div>
-        <div class="form-group"><label>📋 每轮接单数</label><input type="number" id="inputOrders" min="1" max="50" value="10"></div>
-        <button class="btn btn-primary" onclick="saveSettings()">💾 保存</button>
-        <button class="btn btn-danger" onclick="resetHeal()">🛡️ 重置自愈</button>
+      <h2>🔗 快速入口</h2>
+      <div class="link-grid" id="quickLinks">
+        <a class="link-card" href="portfolio.html">
+          <span class="icon">🎨</span>
+          <span class="title">作品全集</span>
+          <span class="desc">322篇文案 · 按分级/类型筛选</span>
+        </a>
+        <a class="link-card" href="novel.html">
+          <span class="icon">📖</span>
+          <span class="title">小说连载</span>
+          <span class="desc">《万象——世界奇迹日志》</span>
+        </a>
+        <a class="link-card" href="index.html">
+          <span class="icon">🏠</span>
+          <span class="title">主站首页</span>
+          <span class="desc">镜观 · 作品集门户</span>
+        </a>
+        <a class="link-card" href="https://fengqywzx.github.io/devtoolbox-pro/portfolio.html" target="_blank">
+          <span class="icon">🌐</span>
+          <span class="title">公网作品集</span>
+          <span class="desc">分享给任何人查看</span>
+        </a>
       </div>
-      <div class="save-feedback hide" id="saveFeedback"></div>
-      <div style="margin-top:16px;padding-top:12px;border-top:1px solid #21262d;">
-        <h2 style="font-size:0.85rem;margin-bottom:8px;">📊 最新写作法则</h2>
-        <div class="lesson-box" id="lessonBox">
-          <div style="color:#8b949e;text-align:center;padding:20px;">等待首次循环...</div>
+      <div style="margin-top:16px;padding:16px;background:#0d1117;border-radius:8px;border:1px solid #21262d;">
+        <div style="font-size:0.85rem;font-weight:600;margin-bottom:8px;">💡 本地服务器模式</div>
+        <div style="font-size:0.75rem;color:#8b949e;line-height:1.6;">
+          如需实时监控和系统控制，请在本地启动服务器：<br>
+          <code style="background:#21262d;padding:2px 8px;border-radius:4px;color:#58a6ff;">node C:\Users\18612\Desktop\实时接单系统\Claude-CodeAgent\server.mjs</code>
+          <br>然后访问 <a href="http://localhost:3458/admin.html" style="color:#58a6ff;">http://localhost:3458/admin.html</a>
         </div>
       </div>
     </div>
   </div>
-  <div class="grid-2">
-    <div class="card">
-      <h2>📋 项目处理队列 <span class="sub" id="queueCount"></span></h2>
-      <div class="queue" id="projectQueue">
-        <div style="color:#8b949e;font-size:0.8rem;text-align:center;padding:20px;">等待项目数据...</div>
-      </div>
-    </div>
-    <div class="card">
-      <h2>🏆 最优写作风格 <span class="sub" id="totalRunsLabel"></span></h2>
-      <div id="styleRanking">
-        <div style="color:#8b949e;font-size:0.8rem;text-align:center;padding:20px;">等待数据积累...</div>
-      </div>
-    </div>
-  </div>
-  <div class="grid">
-    <div class="card">
-      <h2>🛡️ 自愈引擎</h2>
-      <div class="heal-grid" id="healGrid">
-        <div class="heal-item"><span class="label">⏱ 运行时间</span><span class="value" id="healUptime">-</span></div>
-        <div class="heal-item"><span class="label">❌ 故障记录</span><span class="value" id="healFailures">-</span></div>
-        <div class="heal-item"><span class="label">✅ 自愈成功</span><span class="value" id="healHealed">-</span></div>
-        <div class="heal-item"><span class="label">📊 故障模式</span><span class="value" id="healPatterns">-</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <h2>🔥 故障模式分析</h2>
-      <div id="patternList"><div style="color:#8b949e;text-align:center;padding:20px;">暂无故障 — 系统健康</div></div>
-    </div>
-    <div class="card">
-      <h2>📈 工作流成熟度</h2>
-      <div id="maturityInfo"><div style="color:#8b949e;text-align:center;padding:20px;">等待数据...</div></div>
+  <div class="card">
+    <h2>📊 按类型分布</h2>
+    <div id="typeDistribution" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;">
+      <div style="color:#8b949e;text-align:center;padding:20px;">加载中...</div>
     </div>
   </div>
 </div>
-<div class="toast-container" id="toastContainer"></div>
 <script>
-var API = '';
-var lastActivity = '';
+// ═══════════════════════════════════════════
+//  管理模式 — 双模式: 静态JSON(缺省) + API(本地服务器)
+// ═══════════════════════════════════════════
 
-function showToast(msg, type) {
-  type = type || 'success';
-  var c = document.getElementById('toastContainer');
-  var t = document.createElement('div');
-  t.className = 'toast toast-'+type+' show';
-  t.textContent = msg;
-  c.appendChild(t);
-  setTimeout(function(){ t.className = t.className.replace(' show',''); setTimeout(function(){ t.remove(); },400); }, 3500);
+var STATIC_MODE = false;
+
+function loadStaticData() {
+  fetch('./portfolio-data.json').then(function(r){return r.json();}).then(function(works){
+    STATIC_MODE = true;
+    document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-blue"></span>📁 静态模式';
+    document.getElementById('statusBadge').className = 'status-badge badge-blue';
+    renderStatic(works);
+  }).catch(function(){
+    document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-yellow"></span>⚠ 无法加载数据';
+    document.getElementById('statusBadge').className = 'status-badge badge-yellow';
+    document.getElementById('statWorks').textContent = '-';
+    document.getElementById('recentWorks').innerHTML = '<div style="color:#8b949e;text-align:center;padding:30px;">⚠ portfolio-data.json 文件缺失</div>';
+  });
 }
 
-function addLog(icon, msg, cls) {
-  cls = cls || '';
-  var feed = document.getElementById('activityFeed');
-  var time = new Date().toLocaleTimeString('zh-CN',{hour12:false});
-  var line = document.createElement('div');
-  line.className = 'log-line';
-  line.innerHTML = '<span class="log-time">'+time+'</span><span class="log-icon">'+icon+'</span><span class="log-msg '+cls+'">'+msg+'</span>';
-  feed.appendChild(line);
-  feed.scrollTop = feed.scrollHeight;
-  while (feed.children.length > 50) feed.removeChild(feed.firstChild);
+function renderStatic(works) {
+  if (!works || !works.length) { loadStaticData(); return; }
+
+  // Stats
+  document.getElementById('statWorks').textContent = works.length;
+  var top = works.filter(function(w){ return w.isTop || w.grade === 'A'; }).length;
+  document.getElementById('statTop').textContent = top;
+  var totalWords = works.reduce(function(s,w){ return s + (w.word_count || 0); }, 0);
+  document.getElementById('statWords').textContent = (totalWords/10000).toFixed(1) + '万';
+  var types = {};
+  works.forEach(function(w){ var t = w.type || '其他'; types[t] = (types[t]||0) + 1; });
+  document.getElementById('statTypes').textContent = Object.keys(types).length + '种';
+  document.getElementById('statAvg').textContent = Math.round(totalWords/works.length) + '字';
+  var maxScore = works.reduce(function(m,w){ return Math.max(m, w.score||0); }, 0);
+  document.getElementById('statTopScore').textContent = maxScore + '分';
+
+  // Recent works
+  var sorted = works.slice().sort(function(a,b){ return (b.score||0) - (a.score||0); });
+  var recent = sorted.slice(0, 15);
+  document.getElementById('recentCount').textContent = '(' + recent.length + '/' + works.length + ')';
+  var html = '<table class="works-table"><thead><tr><th>标题</th><th>类型</th><th>评分</th><th>字数</th></tr></thead><tbody>';
+  recent.forEach(function(w){
+    var gradeCls = w.grade === 'A' ? 'grade-A' : 'grade-B';
+    html += '<tr><td>' + (w.title||'?') + '</td><td>' + (w.type||'') + '</td><td class="score ' + gradeCls + '">' + (w.score||'-') + '</td><td>' + (w.word_count||'') + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('recentWorks').innerHTML = html;
+
+  // Type distribution
+  var typeHtml = '';
+  var sortedTypes = Object.keys(types).sort(function(a,b){ return types[b]-types[a]; });
+  var maxType = Math.max.apply(null, Object.values(types));
+  var colors = ['#3fb950','#58a6ff','#bc8cff','#d29922','#f85149','#79c0ff'];
+  sortedTypes.forEach(function(t,i){
+    var pct = (types[t]/maxType*100).toFixed(0);
+    var color = colors[i % colors.length];
+    typeHtml += '<div style="background:#0d1117;border-radius:8px;padding:14px;">';
+    typeHtml += '<div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:6px;"><span>' + t + '</span><span style="font-weight:700;color:' + color + ';">' + types[t] + '篇</span></div>';
+    typeHtml += '<div style="height:6px;background:#21262d;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:3px;transition:width .6s;"></div></div>';
+    typeHtml += '</div>';
+  });
+  document.getElementById('typeDistribution').innerHTML = typeHtml;
+
+  // Update stat label
+  document.getElementById('recentCount').textContent = '(' + recent.length + '/' + works.length + ')';
 }
 
-function fmtUptime(s) {
-  if (!s) return '-';
-  var m = Math.floor(s/60), h = Math.floor(m/60);
-  return h > 0 ? h+'h'+m%60+'m' : m+'分钟';
-}
-
-function refreshAll() {
-  fetch(API+'/api/evolve/status').then(function(r){ return r.json(); }).then(function(evolve){
+// Try server API first, fall back to static JSON
+function tryServerFirst() {
+  fetch('/api/evolve/status').then(function(r){return r.json();}).then(function(evolve){
+    // Server mode — use full admin panel
+    document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-green"></span>● 服务器在线';
+    document.getElementById('statusBadge').className = 'status-badge badge-green';
+    document.getElementById('quickLinks').innerHTML = document.getElementById('quickLinks').innerHTML +
+      '<a class="link-card" href="#" style="background:#0f2d1a;border-color:#3fb950;" onclick="location.reload();return false;"><span class="icon">🖥</span><span class="title">本地控制面板</span><span class="desc">端口 3458 · 实时监控</span></a>';
+    addLog('🚀', '服务器连接成功', 'log-green');
+    // Load evolve/heal data (same as original admin flow)
     return Promise.all([
       Promise.resolve(evolve),
-      fetch(API+'/api/heal/status').then(function(r){ return r.json(); }),
-      fetch(API+'/api/config/evolve').then(function(r){ return r.json(); })
+      fetch('/api/heal/status').then(function(r){ return r.json(); }),
+      fetch('/api/config/evolve').then(function(r){ return r.json(); })
     ]);
   }).then(function(arr){
     var evolve = arr[0], heal = arr[1], config = arr[2];
-    var badge = document.getElementById('statusBadge');
-    if (evolve.running) {
-      badge.innerHTML = '<span class="status-dot dot-green"></span>● 运行中';
-      badge.className = 'status-badge badge-green';
-    } else {
-      badge.innerHTML = '<span class="status-dot dot-yellow"></span>● 已暂停';
-      badge.className = 'status-badge badge-yellow';
-    }
-    document.getElementById('statCycle').textContent = evolve.totalCycles || '-';
-    document.getElementById('statLevel').textContent = 'Lv.'+(evolve.languageLevel || '-');
-    document.getElementById('statBest').textContent = evolve.bestOutputs || '-';
-    document.getElementById('statCorrections').textContent = evolve.corrections || '-';
-    document.getElementById('statUpgrades').textContent = evolve.upgrades || '-';
-    document.getElementById('statOrders').textContent = (evolve.ordersPerCycle || '-')+'单/轮';
-    document.getElementById('inputInterval').value = config.intervalMinutes || 70;
-    document.getElementById('inputOrders').value = config.ordersPerCycle || 10;
-    document.getElementById('cycleInfo').textContent = '🔄 周期'+config.intervalMinutes+'min · 已运行'+(evolve.totalCycles||0)+'次循环 · Lv.'+(evolve.languageLevel||0);
+    // Populate server-specific stats
+    document.getElementById('statWorks').textContent = (evolve.totalCycles||0) + '次循环';
+    document.getElementById('statTop').textContent = 'Lv.'+(evolve.languageLevel||'-');
+    document.getElementById('statWords').textContent = (evolve.bestOutputs||'-');
+    document.getElementById('statTypes').textContent = (evolve.corrections||0) + '修正';
+    document.getElementById('statAvg').textContent = (evolve.upgrades||0) + '升级';
+    document.getElementById('statTopScore').textContent = (evolve.ordersPerCycle||'-') + '单/轮';
+    document.getElementById('recentCount').textContent = '';
 
     var results = evolve.lastResults || [];
-    if (results.length > 0 && lastActivity !== JSON.stringify(results.map(function(r){ return r.project; }))) {
-      results.forEach(function(r){
-        var tag = r.training ? '🏋️' : '💰';
-        var corr = r.corrected ? ' 🔧修正' : '';
-        var cls = r.score >= 85 ? 'log-green' : r.score >= 70 ? 'log-yellow' : 'log-red';
-        addLog(tag, (r.project||'?')+' → '+(r.quality||'?')+'('+(r.score||'?')+'分)'+corr, cls);
+    if (results.length > 0) {
+      var rh = '<table class="works-table"><thead><tr><th>项目</th><th>质量</th><th>评分</th><th>状态</th></tr></thead><tbody>';
+      results.slice().reverse().forEach(function(r){
+        var cls = r.score >= 85 ? 'grade-A' : r.score >= 70 ? 'grade-B' : '';
+        var status = r.corrected ? '🔧修正' : r.training ? '🏋️训练' : '💰接单';
+        rh += '<tr><td>' + (r.project||'?') + '</td><td>' + (r.quality||'') + '</td><td class="score ' + cls + '">' + (r.score||'-') + '</td><td>' + status + '</td></tr>';
       });
-      lastActivity = JSON.stringify(results.map(function(r){ return r.project; }));
-    }
-    if (lastActivity === '') {
-      addLog('🚀', '系统已连接，面板就绪', 'log-blue');
-      addLog('📡', '扫描到项目 · 周期'+config.intervalMinutes+'min · 每轮'+config.ordersPerCycle+'单', 'log-dim');
-      lastActivity = 'started';
-    }
-
-    var queueEl = document.getElementById('projectQueue');
-    var queueCount = document.getElementById('queueCount');
-    if (results.length === 0) {
-      queueEl.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">暂无项目记录</div>';
-      queueCount.textContent = '';
+      rh += '</tbody></table>';
+      document.getElementById('recentWorks').innerHTML = rh;
     } else {
-      queueCount.textContent = '('+results.length+'个最新)';
-      var items = [];
-      for (var i = results.length-1; i >= 0; i--) {
-        var r = results[i];
-        var icon = r.training ? '🏋️' : '💰';
-        var cls = r.score >= 85 ? 'done' : 'processing';
-        var gradeCls = r.score >= 85 ? 'A' : r.score >= 70 ? 'B' : 'C';
-        var corrBadge = r.corrected ? '<span style="background:#2d2d1a;color:#d29922;padding:1px 6px;border-radius:3px;font-size:0.65rem;margin-left:4px;">修正</span>' : '';
-        items.push('<div class="q-item '+cls+'"><span class="q-icon">'+icon+'</span><span class="q-title">'+(r.project||'?')+'</span>'+corrBadge+'<span class="q-score '+gradeCls+'">'+(r.quality||'?')+' '+(r.score||'?')+'</span></div>');
-      }
-      queueEl.innerHTML = items.join('');
+      document.getElementById('recentWorks').innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">暂无项目记录</div>';
     }
 
-    var wm = evolve.workflowMaturity || {};
-    var styles = wm.topStyles || [];
-    document.getElementById('totalRunsLabel').textContent = '共'+(wm.totalRuns||0)+'次运行';
-    var rankEl = document.getElementById('styleRanking');
-    if (styles.length === 0) {
-      rankEl.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">等待数据积累...</div>';
-    } else {
-      var maxScore = Math.max.apply(null, styles.map(function(s){ return parseInt(s.avgScore)||1; }));
-      var html = '';
-      styles.forEach(function(s,i){
-        var fill = i === 0 ? 'fill-green' : i === 1 ? 'fill-blue' : i === 2 ? 'fill-yellow' : 'fill-purple';
-        var pct = (parseInt(s.avgScore)/maxScore*100).toFixed(0);
-        html += '<div class="style-bar-wrap"><div class="style-bar-header"><span class="name">'+(i+1)+'. '+s.style.split('_')[0]+'</span><span class="score">'+s.avgScore+'分 · '+s.wins+'胜/'+s.runs+'次</span></div><div class="style-bar"><div class="style-bar-fill '+fill+'" style="width:'+pct+'%"></div></div></div>';
-      });
-      rankEl.innerHTML = html;
-    }
-
-    document.getElementById('healUptime').textContent = fmtUptime(heal.uptime);
-    document.getElementById('healFailures').textContent = heal.failures || '-';
-    document.getElementById('healHealed').textContent = heal.healed || '-';
-    document.getElementById('healPatterns').textContent = heal.patterns || '-';
-
-    var patterns = heal.topPatterns || [];
-    var patEl = document.getElementById('patternList');
-    if (patterns.length === 0) {
-      patEl.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">✅ 系统健康</div>';
-    } else {
-      var patHtml = '';
-      patterns.forEach(function(p){
-        patHtml += '<div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(248,81,73,0.06);border-radius:4px;margin-bottom:4px;font-size:0.78rem;"><span style="color:#f85149;font-weight:600;">'+p.pattern+'</span><span style="color:#8b949e;">×'+p.count+'</span></div>';
-      });
-      patEl.innerHTML = patHtml;
-    }
-
-    var bc = wm.bestCombos || [];
-    var mEl = document.getElementById('maturityInfo');
-    if (bc.length === 0) {
-      mEl.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">等待更多数据...</div>';
-    } else {
-      var bcCopy = bc.slice(-5).reverse();
-      var bcHtml = '';
-      bcCopy.forEach(function(b){
-        bcHtml += '<div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:4px;margin-bottom:4px;font-size:0.78rem;"><span>'+(b.style||'?')+' · '+(b.type||'?')+'</span><span style="color:#3fb950;font-weight:600;">'+(b.score||'?')+'分</span></div>';
-      });
-      mEl.innerHTML = bcHtml;
-    }
-
-    var lessons = evolve.latestLessons || [];
-    var lb = document.getElementById('lessonBox');
-    if (lessons.length === 0) {
-      lb.innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">等待首次循环提取法则...</div>';
-    } else {
-      var lHtml = '';
-      for (var li = 0; li < Math.min(2, lessons.length); li++) {
-        var lesson = lessons[lessons.length-1-li];
-        var brief = lesson.lesson.replace(/\n/g, '<br>');
-        lHtml += '<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #21262d;"><div style="color:#8b949e;font-size:0.7rem;">Cycle '+lesson.cycle+' | Lv.'+lesson.level+'</div><div style="margin-top:4px;">'+brief+'</div></div>';
-      }
-      lb.innerHTML = lHtml;
-    }
-  }).catch(function(e){
-    document.getElementById('statusBadge').innerHTML = '<span class="status-dot dot-red"></span>❌ 连接失败';
-    document.getElementById('statusBadge').className = 'status-badge badge-red';
-    addLog('❌', '连接失败: '+e.message, 'log-red');
+    document.getElementById('typeDistribution').innerHTML = '<div style="color:#8b949e;text-align:center;padding:20px;">服务器模式下查看控制面板获取完整信息</div>';
+  }).catch(function(){
+    // Server not available — use static JSON
+    loadStaticData();
   });
 }
 
-function saveSettings() {
-  var interval = parseInt(document.getElementById('inputInterval').value);
-  var orders = parseInt(document.getElementById('inputOrders').value);
-  if (interval < 10) { showToast('周期不能少于10分钟', 'error'); return; }
-  if (orders < 1 || orders > 50) { showToast('接单数应在1-50之间', 'error'); return; }
-  fetch(API+'/api/config/evolve', {
-    method: 'PUT',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ intervalMinutes: interval, ordersPerCycle: orders })
-  }).then(function(r){ return r.json(); }).then(function(d){
-    if (d.success) {
-      showToast('✅ 已保存 · 周期'+d.intervalMinutes+'min · 每轮'+d.ordersPerCycle+'单');
-      document.getElementById('saveFeedback').textContent = '✅ '+new Date().toLocaleTimeString()+' 保存成功';
-      document.getElementById('saveFeedback').className = 'save-feedback';
-      addLog('⚙️', '设置已更新: 周期'+d.intervalMinutes+'min · 每轮'+d.ordersPerCycle+'单', 'log-blue');
-      setTimeout(function(){ document.getElementById('saveFeedback').className = 'save-feedback hide'; }, 3000);
-    }
-  }).catch(function(e){ showToast('保存失败: '+e.message, 'error'); });
-}
-
-function triggerScan() {
-  addLog('🔍', '正在执行全平台扫描...', 'log-blue');
-  showToast('🔍 扫描中...', 'info');
-  fetch(API+'/api/projects/scan', { method: 'POST' }).then(function(r){ return r.json(); }).then(function(d){
-    var count = d.scanned || (d.projects && d.projects.length) || 0;
-    addLog('✅', '扫描完成 · 发现 '+count+' 个项目', 'log-green');
-    showToast('✅ 扫描完成 · '+count+'个项目');
-    setTimeout(refreshAll, 2000);
-  }).catch(function(e){
-    addLog('❌', '扫描失败: '+e.message, 'log-red');
-    showToast('扫描失败: '+e.message, 'error');
-  });
-}
-
-function resetHeal() {
-  if (!confirm('确定重置自愈引擎的故障记录？')) return;
-  fetch(API+'/api/heal/reset', { method: 'POST' }).then(function(){
-    showToast('✅ 自愈记录已重置');
-    addLog('🛡️', '自愈引擎故障记录已重置', 'log-green');
-    refreshAll();
-  }).catch(function(){ showToast('重置失败', 'error'); });
-}
-
-refreshAll();
-setInterval(refreshAll, 5000);
+tryServerFirst();
 </script>
 </body>
 </html>

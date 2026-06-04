@@ -273,8 +273,16 @@ function render(){
 }
 
 // ═══════════════════════════════════════════
-//  VIEW CHAPTER (try API, fallback to embedded)
+//  VIEW CHAPTER — API → novel-content.json → file path
 // ═══════════════════════════════════════════
+
+var NOVEL_CONTENT = null;
+
+function loadNovelContent() {
+  fetch('./novel-content.json').then(function(r){return r.json();}).then(function(d){
+    NOVEL_CONTENT = d.chapters || {};
+  }).catch(function(){});
+}
 
 function viewChapter(idx){
   var ch = NOVEL.chapters[idx];
@@ -282,12 +290,26 @@ function viewChapter(idx){
   document.getElementById('modalChapterBody').textContent = '(正在加载完整内容...)';
   document.getElementById('modalOverlay').classList.add('show');
 
-  // Try API
   var fname = ch.date + '.md';
+
+  // 1. Try API (local server)
   fetch('/api/portfolio/chapter?file=' + fname).then(function(r){return r.json();}).then(function(d){
-    document.getElementById('modalChapterBody').textContent = d.content || '(暂无)';
+    if (d && d.content) {
+      document.getElementById('modalChapterBody').textContent = d.content;
+      return;
+    }
+    throw new Error('no content');
   }).catch(function(){
-    document.getElementById('modalChapterBody').textContent = '完整章节内容在本地文件中。\n\n文件: 笔记/chronicles/' + fname;
+    // 2. Fallback: embedded content JSON
+    if (NOVEL_CONTENT && NOVEL_CONTENT[ch.date]) {
+      document.getElementById('modalChapterBody').textContent = NOVEL_CONTENT[ch.date];
+    } else {
+      // 3. Final fallback: show file reference
+      document.getElementById('modalChapterBody').textContent =
+        '📄 完整章节内容可在以下位置查看：\n\n' +
+        '文件: 笔记/chronicles/' + fname + '\n' +
+        '(约 ' + ch.wc + ' 字)';
+    }
   });
 }
 
@@ -295,19 +317,23 @@ function closeModal(){document.getElementById('modalOverlay').classList.remove('
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
 
 // ═══════════════════════════════════════════
-//  AUTO-REFRESH from server (live update)
+//  AUTO-REFRESH (static-safe)
 // ═══════════════════════════════════════════
 
 function refreshFromServer(){
-  fetch('/api/novel/status').then(function(r){return r.json();}).then(function(d){
+  // Only attempt server refresh if we detect a local server
+  fetch('/api/novel/status', {signal: AbortSignal.timeout(2000)}).then(function(r){return r.json();}).then(function(d){
     if(d.totalChapters > NOVEL.totalChapters){
       location.reload();
     }
-  }).catch(function(){});
+  }).catch(function(){/* server not available — ignore */});
 }
 
+// Load embedded content, render, start refresh cycle
+loadNovelContent();
 render();
-setInterval(refreshFromServer, 30000);
+// Conservative refresh — 2min, silent fail if no server
+setInterval(refreshFromServer, 120000);
 </script>
 </body>
 </html>

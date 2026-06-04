@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>🔴 文案作战中心 — 实时运行面板</title>
+<title>📊 镜观文案 · 运行看板</title>
 <style>
 :root{--bg:#08080f;--card:#111122;--border:#1a1a38;--text:#d0d0e0;--accent:#6c5ce7;--green:#00e676;--red:#ff5252;--orange:#ffab40;--blue:#448aff;--muted:#666688}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",monospace;padding:16px;min-height:100vh}
 h1{font-size:1.2rem;text-align:center;padding:12px 0;color:var(--accent)}
-h1 .dot{color:var(--green);animation:pulse 1.5s ease-in-out infinite}
+h1 .dot{animation:pulse 1.5s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;max-width:1400px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
@@ -17,207 +17,145 @@ h1 .dot{color:var(--green);animation:pulse 1.5s ease-in-out infinite}
 .status-badge{padding:3px 10px;border-radius:12px;font-size:.65rem;font-weight:600}
 .status-badge.on{background:#0a2a0a;color:var(--green)}
 .status-badge.warn{background:#2a1a0a;color:var(--orange)}
+.status-badge.off{background:#2a0a0a;color:var(--red)}
 .stat-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.75rem}
 .stat-val{font-weight:700}
 .stat-val.g{color:var(--green)}.stat-val.b{color:var(--blue)}.stat-val.o{color:var(--orange)}.stat-val.r{color:var(--red)}
-.log-box{max-height:180px;overflow-y:auto;font-size:.7rem;font-family:monospace}
-.log-line{padding:2px 0;color:var(--muted);border-left:2px solid transparent;padding-left:8px}
-.log-line.active{border-left-color:var(--green);color:var(--text)}
-.log-line.warn{border-left-color:var(--orange)}
-.log-line.err{border-left-color:var(--red)}
-.progress-bar{height:4px;background:var(--border);border-radius:2px;margin:8px 0;overflow:hidden}
-.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .5s}
 .big-num{font-size:2.2rem;font-weight:900;text-align:center}
 .big-label{text-align:center;font-size:.7rem;color:var(--muted)}
-.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.btn{padding:8px 16px;border-radius:8px;border:none;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s}
+.btn{padding:8px 16px;border-radius:8px;border:none;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 .btn-go{background:var(--green);color:#000}
-.btn-go:hover{box-shadow:0 0 20px rgba(0,230,118,.3)}
-.btn-stop{background:var(--red);color:#fff}
 .btn-accent{background:var(--accent);color:#fff}
-.pipeline-animation{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-size:.65rem;margin:8px 0}
-.pipe-step{padding:4px 10px;border-radius:6px;background:var(--border)}
-.pipe-step.done{background:#0a2a0a;color:var(--green)}
-.pipe-arrow{color:var(--muted)}
-#liveOutput{max-height:250px;overflow-y:auto;font-size:.72rem;background:#050510;border-radius:8px;padding:12px;border:1px solid var(--border);white-space:pre-wrap;line-height:1.6}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.link-card{display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,0.02);border-radius:10px;text-decoration:none;color:var(--text);border:1px solid transparent;transition:all .2s;margin-bottom:8px}
+.link-card:hover{border-color:var(--accent);background:rgba(108,92,231,0.06)}
+.link-card .icon{font-size:1.5rem}
+.link-card .title{font-weight:600;font-size:.9rem}
+.link-card .desc{font-size:.7rem;color:var(--muted);margin-top:2px}
+.works-table{width:100%;border-collapse:collapse;font-size:.7rem}
+.works-table th{text-align:left;padding:6px 8px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border)}
+.works-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.works-table tr:hover td{background:rgba(255,255,255,0.02)}
+.type-chips{display:flex;flex-wrap:wrap;gap:6px}
+.type-chip{padding:4px 12px;border-radius:12px;font-size:.7rem;font-weight:600}
 </style>
 </head>
 <body>
 
-<h1>🔴 文案作战中心 v10 <span class="dot">●</span> 自循环运行中</h1>
+<h1>📊 镜观文案 · 运营看板 <span class="dot" id="statusDot">●</span></h1>
 
 <div class="grid">
-  <!-- 系统状态 -->
+  <!-- Static portfolio stats (always available) -->
   <div class="card">
-    <div class="card-header"><span>🖥️ 系统状态</span><span class="status-badge on" id="sysBadge">运行中</span></div>
-    <div class="stat-row"><span>版本</span><span class="stat-val b" id="sysVersion">v10.0.0</span></div>
-    <div class="stat-row"><span>运行时间</span><span class="stat-val" id="sysUptime">0s</span></div>
-    <div class="stat-row"><span>内存</span><span class="stat-val" id="sysMem">0MB</span></div>
-    <div class="stat-row"><span>本地模型</span><span class="stat-val b" id="sysModels">13</span></div>
-    <div class="stat-row"><span>未读通知</span><span class="stat-val o" id="sysNotifs">0</span></div>
+    <div class="card-header"><span>🎨 作品统计</span><span class="status-badge on" id="modeBadge">静态数据</span></div>
+    <div class="big-num g" id="wsTotal">-</div>
+    <div class="big-label">作品总数</div>
+    <div class="stat-row" style="margin-top:12px"><span>推荐作品</span><span class="stat-val g" id="wsTop">-</span></div>
+    <div class="stat-row"><span>总字数</span><span class="stat-val b" id="wsWords">-</span></div>
+    <div class="stat-row"><span>最高评分</span><span class="stat-val o" id="wsMaxScore">-</span></div>
+    <div class="stat-row"><span>文案类型</span><span class="stat-val" id="wsTypes">-</span></div>
   </div>
 
-  <!-- Pipeline -->
+  <!-- Type distribution -->
   <div class="card">
-    <div class="card-header"><span>🔄 自动Pipeline</span><span class="status-badge on" id="plBadge">运行中</span></div>
-    <div class="stat-row"><span>已处理项目</span><span class="stat-val g" id="plProcessed">0</span></div>
-    <div class="stat-row"><span>已写文案</span><span class="stat-val b" id="plWritten">0</span></div>
-    <div class="stat-row"><span>可交付</span><span class="stat-val g" id="plReady">0</span></div>
-    <div class="stat-row"><span>错误</span><span class="stat-val r" id="plErrors">0</span></div>
-    <div class="progress-bar"><div class="progress-fill" id="plProgress" style="width:0%"></div></div>
-    <div class="btn-row">
-      <button class="btn btn-go" onclick="runNow()">▶ 立即运行</button>
-      <button class="btn btn-accent" onclick="demoProject()">🧪 演示项目</button>
+    <div class="card-header"><span>📊 类型分布</span></div>
+    <div id="typeDistrib"><div style="color:var(--muted);text-align:center;padding:20px;">加载中...</div></div>
+  </div>
+
+  <!-- Quick links -->
+  <div class="card">
+    <div class="card-header"><span>🔗 快速跳转</span></div>
+    <a class="link-card" href="index.html"><span class="icon">🏠</span><div><div class="title">主站首页</div><div class="desc">镜观作品集门户</div></div></a>
+    <a class="link-card" href="portfolio.html"><span class="icon">🎨</span><div><div class="title">作品全集</div><div class="desc">322篇文案 · 全文浏览</div></div></a>
+    <a class="link-card" href="novel.html"><span class="icon">📖</span><div><div class="title">小说连载</div><div class="desc">《万象——世界奇迹日志》</div></div></a>
+    <a class="link-card" href="admin.html"><span class="icon">🧬</span><div><div class="title">管理面板</div><div class="desc">系统监控 · 数据看板</div></div></a>
+    <div style="margin-top:10px;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;font-size:.7rem;color:var(--muted);line-height:1.6;">
+      💡 如需实时运行面板（端口3457）：<br>
+      <code style="color:var(--green);">http://localhost:3457</code>
     </div>
   </div>
 
-  <!-- 最近活动 -->
-  <div class="card">
-    <div class="card-header"><span>📋 实时日志</span><span id="logCount">0条</span></div>
-    <div class="log-box" id="logBox">
-      <div class="log-line">等待活动...</div>
-    </div>
-  </div>
-
-  <!-- AI输出预览 -->
+  <!-- Recent top works -->
   <div class="card" style="grid-column:span 2">
-    <div class="card-header"><span>📝 最新产出预览</span><span id="outputTime"></span></div>
-    <div id="liveOutput">点击"演示项目"查看AI写作结果...</div>
-  </div>
-
-  <!-- 数据看板 -->
-  <div class="card">
-    <div class="card-header"><span>💰 财务仪表</span></div>
-    <div class="big-num g" id="finTotal">¥0</div>
-    <div class="big-label">累计收入</div>
-    <div class="stat-row" style="margin-top:12px"><span>已收款项目</span><span class="stat-val" id="finPaid">0</span></div>
-    <div class="stat-row"><span>待收款</span><span class="stat-val o" id="finPending">0</span></div>
-    <div class="stat-row"><span>均价</span><span class="stat-val b" id="finAvg">¥0</span></div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><span>🎯 项目猎手</span></div>
-    <div class="stat-row"><span>监控平台</span><span class="stat-val b">5个</span></div>
-    <div class="stat-row"><span>已发现项目</span><span class="stat-val g" id="hunterFound">0</span></div>
-    <div class="stat-row"><span>上次扫描</span><span class="stat-val" id="hunterLast">-</span></div>
-    <div class="stat-row"><span>自动模式</span><span class="status-badge on">每5分钟</span></div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><span>🧠 模块状态</span></div>
-    <div class="stat-row"><span>V5 通知</span><span class="status-badge on">✅</span></div>
-    <div class="stat-row"><span>V6 RAG检索</span><span class="status-badge on">✅</span></div>
-    <div class="stat-row"><span>V7 分析引擎</span><span class="status-badge on">✅</span></div>
-    <div class="stat-row"><span>V8 协作引擎</span><span class="status-badge on">✅</span></div>
-    <div class="stat-row"><span>V9 自媒体</span><span class="status-badge on">✅</span></div>
-    <div class="stat-row"><span>V10 市场</span><span class="status-badge on">✅</span></div>
+    <div class="card-header"><span>🏆 高分作品 TOP 10</span><span id="topWorksCount"></span></div>
+    <div id="topWorks" style="max-height:280px;overflow-y:auto;"><div style="color:var(--muted);text-align:center;padding:20px;">加载中...</div></div>
   </div>
 </div>
 
 <script>
-const API = 'http://localhost:3457/api';
-let logLines = [];
+// ═══════════════════════════════════════════
+//  DUAL MODE: Static JSON / Live Server (port 3457)
+// ═══════════════════════════════════════════
 
-function addLog(msg, type='active') {
-  logLines.unshift({ msg, type, time: new Date().toLocaleTimeString() });
-  if (logLines.length > 50) logLines.length = 50;
-  document.getElementById('logBox').innerHTML = logLines.map(l =>
-    `<div class="log-line ${l.type}">[${l.time}] ${l.msg}</div>`
-  ).join('');
-  document.getElementById('logCount').textContent = logLines.length + '条';
+var MODE = 'static';
+
+function loadStatic() {
+  fetch('./portfolio-data.json').then(function(r){return r.json();}).then(function(works){
+    if (!works || !works.length) { document.getElementById('wsTotal').textContent = '0'; return; }
+
+    document.getElementById('wsTotal').textContent = works.length;
+    var top = works.filter(function(w){ return w.isTop || w.grade === 'A'; }).length;
+    document.getElementById('wsTop').textContent = top;
+    var totalWords = works.reduce(function(s,w){ return s + (w.word_count || 0); }, 0);
+    document.getElementById('wsWords').textContent = (totalWords/10000).toFixed(1) + '万';
+    var maxScore = works.reduce(function(m,w){ return Math.max(m, w.score||0); }, 0);
+    document.getElementById('wsMaxScore').textContent = maxScore + '分';
+    var types = {};
+    works.forEach(function(w){ var t = w.type || '其他'; types[t] = (types[t]||0) + 1; });
+    document.getElementById('wsTypes').textContent = Object.keys(types).length + '种';
+
+    // Type distribution
+    var typeHtml = '';
+    var sorted = Object.keys(types).sort(function(a,b){ return types[b]-types[a]; });
+    var maxVal = Math.max.apply(null, Object.values(types));
+    var colors = ['#00e676','#448aff','#6c5ce7','#ffab40','#ff5252','#00bcd4'];
+    sorted.forEach(function(t,i){
+      var pct = (types[t]/maxVal*100).toFixed(0);
+      var c = colors[i % colors.length];
+      typeHtml += '<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:2px;"><span>' + t + '</span><span style="color:' + c + ';font-weight:700;">' + types[t] + '篇</span></div><div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:' + c + ';border-radius:3px;transition:width .5s;"></div></div></div>';
+    });
+    document.getElementById('typeDistrib').innerHTML = typeHtml;
+
+    // Top 10 works
+    var sorted = works.slice().sort(function(a,b){ return (b.score||0) - (a.score||0); }).slice(0, 10);
+    document.getElementById('topWorksCount').textContent = '(' + sorted.length + '篇)';
+    var th = '<table class="works-table"><thead><tr><th>#</th><th>标题</th><th>类型</th><th>评分</th><th>字数</th></tr></thead><tbody>';
+    sorted.forEach(function(w,i){
+      var gradeC = w.score >= 90 ? 'g' : w.score >= 80 ? 'o' : '';
+      var shortTitle = (w.title||'?').length > 20 ? (w.title||'?').slice(0,20)+'…' : (w.title||'?');
+      th += '<tr><td>' + (i+1) + '</td><td>' + shortTitle + '</td><td>' + (w.type||'') + '</td><td class="stat-val ' + gradeC + '">' + (w.score||'-') + '</td><td>' + (w.word_count||'') + '</td></tr>';
+    });
+    th += '</tbody></table>';
+    document.getElementById('topWorks').innerHTML = th;
+  }).catch(function(){
+    document.getElementById('wsTotal').textContent = '❌';
+    document.getElementById('typeDistrib').innerHTML = '<div style="color:var(--red);text-align:center;padding:10px;">数据文件缺失</div>';
+  });
 }
 
-async function refresh() {
-  try {
-    const s = await fetch(API + '/status').then(r => r.json());
-    document.getElementById('sysUptime').textContent = Math.floor(s.uptime/60) + '分' + Math.floor(s.uptime%60) + '秒';
-    document.getElementById('sysMem').textContent = Math.round(s.memory.rss/1024/1024) + 'MB';
-    document.getElementById('sysModels').textContent = s.localModels?.length || 0;
-    document.getElementById('sysNotifs').textContent = s.notifications || 0;
-    document.getElementById('sysVersion').textContent = s.version || 'v10';
-    document.getElementById('hunterFound').textContent = s.projectsFound || 0;
-    document.getElementById('sysBadge').textContent = s.online ? '运行中' : '异常';
-  } catch { document.getElementById('sysBadge').textContent = '重连中...'; document.getElementById('sysBadge').className = 'status-badge warn'; }
-
-  try {
-    const pl = await fetch(API + '/pipeline/status').then(r => r.json());
-    document.getElementById('plProcessed').textContent = pl.processed || 0;
-    document.getElementById('plWritten').textContent = pl.written || 0;
-    document.getElementById('plErrors').textContent = pl.errors || 0;
-    document.getElementById('plProgress').style.width = Math.min(100, (pl.written||0)*20) + '%';
-    if (pl.log?.length) addLog(pl.log[0].message, 'active');
-  } catch {}
-
-  try {
-    const fin = await fetch(API + '/crm/finance').then(r => r.json());
-    document.getElementById('finTotal').textContent = '¥' + (fin.totalIncome||0).toLocaleString();
-    document.getElementById('finPaid').textContent = fin.paidProjects || 0;
-    document.getElementById('finPending').textContent = fin.unpaidDelivered || 0;
-    document.getElementById('finAvg').textContent = '¥' + (fin.averageOrderValue||0).toLocaleString();
-  } catch {}
+// Try live server first
+function tryServer() {
+  fetch('http://localhost:3457/api/status', {signal: AbortSignal.timeout(2000)}).then(function(r){return r.json();}).then(function(s){
+    MODE = 'live';
+    document.getElementById('modeBadge').textContent = '实时模式';
+    document.getElementById('modeBadge').className = 'status-badge on';
+    document.getElementById('statusDot').style.color = 'var(--green)';
+    document.getElementById('wsTotal').textContent = s.projectsFound || '-';
+    document.getElementById('wsTop').textContent = '服务器在线';
+    document.getElementById('wsWords').textContent = '端口3457';
+    document.getElementById('wsMaxScore').textContent = (s.uptime ? Math.floor(s.uptime/60)+'分运行' : '-');
+    document.getElementById('wsTypes').textContent = 'v'+(s.version||'10');
+    document.getElementById('typeDistrib').innerHTML = '<div style="color:var(--green);text-align:center;padding:20px;">✅ 服务器在线<br><span style="font-size:.65rem;color:var(--muted);">完整看板请访问 http://localhost:3457</span></div>';
+    document.getElementById('topWorks').innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;">实时数据请在本地访问: http://localhost:3457</div>';
+  }).catch(function(){
+    MODE = 'static';
+    document.getElementById('modeBadge').textContent = '静态模式';
+    document.getElementById('statusDot').style.color = 'var(--orange)';
+    loadStatic();
+  });
 }
 
-async function runNow() {
-  addLog('🚀 手动触发全自动Pipeline...', 'active');
-  document.getElementById('liveOutput').textContent = '⏳ Pipeline运行中...';
-  try {
-    const r = await fetch(API + '/pipeline/run', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({autoWrite:true,maxProjects:3}) }).then(r=>r.json());
-    addLog(`✅ Pipeline完成: 处理${r.projects}个 | 写${r.written}篇 | 可交付${r.ready}篇`, 'active');
-    document.getElementById('liveOutput').textContent = JSON.stringify(r, null, 2);
-    document.getElementById('plReady').textContent = r.ready || 0;
-  } catch(e) { addLog('❌ Pipeline失败: ' + e.message, 'err'); }
-}
-
-async function demoProject() {
-  addLog('🧪 运行演示项目: 教育品牌故事...', 'active');
-  document.getElementById('liveOutput').textContent = '⏳ AI正在写作 (约25秒)...';
-  document.getElementById('outputTime').textContent = new Date().toLocaleTimeString();
-
-  try {
-    const r = await fetch(API + '/v4/full-pipeline', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ title:'需要一个12年教育机构的品牌故事，从地下室到全国30家分校', type:'brand_story', platform:'zbj', budget:1200, wordCount:1000, urgency:'normal' })
-    }).then(r=>r.json());
-
-    document.getElementById('liveOutput').innerHTML =
-      `<div style="color:var(--green);margin-bottom:8px">✅ 质量: ${r.quality?.grade||'?'}级 ${r.quality?.score||0}分 | ${r.elapsed||'?'} | ${r.route?.model||'?'} | ${r.industry||'?'}</div>` +
-      `<div style="line-height:1.8">${(r.content||'').replace(/\n/g,'<br>')}</div>`;
-    document.getElementById('outputTime').textContent = r.elapsed || '';
-
-    addLog(`✅ 演示完成: ${r.quality?.grade}级(${r.quality?.score}分) | ${r.industry} | ${r.elapsed}`, 'active');
-    document.getElementById('plWritten').textContent = (parseInt(document.getElementById('plWritten').textContent)||0) + 1;
-    document.getElementById('plReady').textContent = (parseInt(document.getElementById('plReady').textContent)||0) + 1;
-  } catch(e) {
-    addLog('❌ 演示失败: ' + e.message, 'err');
-    document.getElementById('liveOutput').textContent = '错误: ' + e.message;
-  }
-}
-
-// 启动时
-addLog('🔴 文案作战中心 v10 自循环启动', 'active');
-addLog('✅ 15模块·80+API·13模型·5平台', 'active');
-addLog('⏰ 自动扫描每5分钟 | 自动写作已就绪', 'active');
-addLog('📡 WebSocket通知已连接', 'active');
-
-// 连接WebSocket
-try {
-  const ws = new WebSocket('ws://localhost:3457');
-  ws.onmessage = (e) => {
-    const d = JSON.parse(e.data);
-    if (d.type === 'projects_update') addLog(`🔍 发现 ${d.data.count} 个新项目`, 'active');
-    if (d.type === 'pipeline_complete') addLog(`✅ Pipeline完成: ${d.data.written||0}篇`, 'active');
-  };
-  ws.onopen = () => addLog('🔗 WebSocket已连接', 'active');
-  ws.onclose = () => addLog('⚠️ WebSocket断开，15秒后重连', 'warn');
-} catch {}
-
-// 定时刷新
-refresh();
-setInterval(refresh, 5000);
-
-// 首次演示
-setTimeout(() => demoProject(), 2000);
+tryServer();
 </script>
 </body>
 </html>
